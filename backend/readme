@@ -1,0 +1,19 @@
+
+# installation  projet
+- npm install
+
+# migration table prisma
+- npx prisma generate
+- npx prisma migrate dev --name nom
+
+# pour voir le table dans prisma
+- npx prisma studio
+
+# installation prisma
+- npm install prisma @prisma/client
+- npx prisma init (cree le dossier prisma)
+- npm install @prisma/adapter-pg
+
+ARCHETECTURE
+
+
