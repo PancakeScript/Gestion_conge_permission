@@ -2,6 +2,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const app = express();
 const cors = require("cors");
+const employeRoutes = require("./routes/employe.routes")
 
 // app.use(
 //   cors({
@@ -21,5 +22,6 @@ app.get("/", (req, res) => {
   res.json({ message: "API fonctionnelle" });
 });
 
+app.use("/api/employes", employeRoutes)
 
 module.exports = app;

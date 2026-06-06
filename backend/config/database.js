@@ -1,25 +1,16 @@
-const { PrismaClient } = require("@prisma/client")
+const { PrismaClient } = require("../generated/prisma")
 const { Pool } = require("pg")
 const { PrismaPg } = require("@prisma/adapter-pg")
-
-const globalForPrisma = global
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 })
 
-// Adapter Prisma
 const adapter = new PrismaPg(pool)
 
-const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    adapter,
-    log: ["query", "info", "warn", "error"],
-  })
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma
-}
+const prisma = new PrismaClient({
+  adapter,
+  log: ["warn", "error"],
+})
 
 module.exports = prisma

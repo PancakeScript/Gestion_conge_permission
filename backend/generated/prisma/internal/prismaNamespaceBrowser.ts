@@ -51,7 +51,15 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Test: 'Test'
+  demandes_conge: 'demandes_conge',
+  departement: 'departement',
+  employe: 'employe',
+  jours_feries: 'jours_feries',
+  manager: 'manager',
+  notification: 'notification',
+  rh: 'rh',
+  types_conge: 'types_conge',
+  utilisateur: 'utilisateur'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -70,13 +78,110 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const TestScalarFieldEnum = {
-  id: 'id',
-  nom: 'nom',
-  createdAt: 'createdAt'
+export const Demandes_congeScalarFieldEnum = {
+  id_demande_conde: 'id_demande_conde',
+  id_employe: 'id_employe',
+  id_type_conge: 'id_type_conge',
+  motif: 'motif',
+  statut_demandes_conge: 'statut_demandes_conge',
+  commentaire_manager: 'commentaire_manager',
+  commentaire_rh: 'commentaire_rh',
+  date_demande: 'date_demande'
 } as const
 
-export type TestScalarFieldEnum = (typeof TestScalarFieldEnum)[keyof typeof TestScalarFieldEnum]
+export type Demandes_congeScalarFieldEnum = (typeof Demandes_congeScalarFieldEnum)[keyof typeof Demandes_congeScalarFieldEnum]
+
+
+export const DepartementScalarFieldEnum = {
+  id_departement: 'id_departement',
+  nom_departement: 'nom_departement',
+  id_manager: 'id_manager'
+} as const
+
+export type DepartementScalarFieldEnum = (typeof DepartementScalarFieldEnum)[keyof typeof DepartementScalarFieldEnum]
+
+
+export const EmployeScalarFieldEnum = {
+  id_employe: 'id_employe',
+  nom_employe: 'nom_employe',
+  prenom_employe: 'prenom_employe',
+  telephone_employe: 'telephone_employe',
+  adresse_employe: 'adresse_employe',
+  statut_employe: 'statut_employe',
+  id_departement: 'id_departement',
+  id_utilisateur: 'id_utilisateur'
+} as const
+
+export type EmployeScalarFieldEnum = (typeof EmployeScalarFieldEnum)[keyof typeof EmployeScalarFieldEnum]
+
+
+export const Jours_feriesScalarFieldEnum = {
+  id_jours_feries: 'id_jours_feries',
+  nom_jours_feries: 'nom_jours_feries',
+  date_jours_feries: 'date_jours_feries'
+} as const
+
+export type Jours_feriesScalarFieldEnum = (typeof Jours_feriesScalarFieldEnum)[keyof typeof Jours_feriesScalarFieldEnum]
+
+
+export const ManagerScalarFieldEnum = {
+  id_manager: 'id_manager',
+  nom_manager: 'nom_manager',
+  prenom_manager: 'prenom_manager',
+  telephone_manager: 'telephone_manager',
+  adresse_manager: 'adresse_manager',
+  statut_manager: 'statut_manager',
+  id_departement: 'id_departement',
+  id_utilisateur: 'id_utilisateur'
+} as const
+
+export type ManagerScalarFieldEnum = (typeof ManagerScalarFieldEnum)[keyof typeof ManagerScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id_notification: 'id_notification',
+  id_utilisateur: 'id_utilisateur',
+  message: 'message',
+  statut_notification: 'statut_notification',
+  date_envoie_notification: 'date_envoie_notification'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const RhScalarFieldEnum = {
+  id_rh: 'id_rh',
+  nom_rh: 'nom_rh',
+  prenom_rh: 'prenom_rh',
+  telephone_rh: 'telephone_rh',
+  adresse_rh: 'adresse_rh',
+  statut_rh: 'statut_rh',
+  id_utilisateur: 'id_utilisateur'
+} as const
+
+export type RhScalarFieldEnum = (typeof RhScalarFieldEnum)[keyof typeof RhScalarFieldEnum]
+
+
+export const Types_congeScalarFieldEnum = {
+  id_conge: 'id_conge',
+  nom_types_conge: 'nom_types_conge',
+  statut_types_conge: 'statut_types_conge',
+  id_manager: 'id_manager',
+  duree: 'duree'
+} as const
+
+export type Types_congeScalarFieldEnum = (typeof Types_congeScalarFieldEnum)[keyof typeof Types_congeScalarFieldEnum]
+
+
+export const UtilisateurScalarFieldEnum = {
+  id_utilisateur: 'id_utilisateur',
+  nom_utilisateur: 'nom_utilisateur',
+  prenom: 'prenom',
+  mdp: 'mdp',
+  mail: 'mail'
+} as const
+
+export type UtilisateurScalarFieldEnum = (typeof UtilisateurScalarFieldEnum)[keyof typeof UtilisateurScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -93,4 +198,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

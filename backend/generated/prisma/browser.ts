@@ -18,7 +18,47 @@ export { Prisma }
 export * as $Enums from './enums.ts'
 export * from './enums.ts';
 /**
- * Model Test
+ * Model demandes_conge
+ * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+ */
+export type demandes_conge = Prisma.demandes_congeModel
+/**
+ * Model departement
  * 
  */
-export type Test = Prisma.TestModel
+export type departement = Prisma.departementModel
+/**
+ * Model employe
+ * 
+ */
+export type employe = Prisma.employeModel
+/**
+ * Model jours_feries
+ * 
+ */
+export type jours_feries = Prisma.jours_feriesModel
+/**
+ * Model manager
+ * 
+ */
+export type manager = Prisma.managerModel
+/**
+ * Model notification
+ * 
+ */
+export type notification = Prisma.notificationModel
+/**
+ * Model rh
+ * 
+ */
+export type rh = Prisma.rhModel
+/**
+ * Model types_conge
+ * 
+ */
+export type types_conge = Prisma.types_congeModel
+/**
+ * Model utilisateur
+ * 
+ */
+export type utilisateur = Prisma.utilisateurModel

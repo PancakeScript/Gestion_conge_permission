@@ -8,5 +8,13 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Test.ts'
+export type * from './models/demandes_conge.ts'
+export type * from './models/departement.ts'
+export type * from './models/employe.ts'
+export type * from './models/jours_feries.ts'
+export type * from './models/manager.ts'
+export type * from './models/notification.ts'
+export type * from './models/rh.ts'
+export type * from './models/types_conge.ts'
+export type * from './models/utilisateur.ts'
 export type * from './commonInputTypes.ts'

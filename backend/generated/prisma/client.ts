@@ -31,8 +31,8 @@ export * from "./enums.ts"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Tests
- * const tests = await prisma.test.findMany()
+ * // Fetch zero or more Demandes_conges
+ * const demandes_conges = await prisma.demandes_conge.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -42,7 +42,47 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model Test
+ * Model demandes_conge
+ * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+ */
+export type demandes_conge = Prisma.demandes_congeModel
+/**
+ * Model departement
  * 
  */
-export type Test = Prisma.TestModel
+export type departement = Prisma.departementModel
+/**
+ * Model employe
+ * 
+ */
+export type employe = Prisma.employeModel
+/**
+ * Model jours_feries
+ * 
+ */
+export type jours_feries = Prisma.jours_feriesModel
+/**
+ * Model manager
+ * 
+ */
+export type manager = Prisma.managerModel
+/**
+ * Model notification
+ * 
+ */
+export type notification = Prisma.notificationModel
+/**
+ * Model rh
+ * 
+ */
+export type rh = Prisma.rhModel
+/**
+ * Model types_conge
+ * 
+ */
+export type types_conge = Prisma.types_congeModel
+/**
+ * Model utilisateur
+ * 
+ */
+export type utilisateur = Prisma.utilisateurModel

@@ -1,18 +1,113 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
+
 datasource db {
   provider = "postgresql"
 }
 
-
-model Test {
-  id        Int      @id @default(autoincrement())
-  nom       String
-  createdAt DateTime @default(now())
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model demandes_conge {
+  id_demande_conde      Int         @id @default(autoincrement())
+  id_employe            Int
+  id_type_conge         Int
+  motif                 String?
+  statut_demandes_conge String?     @db.VarChar(30)
+  commentaire_manager   String?
+  commentaire_rh        String?
+  date_demande          DateTime?   @default(now()) @db.Timestamp(6)
+  employe               employe     @relation(fields: [id_employe], references: [id_employe], onDelete: NoAction, onUpdate: NoAction)
+  types_conge           types_conge @relation(fields: [id_type_conge], references: [id_conge], onDelete: NoAction, onUpdate: NoAction)
 }
+
+model departement {
+  id_departement                              Int       @id @default(autoincrement())
+  nom_departement                             String    @db.VarChar(100)
+  id_manager                                  Int?
+  manager_departement_id_managerTomanager     manager?  @relation("departement_id_managerTomanager", fields: [id_manager], references: [id_manager], onDelete: NoAction, onUpdate: NoAction, map: "fk_departement_manager")
+  employe                                     employe[]
+  manager_manager_id_departementTodepartement manager[] @relation("manager_id_departementTodepartement")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model employe {
+  id_employe        Int              @id @default(autoincrement())
+  nom_employe       String           @db.VarChar(100)
+  prenom_employe    String           @db.VarChar(100)
+  telephone_employe String?          @db.VarChar(20)
+  adresse_employe   String?          @db.VarChar(255)
+  statut_employe    String?          @db.VarChar(20)
+  id_departement    Int?
+  id_utilisateur    Int?             @unique
+  demandes_conge    demandes_conge[]
+  departement       departement?     @relation(fields: [id_departement], references: [id_departement], onDelete: NoAction, onUpdate: NoAction)
+  utilisateur       utilisateur?     @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model jours_feries {
+  id_jours_feries   Int      @id @default(autoincrement())
+  nom_jours_feries  String   @db.VarChar(100)
+  date_jours_feries DateTime @db.Date
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model manager {
+  id_manager                                      Int           @id @default(autoincrement())
+  nom_manager                                     String        @db.VarChar(100)
+  prenom_manager                                  String        @db.VarChar(100)
+  telephone_manager                               String?       @db.VarChar(20)
+  adresse_manager                                 String?       @db.VarChar(255)
+  statut_manager                                  String?       @db.VarChar(20)
+  id_departement                                  Int?
+  id_utilisateur                                  Int?          @unique
+  departement_departement_id_managerTomanager     departement[] @relation("departement_id_managerTomanager")
+  departement_manager_id_departementTodepartement departement?  @relation("manager_id_departementTodepartement", fields: [id_departement], references: [id_departement], onDelete: NoAction, onUpdate: NoAction)
+  utilisateur                                     utilisateur?  @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: NoAction, onUpdate: NoAction)
+  types_conge                                     types_conge[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model notification {
+  id_notification          Int         @id @default(autoincrement())
+  id_utilisateur           Int
+  message                  String
+  statut_notification      String?     @db.VarChar(20)
+  date_envoie_notification DateTime?   @default(now()) @db.Timestamp(6)
+  utilisateur              utilisateur @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model rh {
+  id_rh          Int          @id @default(autoincrement())
+  nom_rh         String       @db.VarChar(100)
+  prenom_rh      String       @db.VarChar(100)
+  telephone_rh   String?      @db.VarChar(20)
+  adresse_rh     String?      @db.VarChar(255)
+  statut_rh      String?      @db.VarChar(20)
+  id_utilisateur Int?         @unique
+  utilisateur    utilisateur? @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model types_conge {
+  id_conge           Int              @id @default(autoincrement())
+  nom_types_conge    String           @db.VarChar(100)
+  statut_types_conge String?          @db.VarChar(20)
+  id_manager         Int?
+  duree              Int?
+  demandes_conge     demandes_conge[]
+  manager            manager?         @relation(fields: [id_manager], references: [id_manager], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model utilisateur {
+  id_utilisateur  Int            @id @default(autoincrement())
+  nom_utilisateur String         @db.VarChar(100)
+  prenom          String         @db.VarChar(100)
+  mdp             String         @db.VarChar(255)
+  mail            String         @unique @db.VarChar(150)
+  employe         employe?
+  manager         manager?
+  notification    notification[]
+  rh              rh?
+}
