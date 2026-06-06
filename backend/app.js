@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 
 app.get("/", (req, res) => {
-  res.json({ message: "API RDI opérationnelle" });
+  res.json({ message: "API fonctionnelle" });
 });
 
 

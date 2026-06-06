@@ -8,7 +8,7 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 })
 
-// 🔌 Adapter Prisma
+// Adapter Prisma
 const adapter = new PrismaPg(pool)
 
 const prisma =
