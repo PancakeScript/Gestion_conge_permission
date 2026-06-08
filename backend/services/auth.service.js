@@ -25,10 +25,30 @@ const login = async ({ mail, mdp }) => {
   const token = jwt.sign(
     { id_utilisateur: utilisateur.id_utilisateur, role, id_role },
     process.env.JWT_SECRET,
-    { expiresIn: "7d" }
-  )
+    { expiresIn: "7d" } // ← réduis à 15 minutes
+  );
+
+  // const refreshToken = jwt.sign(
+  //   { id_utilisateur: utilisateur.id_utilisateur, role, id_role },
+  //   process.env.JWT_REFRESH_SECRET,
+  //   { expiresIn: "7d" }
+  // );
 
   return { token, role, id_role }
-}
+};
 
-module.exports = { login }
+// const refreshAccessToken = async (refreshToken) => {
+//   try {
+//     const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+//     const newToken = jwt.sign(
+//       { id_utilisateur: payload.id_utilisateur, role: payload.role, id_role: payload.id_role },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "15m" }
+//     );
+//     return { token: newToken };
+//   } catch {
+//     throw new Error("Refresh token invalide ou expiré");
+//   }
+// };
+
+module.exports = { login };

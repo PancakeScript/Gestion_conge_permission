@@ -44,9 +44,8 @@ export default function LoginEmploye() {
         .left-content { z-index: 1; }
         .left-title { font-family: 'Playfair Display', serif; font-size: 50px; line-height: 1.15; color: #f5f0e8; margin-bottom: 22px; }
         .left-title em { font-style: italic; color: #d4af64; }
-        .left-desc { font-size: 15px; color: #a89880; line-height: 1.75; max-width: 360px; }
+        .left-desc { font-size: 15px; color: #a89880; line-height: 1.75;}
         .divider { width: 48px; height: 2px; background: linear-gradient(90deg, #d4af64, transparent); margin: 28px 0; }
-        .stats-row { display: flex; gap: 40px; z-index: 1; }
         .stat { display: flex; flex-direction: column; gap: 4px; }
         .stat-num { font-family: 'Playfair Display', serif; font-size: 30px; color: #d4af64; }
         .stat-label { font-size: 11px; color: #7a6a55; text-transform: uppercase; letter-spacing: 1.5px; }
@@ -92,18 +91,18 @@ export default function LoginEmploye() {
           <div className="left-content">
             <h1 className="left-title">Gérez les congés<br /><em>intelligemment.</em></h1>
             <div className="divider"></div>
-            <p className="left-desc">Plateforme centralisée pour les employés, managers et RH.</p>
+            <p className="left-desc">Plateforme spécifique employé</p>
           </div>
           <div className="stats-row">
-            <div className="stat"><span className="stat-num">100%</span><span className="stat-label">Numérique</span></div>
+            {/* <div className="stat"><span className="stat-num">100%</span><span className="stat-label">Numérique</span></div>
             <div className="stat"><span className="stat-num">3</span><span className="stat-label">Rôles</span></div>
-            <div className="stat"><span className="stat-num">2×</span><span className="stat-label">Plus rapide</span></div>
+            <div className="stat"><span className="stat-num">2×</span><span className="stat-label">Plus rapide</span></div> */}
           </div>
         </div>
 
         <div className="right-panel">
           <p className="login-label">Connexion</p>
-          <h2 className="login-title">Bon retour 👋</h2>
+          <h2 className="login-title">Bon retour</h2>
           <p className="login-subtitle">Accédez à votre espace personnel</p>
 
           <form onSubmit={handleSubmit}>

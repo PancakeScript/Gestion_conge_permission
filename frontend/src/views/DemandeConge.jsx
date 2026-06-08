@@ -1,1 +1,291 @@
-export default function DemandeConge() { return <div>Demande</div>; }
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { congeApi } from "../services/api";
+
+const TYPES_CONGE = [
+  { nom: "Congé Annuel", justificatif: null },
+  { nom: "Congé Maladie", justificatif: "Certificat médical requis" },
+  { nom: "Congé Maternité/Paternité", justificatif: "Acte de naissance requis" },
+  { nom: "Congé Sans Solde", justificatif: null },
+  { nom: "Congé Exceptionnel", justificatif: "Justificatif selon le cas" },
+];
+
+export default function DemandeConge() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ nom_types_conge: "", date_debut: "", date_fin: "", motif: "" });
+  const [solde, setSolde] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingSolde, setLoadingSolde] = useState(true);
+  const [error, setError] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    congeApi.getSolde()
+      .then(setSolde)
+      .catch(e => setError(e.message))
+      .finally(() => setLoadingSolde(false));
+  }, []);
+
+  const typeSelectionne = TYPES_CONGE.find(t => t.nom === form.nom_types_conge);
+
+  const nombreJours = () => {
+    if (!form.date_debut || !form.date_fin) return 0;
+    const diff = new Date(form.date_fin) - new Date(form.date_debut);
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1);
+  };
+
+  const handleSubmitConfirm = (e) => {
+    e.preventDefault();
+    setError("");
+    if (!form.nom_types_conge || !form.date_debut || !form.date_fin || !form.motif) {
+      setError("Veuillez remplir tous les champs."); return;
+    }
+    if (new Date(form.date_fin) < new Date(form.date_debut)) {
+      setError("La date de fin doit être après la date de début."); return;
+    }
+    setShowConfirm(true);
+  };
+
+  const handleSubmit = async () => {
+    setShowConfirm(false);
+    setLoading(true);
+    try {
+      await congeApi.soumettreDemande(form);
+      setSuccess(true);
+      setForm({ nom_types_conge: "", date_debut: "", date_fin: "", motif: "" });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => { logout(); navigate("/login"); };
+
+  const jours = nombreJours();
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .page-root { min-height: 100vh; background: #f5f0e8; font-family: 'DM Sans', sans-serif; }
+        .navbar { background: #2c2418; padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #3d3020; position: sticky; top: 0; z-index: 100; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; }
+        .nav-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #d4af64, #b8943c); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .nav-icon svg { width: 18px; height: 18px; color: #2c2418; }
+        .nav-name { font-family: 'Playfair Display', serif; font-size: 18px; color: #f5f0e8; }
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-link { padding: 8px 16px; border-radius: 8px; font-size: 14px; color: #a89880; cursor: pointer; border: none; background: none; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+        .nav-link:hover, .nav-link.active { background: rgba(212,175,100,0.15); color: #d4af64; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .btn-logout { padding: 8px 16px; background: transparent; border: 1px solid #3d3020; border-radius: 8px; color: #a89880; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
+        .btn-logout:hover { border-color: #d4af64; color: #d4af64; }
+        .main { padding: 36px 40px; max-width: 860px; margin: 0 auto; }
+        .page-title { font-family: 'Playfair Display', serif; font-size: 30px; color: #2c2418; margin-bottom: 6px; }
+        .page-subtitle { font-size: 14px; color: #a89070; margin-bottom: 28px; }
+        .solde-banner { background: linear-gradient(135deg, #2c2418, #3d3020); border-radius: 14px; padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+        .solde-info { display: flex; flex-direction: column; gap: 2px; }
+        .solde-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #a89880; }
+        .solde-value { font-family: 'Playfair Display', serif; font-size: 36px; color: #d4af64; }
+        .solde-desc { font-size: 13px; color: #7a6a55; }
+        .solde-bar-wrap { flex: 1; max-width: 200px; }
+        .solde-bar-track { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 8px; }
+        .solde-bar-fill { height: 6px; background: linear-gradient(90deg, #d4af64, #b8943c); border-radius: 3px; }
+        .card { background: #faf7f2; border-radius: 14px; padding: 28px; border: 1px solid #e8e0d0; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-label { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #6b5c45; }
+        .form-select, .form-input, .form-textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #e0d8cc; border-radius: 10px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: #2c2418; background: #fff; outline: none; transition: all 0.2s; }
+        .form-select:focus, .form-input:focus, .form-textarea:focus { border-color: #d4af64; box-shadow: 0 0 0 3px rgba(212,175,100,0.15); }
+        .form-textarea { resize: vertical; min-height: 100px; }
+        .justificatif-box { background: #fff8e6; border: 1px solid #f0d080; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #b8943c; display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+        .jours-preview { background: #f0f7ff; border: 1px solid #b3d4f5; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #1565c0; display: flex; align-items: center; gap: 8px; }
+        .error-box { background: #fef5f5; border: 1px solid #f5c0c0; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #c0392b; display: flex; align-items: center; gap: 8px; margin-top: 16px; }
+        .success-card { background: #faf7f2; border-radius: 14px; padding: 48px 28px; border: 1px solid #e8e0d0; text-align: center; }
+        .success-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #d4af64, #b8943c); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .success-title { font-family: 'Playfair Display', serif; font-size: 24px; color: #2c2418; margin-bottom: 8px; }
+        .success-desc { font-size: 14px; color: #a89070; margin-bottom: 24px; }
+        .btn-row { display: flex; gap: 12px; margin-top: 24px; }
+        .btn-primary { padding: 13px 28px; background: linear-gradient(135deg, #d4af64, #b8943c); color: #2c2418; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(180,140,60,0.3); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn-secondary { padding: 13px 28px; background: transparent; color: #6b5c45; border: 1.5px solid #e0d8cc; border-radius: 10px; font-size: 14px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
+        .btn-secondary:hover { border-color: #b8943c; color: #b8943c; }
+        .spinner { width: 16px; height: 16px; border: 2px solid rgba(44,36,24,0.2); border-top-color: #2c2418; border-radius: 50%; animation: spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .overlay { position: fixed; inset: 0; background: rgba(44,36,24,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(2px); }
+        .modal { background: #faf7f2; border-radius: 16px; padding: 32px; max-width: 440px; width: 90%; border: 1px solid #e8e0d0; }
+        .modal-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #2c2418; margin-bottom: 10px; }
+        .modal-desc { font-size: 14px; color: #a89070; margin-bottom: 8px; line-height: 1.6; }
+        .modal-detail { background: #f5f0e8; border-radius: 8px; padding: 12px 14px; margin: 14px 0; font-size: 13px; color: #6b5c45; line-height: 1.8; }
+        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+        @media (max-width: 768px) { .navbar { padding: 0 16px; } .nav-links { display: none; } .main { padding: 24px 16px; } .form-grid { grid-template-columns: 1fr; } }
+      `}</style>
+
+      {/* Modal confirmation demande */}
+      {showConfirm && (
+        <div className="overlay">
+          <div className="modal">
+            <div className="modal-title">Confirmer la demande</div>
+            <div className="modal-desc">Voulez-vous vraiment soumettre cette demande de congé ?</div>
+            <div className="modal-detail">
+              <strong>Type :</strong> {form.nom_types_conge}<br />
+              <strong>Du :</strong> {new Date(form.date_debut).toLocaleDateString("fr-FR")}<br />
+              <strong>Au :</strong> {new Date(form.date_fin).toLocaleDateString("fr-FR")}<br />
+              <strong>Durée :</strong> {jours} jour{jours > 1 ? "s" : ""}<br />
+              <strong>Motif :</strong> {form.motif}
+            </div>
+            <div className="modal-btns">
+              <button className="btn-primary" onClick={handleSubmit}>Confirmer</button>
+              <button className="btn-secondary" onClick={() => setShowConfirm(false)}>Annuler</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal confirmation déconnexion */}
+      {showLogoutConfirm && (
+        <div className="overlay">
+          <div className="modal">
+            <div className="modal-title">Déconnexion</div>
+            <div className="modal-desc">Voulez-vous vraiment vous déconnecter ?</div>
+            <div className="modal-btns">
+              <button className="btn-primary" onClick={handleLogout}>Oui, me déconnecter</button>
+              <button className="btn-secondary" onClick={() => setShowLogoutConfirm(false)}>Annuler</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="page-root">
+        <nav className="navbar">
+          <div className="nav-brand">
+            <div className="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="2" y="7" width="20" height="14" rx="2"/>
+                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+              </svg>
+            </div>
+            <span className="nav-name">CongeApp</span>
+          </div>
+          <div className="nav-links">
+            <button className="nav-link" onClick={() => navigate("/dashboard")}>Dashboard</button>
+            <button className="nav-link active">Demandes</button>
+            <button className="nav-link" onClick={() => navigate("/profil")}>Profil</button>
+            <button className="nav-link" onClick={() => navigate("/politique")}>Politique</button>
+          </div>
+          <div className="nav-right">
+            <button className="btn-logout" onClick={() => setShowLogoutConfirm(true)}>Déconnexion</button>
+          </div>
+        </nav>
+
+        <main className="main">
+          <h1 className="page-title">Nouvelle demande</h1>
+          <p className="page-subtitle">Remplissez le formulaire pour soumettre une demande de congé</p>
+
+          {!loadingSolde && solde && (
+            <div className="solde-banner">
+              <div className="solde-info">
+                <span className="solde-label">Solde disponible</span>
+                <span className="solde-value">{solde.soldeRestant}</span>
+                <span className="solde-desc">jours sur {solde.joursAnnuels} annuels</span>
+              </div>
+              <div className="solde-bar-wrap">
+                <div className="solde-bar-track">
+                  <div className="solde-bar-fill" style={{width: `${(solde.soldeRestant / solde.joursAnnuels) * 100}%`}}></div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {success ? (
+            <div className="success-card">
+              <div className="success-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2c2418" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div className="success-title">Demande soumise !</div>
+              <div className="success-desc">Votre demande a été transmise et sera traitée par votre manager.</div>
+              <div className="btn-row" style={{justifyContent:"center"}}>
+                <button className="btn-primary" onClick={() => setSuccess(false)}>Nouvelle demande</button>
+                <button className="btn-secondary" onClick={() => navigate("/dashboard")}>Retour au dashboard</button>
+              </div>
+            </div>
+          ) : (
+            <div className="card">
+              <form onSubmit={handleSubmitConfirm}>
+                <div className="form-grid">
+                  <div className="form-group full">
+                    <label className="form-label">Type de congé</label>
+                    <select className="form-select" value={form.nom_types_conge}
+                      onChange={e => setForm({...form, nom_types_conge: e.target.value})}>
+                      <option value="">-- Sélectionner un type --</option>
+                      {TYPES_CONGE.map(t => <option key={t.nom} value={t.nom}>{t.nom}</option>)}
+                    </select>
+                    {typeSelectionne?.justificatif && (
+                      <div className="justificatif-box">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        {typeSelectionne.justificatif}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Date de début</label>
+                    <input type="date" className="form-input" value={form.date_debut}
+                      min={new Date().toISOString().split("T")[0]}
+                      onChange={e => setForm({...form, date_debut: e.target.value})} />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Date de fin</label>
+                    <input type="date" className="form-input" value={form.date_fin}
+                      min={form.date_debut || new Date().toISOString().split("T")[0]}
+                      onChange={e => setForm({...form, date_fin: e.target.value})} />
+                  </div>
+
+                  {jours > 0 && (
+                    <div className="form-group full">
+                      <div className="jours-preview">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Durée calculée : <strong>{jours} jour{jours > 1 ? "s" : ""}</strong>
+                        {solde && form.nom_types_conge !== "Congé Sans Solde" && jours > solde.soldeRestant && (
+                          <span style={{color:"#c0392b", marginLeft: 8}}>⚠ Solde insuffisant</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="form-group full">
+                    <label className="form-label">Motif</label>
+                    <textarea className="form-textarea" placeholder="Décrivez le motif de votre demande..."
+                      value={form.motif} onChange={e => setForm({...form, motif: e.target.value})} />
+                  </div>
+                </div>
+
+                {error && (
+                  <div className="error-box">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {error}
+                  </div>
+                )}
+
+                <div className="btn-row">
+                  <button type="submit" className="btn-primary" disabled={loading}>
+                    {loading ? <><div className="spinner"/> Envoi...</> : <>Soumettre la demande</>}
+                  </button>
+                  <button type="button" className="btn-secondary" onClick={() => navigate("/dashboard")}>Annuler</button>
+                </div>
+              </form>
+            </div>
+          )}
+        </main>
+      </div>
+    </>
+  );
+}
