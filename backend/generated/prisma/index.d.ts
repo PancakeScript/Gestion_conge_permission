@@ -1782,12 +1782,14 @@ export namespace Prisma {
     id_demande_conde: number | null
     id_employe: number | null
     id_type_conge: number | null
+    nombre_jours: number | null
   }
 
   export type Demandes_congeSumAggregateOutputType = {
     id_demande_conde: number | null
     id_employe: number | null
     id_type_conge: number | null
+    nombre_jours: number | null
   }
 
   export type Demandes_congeMinAggregateOutputType = {
@@ -1799,6 +1801,9 @@ export namespace Prisma {
     commentaire_manager: string | null
     commentaire_rh: string | null
     date_demande: Date | null
+    date_debut: Date | null
+    date_fin: Date | null
+    nombre_jours: number | null
   }
 
   export type Demandes_congeMaxAggregateOutputType = {
@@ -1810,6 +1815,9 @@ export namespace Prisma {
     commentaire_manager: string | null
     commentaire_rh: string | null
     date_demande: Date | null
+    date_debut: Date | null
+    date_fin: Date | null
+    nombre_jours: number | null
   }
 
   export type Demandes_congeCountAggregateOutputType = {
@@ -1821,6 +1829,9 @@ export namespace Prisma {
     commentaire_manager: number
     commentaire_rh: number
     date_demande: number
+    date_debut: number
+    date_fin: number
+    nombre_jours: number
     _all: number
   }
 
@@ -1829,12 +1840,14 @@ export namespace Prisma {
     id_demande_conde?: true
     id_employe?: true
     id_type_conge?: true
+    nombre_jours?: true
   }
 
   export type Demandes_congeSumAggregateInputType = {
     id_demande_conde?: true
     id_employe?: true
     id_type_conge?: true
+    nombre_jours?: true
   }
 
   export type Demandes_congeMinAggregateInputType = {
@@ -1846,6 +1859,9 @@ export namespace Prisma {
     commentaire_manager?: true
     commentaire_rh?: true
     date_demande?: true
+    date_debut?: true
+    date_fin?: true
+    nombre_jours?: true
   }
 
   export type Demandes_congeMaxAggregateInputType = {
@@ -1857,6 +1873,9 @@ export namespace Prisma {
     commentaire_manager?: true
     commentaire_rh?: true
     date_demande?: true
+    date_debut?: true
+    date_fin?: true
+    nombre_jours?: true
   }
 
   export type Demandes_congeCountAggregateInputType = {
@@ -1868,6 +1887,9 @@ export namespace Prisma {
     commentaire_manager?: true
     commentaire_rh?: true
     date_demande?: true
+    date_debut?: true
+    date_fin?: true
+    nombre_jours?: true
     _all?: true
   }
 
@@ -1966,6 +1988,9 @@ export namespace Prisma {
     commentaire_manager: string | null
     commentaire_rh: string | null
     date_demande: Date | null
+    date_debut: Date | null
+    date_fin: Date | null
+    nombre_jours: number | null
     _count: Demandes_congeCountAggregateOutputType | null
     _avg: Demandes_congeAvgAggregateOutputType | null
     _sum: Demandes_congeSumAggregateOutputType | null
@@ -1996,6 +2021,9 @@ export namespace Prisma {
     commentaire_manager?: boolean
     commentaire_rh?: boolean
     date_demande?: boolean
+    date_debut?: boolean
+    date_fin?: boolean
+    nombre_jours?: boolean
     employe?: boolean | employeDefaultArgs<ExtArgs>
     types_conge?: boolean | types_congeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["demandes_conge"]>
@@ -2009,6 +2037,9 @@ export namespace Prisma {
     commentaire_manager?: boolean
     commentaire_rh?: boolean
     date_demande?: boolean
+    date_debut?: boolean
+    date_fin?: boolean
+    nombre_jours?: boolean
     employe?: boolean | employeDefaultArgs<ExtArgs>
     types_conge?: boolean | types_congeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["demandes_conge"]>
@@ -2022,6 +2053,9 @@ export namespace Prisma {
     commentaire_manager?: boolean
     commentaire_rh?: boolean
     date_demande?: boolean
+    date_debut?: boolean
+    date_fin?: boolean
+    nombre_jours?: boolean
     employe?: boolean | employeDefaultArgs<ExtArgs>
     types_conge?: boolean | types_congeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["demandes_conge"]>
@@ -2035,9 +2069,12 @@ export namespace Prisma {
     commentaire_manager?: boolean
     commentaire_rh?: boolean
     date_demande?: boolean
+    date_debut?: boolean
+    date_fin?: boolean
+    nombre_jours?: boolean
   }
 
-  export type demandes_congeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_demande_conde" | "id_employe" | "id_type_conge" | "motif" | "statut_demandes_conge" | "commentaire_manager" | "commentaire_rh" | "date_demande", ExtArgs["result"]["demandes_conge"]>
+  export type demandes_congeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_demande_conde" | "id_employe" | "id_type_conge" | "motif" | "statut_demandes_conge" | "commentaire_manager" | "commentaire_rh" | "date_demande" | "date_debut" | "date_fin" | "nombre_jours", ExtArgs["result"]["demandes_conge"]>
   export type demandes_congeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employe?: boolean | employeDefaultArgs<ExtArgs>
     types_conge?: boolean | types_congeDefaultArgs<ExtArgs>
@@ -2066,6 +2103,9 @@ export namespace Prisma {
       commentaire_manager: string | null
       commentaire_rh: string | null
       date_demande: Date | null
+      date_debut: Date | null
+      date_fin: Date | null
+      nombre_jours: number | null
     }, ExtArgs["result"]["demandes_conge"]>
     composites: {}
   }
@@ -2499,6 +2539,9 @@ export namespace Prisma {
     readonly commentaire_manager: FieldRef<"demandes_conge", 'String'>
     readonly commentaire_rh: FieldRef<"demandes_conge", 'String'>
     readonly date_demande: FieldRef<"demandes_conge", 'DateTime'>
+    readonly date_debut: FieldRef<"demandes_conge", 'DateTime'>
+    readonly date_fin: FieldRef<"demandes_conge", 'DateTime'>
+    readonly nombre_jours: FieldRef<"demandes_conge", 'Int'>
   }
     
 
@@ -12147,7 +12190,10 @@ export namespace Prisma {
     statut_demandes_conge: 'statut_demandes_conge',
     commentaire_manager: 'commentaire_manager',
     commentaire_rh: 'commentaire_rh',
-    date_demande: 'date_demande'
+    date_demande: 'date_demande',
+    date_debut: 'date_debut',
+    date_fin: 'date_fin',
+    nombre_jours: 'nombre_jours'
   };
 
   export type Demandes_congeScalarFieldEnum = (typeof Demandes_congeScalarFieldEnum)[keyof typeof Demandes_congeScalarFieldEnum]
@@ -12345,6 +12391,9 @@ export namespace Prisma {
     commentaire_manager?: StringNullableFilter<"demandes_conge"> | string | null
     commentaire_rh?: StringNullableFilter<"demandes_conge"> | string | null
     date_demande?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
+    date_debut?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
+    date_fin?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
+    nombre_jours?: IntNullableFilter<"demandes_conge"> | number | null
     employe?: XOR<EmployeScalarRelationFilter, employeWhereInput>
     types_conge?: XOR<Types_congeScalarRelationFilter, types_congeWhereInput>
   }
@@ -12358,6 +12407,9 @@ export namespace Prisma {
     commentaire_manager?: SortOrderInput | SortOrder
     commentaire_rh?: SortOrderInput | SortOrder
     date_demande?: SortOrderInput | SortOrder
+    date_debut?: SortOrderInput | SortOrder
+    date_fin?: SortOrderInput | SortOrder
+    nombre_jours?: SortOrderInput | SortOrder
     employe?: employeOrderByWithRelationInput
     types_conge?: types_congeOrderByWithRelationInput
   }
@@ -12374,6 +12426,9 @@ export namespace Prisma {
     commentaire_manager?: StringNullableFilter<"demandes_conge"> | string | null
     commentaire_rh?: StringNullableFilter<"demandes_conge"> | string | null
     date_demande?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
+    date_debut?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
+    date_fin?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
+    nombre_jours?: IntNullableFilter<"demandes_conge"> | number | null
     employe?: XOR<EmployeScalarRelationFilter, employeWhereInput>
     types_conge?: XOR<Types_congeScalarRelationFilter, types_congeWhereInput>
   }, "id_demande_conde">
@@ -12387,6 +12442,9 @@ export namespace Prisma {
     commentaire_manager?: SortOrderInput | SortOrder
     commentaire_rh?: SortOrderInput | SortOrder
     date_demande?: SortOrderInput | SortOrder
+    date_debut?: SortOrderInput | SortOrder
+    date_fin?: SortOrderInput | SortOrder
+    nombre_jours?: SortOrderInput | SortOrder
     _count?: demandes_congeCountOrderByAggregateInput
     _avg?: demandes_congeAvgOrderByAggregateInput
     _max?: demandes_congeMaxOrderByAggregateInput
@@ -12406,6 +12464,9 @@ export namespace Prisma {
     commentaire_manager?: StringNullableWithAggregatesFilter<"demandes_conge"> | string | null
     commentaire_rh?: StringNullableWithAggregatesFilter<"demandes_conge"> | string | null
     date_demande?: DateTimeNullableWithAggregatesFilter<"demandes_conge"> | Date | string | null
+    date_debut?: DateTimeNullableWithAggregatesFilter<"demandes_conge"> | Date | string | null
+    date_fin?: DateTimeNullableWithAggregatesFilter<"demandes_conge"> | Date | string | null
+    nombre_jours?: IntNullableWithAggregatesFilter<"demandes_conge"> | number | null
   }
 
   export type departementWhereInput = {
@@ -12920,6 +12981,9 @@ export namespace Prisma {
     commentaire_manager?: string | null
     commentaire_rh?: string | null
     date_demande?: Date | string | null
+    date_debut?: Date | string | null
+    date_fin?: Date | string | null
+    nombre_jours?: number | null
     employe: employeCreateNestedOneWithoutDemandes_congeInput
     types_conge: types_congeCreateNestedOneWithoutDemandes_congeInput
   }
@@ -12933,6 +12997,9 @@ export namespace Prisma {
     commentaire_manager?: string | null
     commentaire_rh?: string | null
     date_demande?: Date | string | null
+    date_debut?: Date | string | null
+    date_fin?: Date | string | null
+    nombre_jours?: number | null
   }
 
   export type demandes_congeUpdateInput = {
@@ -12941,6 +13008,9 @@ export namespace Prisma {
     commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
     commentaire_rh?: NullableStringFieldUpdateOperationsInput | string | null
     date_demande?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
     employe?: employeUpdateOneRequiredWithoutDemandes_congeNestedInput
     types_conge?: types_congeUpdateOneRequiredWithoutDemandes_congeNestedInput
   }
@@ -12954,6 +13024,9 @@ export namespace Prisma {
     commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
     commentaire_rh?: NullableStringFieldUpdateOperationsInput | string | null
     date_demande?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type demandes_congeCreateManyInput = {
@@ -12965,6 +13038,9 @@ export namespace Prisma {
     commentaire_manager?: string | null
     commentaire_rh?: string | null
     date_demande?: Date | string | null
+    date_debut?: Date | string | null
+    date_fin?: Date | string | null
+    nombre_jours?: number | null
   }
 
   export type demandes_congeUpdateManyMutationInput = {
@@ -12973,6 +13049,9 @@ export namespace Prisma {
     commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
     commentaire_rh?: NullableStringFieldUpdateOperationsInput | string | null
     date_demande?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type demandes_congeUncheckedUpdateManyInput = {
@@ -12984,6 +13063,9 @@ export namespace Prisma {
     commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
     commentaire_rh?: NullableStringFieldUpdateOperationsInput | string | null
     date_demande?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type departementCreateInput = {
@@ -13507,6 +13589,17 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type EmployeScalarRelationFilter = {
     is?: employeWhereInput
     isNot?: employeWhereInput
@@ -13531,12 +13624,16 @@ export namespace Prisma {
     commentaire_manager?: SortOrder
     commentaire_rh?: SortOrder
     date_demande?: SortOrder
+    date_debut?: SortOrder
+    date_fin?: SortOrder
+    nombre_jours?: SortOrder
   }
 
   export type demandes_congeAvgOrderByAggregateInput = {
     id_demande_conde?: SortOrder
     id_employe?: SortOrder
     id_type_conge?: SortOrder
+    nombre_jours?: SortOrder
   }
 
   export type demandes_congeMaxOrderByAggregateInput = {
@@ -13548,6 +13645,9 @@ export namespace Prisma {
     commentaire_manager?: SortOrder
     commentaire_rh?: SortOrder
     date_demande?: SortOrder
+    date_debut?: SortOrder
+    date_fin?: SortOrder
+    nombre_jours?: SortOrder
   }
 
   export type demandes_congeMinOrderByAggregateInput = {
@@ -13559,12 +13659,16 @@ export namespace Prisma {
     commentaire_manager?: SortOrder
     commentaire_rh?: SortOrder
     date_demande?: SortOrder
+    date_debut?: SortOrder
+    date_fin?: SortOrder
+    nombre_jours?: SortOrder
   }
 
   export type demandes_congeSumOrderByAggregateInput = {
     id_demande_conde?: SortOrder
     id_employe?: SortOrder
     id_type_conge?: SortOrder
+    nombre_jours?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -13615,6 +13719,22 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -13628,17 +13748,6 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
-  }
-
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type ManagerNullableScalarRelationFilter = {
@@ -13710,22 +13819,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type Demandes_congeListRelationFilter = {
@@ -14096,6 +14189,14 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type employeUpdateOneRequiredWithoutDemandes_congeNestedInput = {
     create?: XOR<employeCreateWithoutDemandes_congeInput, employeUncheckedCreateWithoutDemandes_congeInput>
     connectOrCreate?: employeCreateOrConnectWithoutDemandes_congeInput
@@ -14194,14 +14295,6 @@ export namespace Prisma {
     update?: managerUpdateWithWhereUniqueWithoutDepartement_manager_id_departementTodepartementInput | managerUpdateWithWhereUniqueWithoutDepartement_manager_id_departementTodepartementInput[]
     updateMany?: managerUpdateManyWithWhereWithoutDepartement_manager_id_departementTodepartementInput | managerUpdateManyWithWhereWithoutDepartement_manager_id_departementTodepartementInput[]
     deleteMany?: managerScalarWhereInput | managerScalarWhereInput[]
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type employeUncheckedUpdateManyWithoutDepartementNestedInput = {
@@ -14688,6 +14781,17 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -14732,17 +14836,6 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -14755,6 +14848,33 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -14786,33 +14906,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -15136,6 +15229,9 @@ export namespace Prisma {
     commentaire_manager?: string | null
     commentaire_rh?: string | null
     date_demande?: Date | string | null
+    date_debut?: Date | string | null
+    date_fin?: Date | string | null
+    nombre_jours?: number | null
     types_conge: types_congeCreateNestedOneWithoutDemandes_congeInput
   }
 
@@ -15147,6 +15243,9 @@ export namespace Prisma {
     commentaire_manager?: string | null
     commentaire_rh?: string | null
     date_demande?: Date | string | null
+    date_debut?: Date | string | null
+    date_fin?: Date | string | null
+    nombre_jours?: number | null
   }
 
   export type demandes_congeCreateOrConnectWithoutEmployeInput = {
@@ -15231,6 +15330,9 @@ export namespace Prisma {
     commentaire_manager?: StringNullableFilter<"demandes_conge"> | string | null
     commentaire_rh?: StringNullableFilter<"demandes_conge"> | string | null
     date_demande?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
+    date_debut?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
+    date_fin?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
+    nombre_jours?: IntNullableFilter<"demandes_conge"> | number | null
   }
 
   export type departementUpsertWithoutEmployeInput = {
@@ -15611,6 +15713,9 @@ export namespace Prisma {
     commentaire_manager?: string | null
     commentaire_rh?: string | null
     date_demande?: Date | string | null
+    date_debut?: Date | string | null
+    date_fin?: Date | string | null
+    nombre_jours?: number | null
     employe: employeCreateNestedOneWithoutDemandes_congeInput
   }
 
@@ -15622,6 +15727,9 @@ export namespace Prisma {
     commentaire_manager?: string | null
     commentaire_rh?: string | null
     date_demande?: Date | string | null
+    date_debut?: Date | string | null
+    date_fin?: Date | string | null
+    nombre_jours?: number | null
   }
 
   export type demandes_congeCreateOrConnectWithoutTypes_congeInput = {
@@ -16024,6 +16132,9 @@ export namespace Prisma {
     commentaire_manager?: string | null
     commentaire_rh?: string | null
     date_demande?: Date | string | null
+    date_debut?: Date | string | null
+    date_fin?: Date | string | null
+    nombre_jours?: number | null
   }
 
   export type demandes_congeUpdateWithoutEmployeInput = {
@@ -16032,6 +16143,9 @@ export namespace Prisma {
     commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
     commentaire_rh?: NullableStringFieldUpdateOperationsInput | string | null
     date_demande?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
     types_conge?: types_congeUpdateOneRequiredWithoutDemandes_congeNestedInput
   }
 
@@ -16043,6 +16157,9 @@ export namespace Prisma {
     commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
     commentaire_rh?: NullableStringFieldUpdateOperationsInput | string | null
     date_demande?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type demandes_congeUncheckedUpdateManyWithoutEmployeInput = {
@@ -16053,6 +16170,9 @@ export namespace Prisma {
     commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
     commentaire_rh?: NullableStringFieldUpdateOperationsInput | string | null
     date_demande?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type departementCreateManyManager_departement_id_managerTomanagerInput = {
@@ -16115,6 +16235,9 @@ export namespace Prisma {
     commentaire_manager?: string | null
     commentaire_rh?: string | null
     date_demande?: Date | string | null
+    date_debut?: Date | string | null
+    date_fin?: Date | string | null
+    nombre_jours?: number | null
   }
 
   export type demandes_congeUpdateWithoutTypes_congeInput = {
@@ -16123,6 +16246,9 @@ export namespace Prisma {
     commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
     commentaire_rh?: NullableStringFieldUpdateOperationsInput | string | null
     date_demande?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
     employe?: employeUpdateOneRequiredWithoutDemandes_congeNestedInput
   }
 
@@ -16134,6 +16260,9 @@ export namespace Prisma {
     commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
     commentaire_rh?: NullableStringFieldUpdateOperationsInput | string | null
     date_demande?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type demandes_congeUncheckedUpdateManyWithoutTypes_congeInput = {
@@ -16144,6 +16273,9 @@ export namespace Prisma {
     commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
     commentaire_rh?: NullableStringFieldUpdateOperationsInput | string | null
     date_demande?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type notificationCreateManyUtilisateurInput = {

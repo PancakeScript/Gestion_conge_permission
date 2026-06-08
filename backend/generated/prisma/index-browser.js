@@ -128,7 +128,10 @@ exports.Prisma.Demandes_congeScalarFieldEnum = {
   statut_demandes_conge: 'statut_demandes_conge',
   commentaire_manager: 'commentaire_manager',
   commentaire_rh: 'commentaire_rh',
-  date_demande: 'date_demande'
+  date_demande: 'date_demande',
+  date_debut: 'date_debut',
+  date_fin: 'date_fin',
+  nombre_jours: 'nombre_jours'
 };
 
 exports.Prisma.DepartementScalarFieldEnum = {

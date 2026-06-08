@@ -17,6 +17,9 @@ model demandes_conge {
   commentaire_manager   String?
   commentaire_rh        String?
   date_demande          DateTime?   @default(now()) @db.Timestamp(6)
+  date_debut            DateTime?   @db.Date
+  date_fin              DateTime?   @db.Date
+  nombre_jours          Int?
   employe               employe     @relation(fields: [id_employe], references: [id_employe], onDelete: NoAction, onUpdate: NoAction)
   types_conge           types_conge @relation(fields: [id_type_conge], references: [id_conge], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -110,4 +113,4 @@ model utilisateur {
   manager         manager?
   notification    notification[]
   rh              rh?
-}
+}

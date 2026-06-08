@@ -7,8 +7,16 @@ const verifierToken = (req, res, next) => {
     req.user = jwt.verify(token, process.env.JWT_SECRET)
     next()
   } catch {
-    res.status(401).json({ error: "Token invalide" })
+    return res.status(401).json({ error: "Token invalide ou expiré" })
   }
 }
 
-module.exports = { verifierToken }
+// Vérifier le rôle
+const autoriser = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user.role)) {
+    return res.status(403).json({ error: "Accès refusé" })
+  }
+  next()
+}
+
+module.exports = { verifierToken, autoriser } 
