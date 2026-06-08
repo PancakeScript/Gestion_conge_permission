@@ -1,0 +1,1 @@
+export default function DashboardEmploye() { return <div>Dashboard</div>; }

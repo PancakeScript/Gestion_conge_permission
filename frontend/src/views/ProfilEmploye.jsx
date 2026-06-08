@@ -1,0 +1,1 @@
+export default function ProfilEmploye() { return <div>Profil</div>; }
