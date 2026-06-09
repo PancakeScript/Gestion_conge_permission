@@ -4,7 +4,10 @@ class EmployeController {
   // GET /api/employe/profil
   async getProfil(req, res) {
     try {
-      const profil = await employeService.obtenirProfil(req.user.id_employe);
+      console.log("PARAMS =", req.params);
+      console.log("USER =", req.user);
+      console.log("REQ.USER =", req.user);
+      const profil = await employeService.obtenirProfil(req.params.id);
       return res.status(200).json(profil);
     } catch (error) {
       return res.status(500).json({ error: error.message });
@@ -28,7 +31,9 @@ async createEmploye(req, res) {
   // PUT /api/employe/profil
   async updateProfil(req, res) {
     try {
-      const profilMisAJour = await employeService.modifierProfil(req.user.id_employe, req.body);
+      console.log("PARAMS =", req.params);
+      console.log("USER =", req.user);
+      const profilMisAJour = await employeService.modifierProfil(req.params.id, req.body);
       return res.status(200).json({ message: "Profil mis à jour", donnees: profilMisAJour });
     } catch (error) {
       return res.status(500).json({ error: error.message });

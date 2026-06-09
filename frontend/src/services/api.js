@@ -93,12 +93,12 @@ export const congeApi = {
 };
 
 export const employeApi = {
-  getProfil: async (id) => {
-    const res = await fetch(`${BASE_URL}/employes/${id}`, { headers: authHeaders() });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-    return data;
-  },
+getProfil: async () => {
+  const res = await fetch(`${BASE_URL}/employes/moi`, { headers: authHeaders() });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+},
 
   updateProfil: async (id, profilData) => {
     const res = await fetch(`${BASE_URL}/employes/${id}`, {

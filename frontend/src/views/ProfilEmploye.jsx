@@ -15,19 +15,33 @@ export default function ProfilEmploye() {
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+  // useEffect(() => {
+  //   console.log(user);
+  //   if (!user?.id_role) return;
+  //   employeApi.getProfil()
+  //     .then(data => {
+  //       setProfil(data);
+  //       setForm({
+  //         telephone_employe: data.telephone_employe || "",
+  //         adresse_employe: data.adresse_employe || "",
+  //       });
+  //     })
+  //     .catch(e => setError(e.message))
+  //     .finally(() => setLoading(false));
+  // }, [user]);
+
   useEffect(() => {
-    if (!user?.id_role) return;
-    employeApi.getProfil(user.id_role)
-      .then(data => {
-        setProfil(data);
-        setForm({
-          telephone_employe: data.telephone_employe || "",
-          adresse_employe: data.adresse_employe || "",
-        });
-      })
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false));
-  }, [user]);
+  employeApi.getProfil()  // ← plus d'argument
+    .then(data => {
+      setProfil(data);
+      setForm({
+        telephone_employe: data.telephone_employe || "",
+        adresse_employe: data.adresse_employe || "",
+      });
+    })
+    .catch(e => setError(e.message))
+    .finally(() => setLoading(false));
+}, []);
 
   const handleSave = async () => {
     setShowSaveConfirm(false);
