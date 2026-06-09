@@ -31,9 +31,11 @@ async createEmploye(req, res) {
   // PUT /api/employe/profil
   async updateProfil(req, res) {
     try {
-      console.log("PARAMS =", req.params);
+      //params ovaina params.id
+      console.log("PARAMS =", req.params.id);
       console.log("USER =", req.user);
-      const profilMisAJour = await employeService.modifierProfil(req.params.id, req.body);
+      //modifierProfil par modifierEmploye 
+      const profilMisAJour = await employeService.modifierEmploye(req.params.id, req.body);
       return res.status(200).json({ message: "Profil mis à jour", donnees: profilMisAJour });
     } catch (error) {
       return res.status(500).json({ error: error.message });

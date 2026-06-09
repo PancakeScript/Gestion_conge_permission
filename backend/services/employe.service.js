@@ -48,7 +48,7 @@ const creerEmploye = async (data) => {
 // Modifier les infos d'un employé
 const modifierEmploye = async (id, data) => {
   return prisma.employe.update({
-    where: { id_employe: id },
+    where: { id_employe: parseInt(id) },
     data,
   })
 }
@@ -56,7 +56,7 @@ const modifierEmploye = async (id, data) => {
 // Consulter le profil
 const getEmploye = async (id) => {
   return prisma.employe.findUnique({
-    where: { id_employe: id },
+    where: { id_employe: parseInt(id) },
     include: { departement: true, utilisateur: true },
   })
 }
