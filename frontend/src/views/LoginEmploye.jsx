@@ -33,8 +33,9 @@ export default function LoginEmploye() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body, #root { width: 100%; min-height: 100vh; }
         .login-root { min-height: 100vh; display: flex; font-family: 'DM Sans', sans-serif; background: #f5f0e8; }
-        .left-panel { flex: 1; background: linear-gradient(160deg, #2c2418 0%, #3d3020 50%, #2c2418 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 52px; position: relative; overflow: hidden; }
+        .left-panel { flex: 0.8; background: linear-gradient(160deg, #2c2418 0%, #3d3020 50%, #2c2418 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 52px; position: relative; overflow: hidden; }
         .left-panel::before { content: ''; position: absolute; top: -100px; left: -100px; width: 480px; height: 480px; background: radial-gradient(circle, rgba(212,175,100,0.15) 0%, transparent 70%); pointer-events: none; }
         .left-panel::after { content: ''; position: absolute; bottom: -80px; right: -80px; width: 380px; height: 380px; background: radial-gradient(circle, rgba(180,140,80,0.1) 0%, transparent 70%); pointer-events: none; }
         .brand { display: flex; align-items: center; gap: 12px; z-index: 1; }
@@ -49,7 +50,7 @@ export default function LoginEmploye() {
         .stat { display: flex; flex-direction: column; gap: 4px; }
         .stat-num { font-family: 'Playfair Display', serif; font-size: 30px; color: #d4af64; }
         .stat-label { font-size: 11px; color: #7a6a55; text-transform: uppercase; letter-spacing: 1.5px; }
-        .right-panel { width: 500px; background: #faf7f2; display: flex; flex-direction: column; justify-content: center; padding: 64px 60px 64px 40px; border-left: 1px solid #e8e0d0; }
+        .right-panel { width: 650px; min-width: 650px; background: #faf7f2; display: flex; flex-direction: column; justify-content: center; padding: 64px 60px 64px 40px; border-left: 1px solid #e8e0d0; }
         .login-label { font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #b8943c; margin-bottom: 12px; }
         .login-title { font-family: 'Playfair Display', serif; font-size: 36px; color: #2c2418; margin-bottom: 8px; line-height: 1.2; }
         .login-subtitle { font-size: 14px; color: #a89070; margin-bottom: 40px; }

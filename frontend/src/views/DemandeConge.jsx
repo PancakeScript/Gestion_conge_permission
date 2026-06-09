@@ -73,6 +73,7 @@ export default function DemandeConge() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body, #root { width: 100%; min-height: 100vh; }
         .page-root { min-height: 100vh; background: #f5f0e8; font-family: 'DM Sans', sans-serif; }
         .navbar { background: #2c2418; padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #3d3020; position: sticky; top: 0; z-index: 100; }
         .nav-brand { display: flex; align-items: center; gap: 10px; }
@@ -125,7 +126,7 @@ export default function DemandeConge() {
         .modal-desc { font-size: 14px; color: #a89070; margin-bottom: 8px; line-height: 1.6; }
         .modal-detail { background: #f5f0e8; border-radius: 8px; padding: 12px 14px; margin: 14px 0; font-size: 13px; color: #6b5c45; line-height: 1.8; }
         .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
-        @media (max-width: 768px) { .navbar { padding: 0 16px; } .nav-links { display: none; } .main { padding: 24px 16px; } .form-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .navbar { padding: 0 16px; } .nav-links {display: flex;gap: 2px;}.main { padding: 24px 16px; } .form-grid { grid-template-columns: 1fr; } }
       `}</style>
 
       {/* Modal confirmation demande */}

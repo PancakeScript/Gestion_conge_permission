@@ -47,6 +47,7 @@ export default function DashboardEmploye() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body, #root { width: 100%; min-height: 100vh; }
         .dash-root { min-height: 100vh; background: #f5f0e8; font-family: 'DM Sans', sans-serif; }
         .navbar { background: #2c2418; padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #3d3020;position: sticky; top: 0; z-index: 100; }
         .nav-brand { display: flex; align-items: center; gap: 10px; }
@@ -91,7 +92,7 @@ export default function DashboardEmploye() {
         .btn-new { display: flex; align-items: center; gap: 8px; padding: 12px 22px; background: linear-gradient(135deg, #d4af64, #b8943c); color: #2c2418; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-bottom: 28px; transition: all 0.2s; }
         .btn-new:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(180,140,60,0.3); }
         .loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; font-size: 15px; color: #a89070; }
-        @media (max-width: 900px) { .cards-row { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: 1fr; } .main { padding: 24px 16px; } .navbar { padding: 0 16px; } }
+        @media (max-width: 768px) { .cards-row { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: 1fr; } .main { padding: 24px 16px; } .nav-links {display: flex;gap: 2px;} .navbar { padding: 0 16px; } }
       `}</style>
 
       {showLogoutConfirm && (
@@ -125,7 +126,7 @@ export default function DashboardEmploye() {
             <button className="nav-link" onClick={() => navigate("/politique")}>Politique</button>
           </div>
           <div className="nav-right">
-            <span className="nav-user">Employé</span>
+            {/* <span className="nav-user">Employé</span> */}
             <button className="btn-logout" onClick={() => setShowLogoutConfirm(true)}>Déconnexion</button>
           </div>
         </nav>

@@ -123,7 +123,7 @@ export default function ProfilEmploye() {
         .btn-confirm-red:hover { box-shadow: 0 4px 14px rgba(192,57,43,0.35); }
         .btn-modal-cancel { padding: 12px 22px; background: transparent; color: #6b5c45; border: 1.5px solid #e0d8cc; border-radius: 10px; font-size: 14px; cursor: pointer; }
         .loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; font-size: 15px; color: #a89070; }
-        @media (max-width: 768px) { .navbar { padding: 0 16px; } .nav-links { display: none; } .main { padding: 24px 16px; } .info-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .navbar { padding: 0 16px; } .nav-links {display: flex;gap: 2px;} .main { padding: 24px 16px; } .info-grid { grid-template-columns: 1fr; } }
       `}</style>
 
       {/* Modal confirmation sauvegarde — vert */}

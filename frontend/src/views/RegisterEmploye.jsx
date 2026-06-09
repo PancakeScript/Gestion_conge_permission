@@ -35,8 +35,9 @@ export default function RegisterEmploye() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body, #root { width: 100%; min-height: 100vh; }
         .reg-root { min-height: 100vh; display: flex; font-family: 'DM Sans', sans-serif; background: #f5f0e8; }
-        .left-panel { flex: 1; background: linear-gradient(160deg, #2c2418 0%, #3d3020 50%, #2c2418 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 52px; position: relative; overflow: hidden; }
+        .left-panel { flex: 0.8; background: linear-gradient(160deg, #2c2418 0%, #3d3020 50%, #2c2418 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 52px; position: relative; overflow: hidden; }
         .left-panel::before { content: ''; position: absolute; top: -100px; left: -100px; width: 480px; height: 480px; background: radial-gradient(circle, rgba(212,175,100,0.15) 0%, transparent 70%); pointer-events: none; }
         .brand { display: flex; align-items: center; gap: 12px; z-index: 1; }
         .brand-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #d4af64, #b8943c); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
@@ -51,7 +52,7 @@ export default function RegisterEmploye() {
         .step-item { display: flex; align-items: center; gap: 14px; }
         .step-dot { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #d4af64, #b8943c); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #2c2418; flex-shrink: 0; }
         .step-text { font-size: 14px; color: #a89880; }
-        .right-panel { width: 520px; background: #faf7f2; display: flex; flex-direction: column; justify-content: center; padding: 48px 52px; border-left: 1px solid #e8e0d0; overflow-y: auto; }
+        .right-panel { width: 650px; background: #faf7f2; display: flex; flex-direction: column; justify-content: center; padding: 48px 52px; border-left: 1px solid #e8e0d0; overflow-y: auto; }
         .reg-label { font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #b8943c; margin-bottom: 12px; }
         .reg-title { font-family: 'Playfair Display', serif; font-size: 32px; color: #2c2418; margin-bottom: 6px; }
         .reg-subtitle { font-size: 14px; color: #a89070; margin-bottom: 32px; }
