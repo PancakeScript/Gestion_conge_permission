@@ -16,12 +16,17 @@ export default function DemandeConge() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  const [form, setForm] = useState(() => {
-    const saved = sessionStorage.getItem("demande_form");
-    return saved ? JSON.parse(saved) : {
-      nom_types_conge: "", date_debut: "", date_fin: "", motif: ""
-    };
-  });
+  const FORM_INITIAL = {
+  nom_types_conge: "",
+  date_debut: "",
+  date_fin: "",
+  motif: ""
+};
+
+const [form, setForm] = useState(() => {
+  const saved = sessionStorage.getItem("demande_form");
+  return saved ? JSON.parse(saved) : FORM_INITIAL;
+});
   const [fichier, setFichier] = useState(null);
   const [solde, setSolde] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -73,7 +78,7 @@ export default function DemandeConge() {
       await congeApi.soumettreDemande(form);
       sessionStorage.removeItem("demande_form");
       setSuccess(true);
-      setForm({ nom_types_conge: "", date_debut: "", date_fin: "", motif: "" });
+      setForm(FORM_INITIAL);
       setFichier(null);
       congeApi.getMesDemandes().then(setHistorique).catch(() => {});
     } catch (err) {
@@ -83,17 +88,25 @@ export default function DemandeConge() {
     }
   };
 
-  const handleAnnuler = () => {
-    // e.preventDefault();
-    // setError("");
-    // if (!form.nom_types_conge || !form.date_debut || !form.date_fin || !form.motif) {
-    //   setError("Veuillez remplir tous les champs obligatoires."); return;
-    // }
-    setShowAnnulerConfirm(false);
-    sessionStorage.removeItem("demande_form");
-    navigate("/demande-conge");
-  };
+  // const handleAnnuler = () => {
+  //   setShowAnnulerConfirm(false);
+  //   sessionStorage.removeItem("demande_form");
+  //   navigate("/demande-conge");
+  // };
 
+const handleAnnuler = () => {
+  setShowAnnulerConfirm(false);
+
+  sessionStorage.removeItem("demande_form");
+
+  setForm(FORM_INITIAL);
+  setFichier(null);
+  setError("");
+
+  if (fileInputRef.current) {
+    fileInputRef.current.value = "";
+  }
+};
   const handleLogout = () => { logout(); navigate("/login"); };
 
   const jours = nombreJours();
@@ -209,7 +222,7 @@ export default function DemandeConge() {
               {fichier && <><br/><strong>Justificatif :</strong> {fichier.name}</>}
             </div>
             <div className="modal-btns">
-              <button className="btn-confirm-green" onClick={handleSubmit}>✓ Confirmer</button>
+              <button className="btn-confirm-green" onClick={handleSubmit}>Confirmer</button>
               <button className="btn-modal-cancel" onClick={() => setShowConfirm(false)}>Annuler</button>
             </div>
           </div>

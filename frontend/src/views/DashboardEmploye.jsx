@@ -74,7 +74,10 @@ export default function DashboardEmploye() {
         .card-bar-fill { height: 6px; background: linear-gradient(90deg, #d4af64, #b8943c); border-radius: 3px; transition: width 0.6s; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .section-title { font-family: 'Playfair Display', serif; font-size: 20px; color: #2c2418; margin-bottom: 16px; }
-        .demandes-list { display: flex; flex-direction: column; gap: 10px; }
+        .demandes-list {display: flex; flex-direction: column; gap: 10px;max-height: 520px;overflow-y: auto;padding-right: 4px;}
+        .demandes-list::-webkit-scrollbar {width: 6px;}
+        .demandes-list::-webkit-scrollbar-track {background: #f0ece4; border-radius: 3px;}
+        .demandes-list::-webkit-scrollbar-thumb {background: #d4af64; border-radius: 3px;}
         .demande-item { background: #faf7f2; border: 1px solid #e8e0d0; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
         .demande-info { display: flex; flex-direction: column; gap: 3px; }
         .demande-type { font-size: 14px; font-weight: 600; color: #2c2418; }
@@ -101,7 +104,8 @@ export default function DashboardEmploye() {
       <div style={{fontFamily:"'Playfair Display',serif",fontSize:22,color:"#2c2418",marginBottom:10}}>Déconnexion</div>
       <div style={{fontSize:14,color:"#a89070",marginBottom:20}}>Voulez-vous vraiment vous déconnecter ?</div>
       <div style={{display:"flex",gap:10}}>
-        <button onClick={handleLogout} style={{padding:"12px 24px",background:"linear-gradient(135deg,#d4af64,#b8943c)",color:"#2c2418",border:"none",borderRadius:10,fontSize:14,fontWeight:700,cursor:"pointer"}}>Oui, me déconnecter</button>
+        <button
+  onClick={handleLogout}style={{padding:"12px 24px",background:"linear-gradient(135deg,#e74c3c,#c0392b)",color:"#fff",border:"none",borderRadius:10,fontSize:14,fontWeight:700,cursor:"pointer"}}>Se déconnecter</button>
         <button onClick={() => setShowLogoutConfirm(false)} style={{padding:"12px 24px",background:"transparent",color:"#6b5c45",border:"1.5px solid #e0d8cc",borderRadius:10,fontSize:14,cursor:"pointer"}}>Annuler</button>
       </div>
     </div>
@@ -174,7 +178,7 @@ export default function DashboardEmploye() {
                     {(dashboard?.demandes ?? []).length === 0 ? (
                       <div className="empty">Aucune demande pour le moment</div>
                     ) : (
-                      (dashboard?.demandes ?? []).slice(0, 6).map((d, i) => {
+                      (dashboard?.demandes ?? []).map((d, i) => {
                         const s = statutStyle(d.statut_demandes_conge);
                         return (
                           <div key={i} className="demande-item">
