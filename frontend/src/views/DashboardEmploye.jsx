@@ -59,8 +59,8 @@ export default function DashboardEmploye() {
         .nav-link:hover, .nav-link.active { background: rgba(212,175,100,0.15); color: #d4af64; }
         .nav-right { display: flex; align-items: center; gap: 12px; }
         .nav-user { font-size: 13px; color: #a89880; }
-        .btn-logout { padding: 8px 16px; background: transparent; border: 1px solid #3d3020; border-radius: 8px; color: #a89880; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
-        .btn-logout:hover { border-color: #d4af64; color: #d4af64; }
+        .btn-logout { padding: 8px 16px; background: transparent; border: 1px solid #c0392b; border-radius: 8px; color: #c0392b; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
+        .btn-logout:hover { background: #c0392b; color: #fff; }
         .main { padding: 36px 40px; max-width: 1200px; margin: 0 auto; }
         .page-title { font-family: 'Playfair Display', serif; font-size: 30px; color: #2c2418; margin-bottom: 6px; }
         .page-subtitle { font-size: 14px; color: #a89070; margin-bottom: 32px; }

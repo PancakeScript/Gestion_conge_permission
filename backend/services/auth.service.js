@@ -25,7 +25,7 @@ const login = async ({ mail, mdp }) => {
   const token = jwt.sign(
     { id_utilisateur: utilisateur.id_utilisateur, role, id_role },
     process.env.JWT_SECRET,
-    { expiresIn: "7d" } // ← réduis à 15 minutes
+    { expiresIn: "1d" } 
   );
 
   // const refreshToken = jwt.sign(

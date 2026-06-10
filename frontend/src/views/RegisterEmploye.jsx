@@ -36,7 +36,7 @@ export default function RegisterEmploye() {
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body, #root { width: 100%; min-height: 100vh; }
-        .reg-root { min-height: 100vh; display: flex; font-family: 'DM Sans', sans-serif; background: #f5f0e8; }
+        .reg-root { min-height: 100vh; display: flex; font-family: 'DM Sans', sans-serif; background: #faf7f2; }
         .left-panel { flex: 0.8; background: linear-gradient(160deg, #2c2418 0%, #3d3020 50%, #2c2418 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 52px; position: relative; overflow: hidden; }
         .left-panel::before { content: ''; position: absolute; top: -100px; left: -100px; width: 480px; height: 480px; background: radial-gradient(circle, rgba(212,175,100,0.15) 0%, transparent 70%); pointer-events: none; }
         .brand { display: flex; align-items: center; gap: 12px; z-index: 1; }

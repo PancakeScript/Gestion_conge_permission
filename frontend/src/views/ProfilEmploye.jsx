@@ -134,7 +134,7 @@ export default function ProfilEmploye() {
             <div className="modal-desc">Voulez-vous vraiment enregistrer les modifications de votre profil ?</div>
             <div className="modal-btns">
               <button className="btn-confirm-green" onClick={handleSave} disabled={saving}>
-                {saving ? "Enregistrement..." : "✓ Confirmer"}
+                {saving ? "Enregistrement..." : " Confirmer"}
               </button>
               <button className="btn-modal-cancel" onClick={() => setShowSaveConfirm(false)}>Annuler</button>
             </div>
@@ -268,7 +268,7 @@ export default function ProfilEmploye() {
                 )}
                 <div className="btn-row">
                   <button className="btn-save" onClick={() => setShowSaveConfirm(true)} disabled={saving}>
-                    {saving ? <><div className="spinner"/> Enregistrement...</> : "✓ Enregistrer"}
+                    {saving ? <><div className="spinner"/> Enregistrement...</> : "Enregistrer"}
                   </button>
                   <button className="btn-cancel" onClick={() => setForm({ telephone_employe: profil?.telephone_employe || "", adresse_employe: profil?.adresse_employe || "" })}>
                     Réinitialiser

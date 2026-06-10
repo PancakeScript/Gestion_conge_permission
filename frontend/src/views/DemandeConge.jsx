@@ -84,8 +84,8 @@ export default function DemandeConge() {
         .nav-link { padding: 8px 16px; border-radius: 8px; font-size: 14px; color: #a89880; cursor: pointer; border: none; background: none; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
         .nav-link:hover, .nav-link.active { background: rgba(212,175,100,0.15); color: #d4af64; }
         .nav-right { display: flex; align-items: center; gap: 12px; }
-        .btn-logout { padding: 8px 16px; background: transparent; border: 1px solid #3d3020; border-radius: 8px; color: #a89880; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
-        .btn-logout:hover { border-color: #d4af64; color: #d4af64; }
+        .btn-logout { padding: 8px 16px; background: transparent; border: 1px solid #c0392b; border-radius: 8px; color: #c0392b; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
+        .btn-logout:hover { background: #c0392b; color: #fff; }
         .main { padding: 36px 40px; max-width: 860px; margin: 0 auto; }
         .page-title { font-family: 'Playfair Display', serif; font-size: 30px; color: #2c2418; margin-bottom: 6px; }
         .page-subtitle { font-size: 14px; color: #a89070; margin-bottom: 28px; }
@@ -103,7 +103,7 @@ export default function DemandeConge() {
         .form-group.full { grid-column: 1 / -1; }
         .form-label { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #6b5c45; }
         .form-select, .form-input, .form-textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #e0d8cc; border-radius: 10px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: #2c2418; background: #fff; outline: none; transition: all 0.2s; }
-        .form-select:focus, .form-input:focus, .form-textarea:focus { border-color: #d4af64; box-shadow: 0 0 0 3px rgba(212,175,100,0.15); }
+        .form-select:focus, .form-input:focus, .form-textarea:focus { border-color: #171616; box-shadow: 0 0 0 3px rgba(212,175,100,0.15); }
         .form-textarea { resize: vertical; min-height: 100px; }
         .justificatif-box { background: #fff8e6; border: 1px solid #f0d080; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #b8943c; display: flex; align-items: center; gap: 8px; margin-top: 4px; }
         .jours-preview { background: #f0f7ff; border: 1px solid #b3d4f5; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #1565c0; display: flex; align-items: center; gap: 8px; }
@@ -113,8 +113,8 @@ export default function DemandeConge() {
         .success-title { font-family: 'Playfair Display', serif; font-size: 24px; color: #2c2418; margin-bottom: 8px; }
         .success-desc { font-size: 14px; color: #a89070; margin-bottom: 24px; }
         .btn-row { display: flex; gap: 12px; margin-top: 24px; }
-        .btn-primary { padding: 13px 28px; background: linear-gradient(135deg, #d4af64, #b8943c); color: #2c2418; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
-        .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(180,140,60,0.3); }
+        .btn-primary { padding: 13px 28px; background: linear-gradient(135deg, #27ae60, #1e8449); color:  #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(39,174,96,0.3); }
         .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
         .btn-secondary { padding: 13px 28px; background: transparent; color: #6b5c45; border: 1.5px solid #e0d8cc; border-radius: 10px; font-size: 14px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
         .btn-secondary:hover { border-color: #b8943c; color: #b8943c; }
@@ -126,6 +126,9 @@ export default function DemandeConge() {
         .modal-desc { font-size: 14px; color: #a89070; margin-bottom: 8px; line-height: 1.6; }
         .modal-detail { background: #f5f0e8; border-radius: 8px; padding: 12px 14px; margin: 14px 0; font-size: 13px; color: #6b5c45; line-height: 1.8; }
         .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-confirm-red { padding: 12px 22px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-confirm-red:hover { box-shadow: 0 4px 14px rgba(192,57,43,0.35); }
+        .btn-modal-cancel { padding: 12px 22px; background: transparent; color: #6b5c45; border: 1.5px solid #e0d8cc; border-radius: 10px; font-size: 14px; cursor: pointer; }
         @media (max-width: 768px) { .navbar { padding: 0 16px; } .nav-links {display: flex;gap: 2px;}.main { padding: 24px 16px; } .form-grid { grid-template-columns: 1fr; } }
       `}</style>
 
@@ -150,15 +153,14 @@ export default function DemandeConge() {
         </div>
       )}
 
-      {/* Modal confirmation déconnexion */}
       {showLogoutConfirm && (
         <div className="overlay">
           <div className="modal">
             <div className="modal-title">Déconnexion</div>
             <div className="modal-desc">Voulez-vous vraiment vous déconnecter ?</div>
             <div className="modal-btns">
-              <button className="btn-primary" onClick={handleLogout}>Oui, me déconnecter</button>
-              <button className="btn-secondary" onClick={() => setShowLogoutConfirm(false)}>Annuler</button>
+              <button className="btn-confirm-red" onClick={handleLogout}>Se déconnecter</button>
+              <button className="btn-modal-cancel" onClick={() => setShowLogoutConfirm(false)}>Annuler</button>
             </div>
           </div>
         </div>
@@ -225,7 +227,7 @@ export default function DemandeConge() {
                     <label className="form-label">Type de congé</label>
                     <select className="form-select" value={form.nom_types_conge}
                       onChange={e => setForm({...form, nom_types_conge: e.target.value})}>
-                      <option value="">-- Sélectionner un type --</option>
+                      <option value="">Sélectionner un type</option>
                       {TYPES_CONGE.map(t => <option key={t.nom} value={t.nom}>{t.nom}</option>)}
                     </select>
                     {typeSelectionne?.justificatif && (
