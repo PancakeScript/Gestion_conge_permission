@@ -18,9 +18,12 @@ app.get("/", (req, res) => {
 const authRoutes = require("./routes/auth.routes");
 const employeRoutes = require("./routes/employe.routes");
 const congeRoutes = require("./routes/conge.routes");
+const managerRoutes = require("./routes/manager.routes"); 
 
 app.use("/api/auth", authRoutes);
 app.use("/api/employes", employeRoutes);
 app.use("/api/conges", congeRoutes);
+app.use("/api/manager", managerRoutes); 
+app.use("/api/departements", require("./routes/departement.routes"));
 
 module.exports = app;
