@@ -131,7 +131,8 @@ exports.Prisma.Demandes_congeScalarFieldEnum = {
   date_demande: 'date_demande',
   date_debut: 'date_debut',
   date_fin: 'date_fin',
-  nombre_jours: 'nombre_jours'
+  nombre_jours: 'nombre_jours',
+  justificatif_pdf: 'justificatif_pdf'
 };
 
 exports.Prisma.DepartementScalarFieldEnum = {

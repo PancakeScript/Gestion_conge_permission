@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -13,6 +13,7 @@ model demandes_conge {
   id_employe            Int
   id_type_conge         Int
   motif                 String?
+  justificatif_pdf      String?   @db.VarChar(255)
   statut_demandes_conge String?     @db.VarChar(30)
   commentaire_manager   String?
   commentaire_rh        String?

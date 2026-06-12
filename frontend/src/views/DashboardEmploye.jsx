@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { congeApi } from "../services/api";
 
 export default function DashboardEmploye() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,11 +21,16 @@ export default function DashboardEmploye() {
   const handleLogout = () => { logout(); navigate("/login"); };
 
   const statutStyle = (statut) => {
-    const s = { en_attente: { bg: "#fff8e6", color: "#b8943c", label: "En attente" }, approuve: { bg: "#e8f5e9", color: "#2e7d32", label: "Approuvé" }, refuse: { bg: "#fdecea", color: "#c0392b", label: "Refusé" }, approuve_manager: { bg: "#e3f2fd", color: "#1565c0", label: "Validé manager" }, annule: { bg: "#f5f5f5", color: "#757575", label: "Annulé" } };
+    const s = {
+      en_attente: { bg: "#fff8e6", color: "#b8943c", label: "En attente" },
+      approuve: { bg: "#e8f5e9", color: "#2e7d32", label: "Approuvé" },
+      refuse: { bg: "#fdecea", color: "#c0392b", label: "Refusé" },
+      approuve_manager: { bg: "#e3f2fd", color: "#1565c0", label: "Validé manager" },
+      annule: { bg: "#f5f5f5", color: "#757575", label: "Annulé" }
+    };
     return s[statut] || { bg: "#f5f5f5", color: "#757575", label: statut };
   };
 
-  // Calendrier simple — absences du mois courant
   const today = new Date();
   const absenceDates = (dashboard?.demandes || [])
     .filter(d => d.statut_demandes_conge === "approuve" && d.date_debut && d.date_fin)
@@ -36,6 +41,10 @@ export default function DashboardEmploye() {
       while (cur <= end) { dates.push(new Date(cur).toDateString()); cur.setDate(cur.getDate() + 1); }
       return dates;
     });
+
+  const nbAcceptees = (dashboard?.demandes || []).filter(d => d.statut_demandes_conge === "approuve").length;
+  const nbRefusees = (dashboard?.demandes || []).filter(d => d.statut_demandes_conge === "refuse").length;
+  const nbEnAttente = (dashboard?.demandes || []).filter(d => d.statut_demandes_conge === "en_attente").length;
 
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
@@ -48,8 +57,8 @@ export default function DashboardEmploye() {
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body, #root { width: 100%; min-height: 100vh; }
-        .dash-root { min-height: 100vh; background: #f5f0e8; font-family: 'DM Sans', sans-serif; }
-        .navbar { background: #2c2418; padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #3d3020;position: sticky; top: 0; z-index: 100; }
+        .dash-root { min-height: 100vh; background: #f5f0e8; font-family: 'DM Sans', sans-serif; width: 100%; }
+        .navbar { background: #2c2418; padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #3d3020; position: sticky; top: 0; z-index: 100; width: 100%; }
         .nav-brand { display: flex; align-items: center; gap: 10px; }
         .nav-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #d4af64, #b8943c); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
         .nav-icon svg { width: 18px; height: 18px; color: #2c2418; }
@@ -58,13 +67,14 @@ export default function DashboardEmploye() {
         .nav-link { padding: 8px 16px; border-radius: 8px; font-size: 14px; color: #a89880; cursor: pointer; border: none; background: none; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
         .nav-link:hover, .nav-link.active { background: rgba(212,175,100,0.15); color: #d4af64; }
         .nav-right { display: flex; align-items: center; gap: 12px; }
-        .nav-user { font-size: 13px; color: #a89880; }
+        .notif-btn { background: none; border: none; font-size: 20px; cursor: pointer; position: relative; padding: 4px 6px; }
+        .notif-badge { position: absolute; top: -2px; right: -2px; background: #c0392b; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
         .btn-logout { padding: 8px 16px; background: transparent; border: 1px solid #c0392b; border-radius: 8px; color: #c0392b; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
         .btn-logout:hover { background: #c0392b; color: #fff; }
         .main { padding: 36px 40px; max-width: 1200px; margin: 0 auto; }
         .page-title { font-family: 'Playfair Display', serif; font-size: 30px; color: #2c2418; margin-bottom: 6px; }
         .page-subtitle { font-size: 14px; color: #a89070; margin-bottom: 32px; }
-        .cards-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+        .cards-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 16px; }
         .card { background: #faf7f2; border-radius: 14px; padding: 24px; border: 1px solid #e8e0d0; }
         .card-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #a89070; margin-bottom: 10px; }
         .card-value { font-family: 'Playfair Display', serif; font-size: 42px; color: #2c2418; line-height: 1; margin-bottom: 6px; }
@@ -72,45 +82,55 @@ export default function DashboardEmploye() {
         .card-desc { font-size: 13px; color: #a89070; }
         .card-bar-track { height: 6px; background: #e8e0d0; border-radius: 3px; margin-top: 14px; }
         .card-bar-fill { height: 6px; background: linear-gradient(90deg, #d4af64, #b8943c); border-radius: 3px; transition: width 0.6s; }
+        .mini-stats { display: flex; gap: 10px; margin-bottom: 28px; }
+        .mini-stat { display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .mini-stat.green { background: #e8f5e9; color: #2e7d32; }
+        .mini-stat.red { background: #fdecea; color: #c0392b; }
+        .mini-stat.yellow { background: #fff8e6; color: #b8943c; }
+        .mini-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .section-title { font-family: 'Playfair Display', serif; font-size: 20px; color: #2c2418; margin-bottom: 16px; }
-        .demandes-list {display: flex; flex-direction: column; gap: 10px;max-height: 520px;overflow-y: auto;padding-right: 4px;}
-        .demandes-list::-webkit-scrollbar {width: 6px;}
-        .demandes-list::-webkit-scrollbar-track {background: #f0ece4; border-radius: 3px;}
-        .demandes-list::-webkit-scrollbar-thumb {background: #d4af64; border-radius: 3px;}
-        .demande-item { background: #faf7f2; border: 1px solid #e8e0d0; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
-        .demande-info { display: flex; flex-direction: column; gap: 3px; }
+        .demandes-list { display: flex; flex-direction: column; gap: 10px; max-height: 520px; overflow-y: auto; padding-right: 4px; }
+        .demandes-list::-webkit-scrollbar { width: 6px; }
+        .demandes-list::-webkit-scrollbar-track { background: #f0ece4; border-radius: 3px; }
+        .demandes-list::-webkit-scrollbar-thumb { background: #d4af64; border-radius: 3px; }
+        .demande-item { background: #fff; border: 1px solid #e8e0d0; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .demande-info { display: flex; flex-direction: column; gap: 3px; flex: 1; }
         .demande-type { font-size: 14px; font-weight: 600; color: #2c2418; }
         .demande-date { font-size: 12px; color: #a89070; }
-        .statut-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .statut-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
         .empty { text-align: center; padding: 40px 20px; color: #a89070; font-size: 14px; }
-        .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-        .cal-month { font-family: 'Playfair Display', serif; font-size: 18px; color: #2c2418; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-name { text-align: center; font-size: 11px; font-weight: 600; color: #a89070; padding: 4px 0; text-transform: uppercase; }
-        .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; color: #6b5c45; cursor: default; }
+        .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; color: #6b5c45; }
         .cal-day.today { background: linear-gradient(135deg, #d4af64, #b8943c); color: #2c2418; font-weight: 700; }
         .cal-day.absent { background: #fdecea; color: #c0392b; font-weight: 600; }
         .cal-day.empty-day { opacity: 0; }
         .btn-new { display: flex; align-items: center; gap: 8px; padding: 12px 22px; background: linear-gradient(135deg, #d4af64, #b8943c); color: #2c2418; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-bottom: 28px; transition: all 0.2s; }
         .btn-new:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(180,140,60,0.3); }
         .loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; font-size: 15px; color: #a89070; }
-        @media (max-width: 768px) { .cards-row { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: 1fr; } .main { padding: 24px 16px; } .nav-links {display: flex;gap: 2px;} .navbar { padding: 0 16px; } }
+        .overlay { position: fixed; inset: 0; background: rgba(44,36,24,0.55); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(2px); }
+        .modal { background: #faf7f2; border-radius: 16px; padding: 32px; max-width: 420px; width: 90%; border: 1px solid #e8e0d0; }
+        .modal-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #2c2418; margin-bottom: 10px; }
+        .modal-desc { font-size: 14px; color: #a89070; margin-bottom: 20px; line-height: 1.6; }
+        .modal-btns { display: flex; gap: 10px; }
+        .btn-confirm-red { padding: 12px 22px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .btn-modal-cancel { padding: 12px 22px; background: transparent; color: #6b5c45; border: 1.5px solid #e0d8cc; border-radius: 10px; font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+        @media (max-width: 768px) { .cards-row { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: 1fr; } .main { padding: 24px 16px; } .navbar { padding: 0 16px; } .mini-stats { flex-wrap: wrap; } }
       `}</style>
 
       {showLogoutConfirm && (
-      <div style={{position:"fixed",inset:0,background:"rgba(44,36,24,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,backdropFilter:"blur(2px)"}}>
-    < div style={{background:"#faf7f2",borderRadius:16,padding:32,maxWidth:400,width:"90%",border:"1px solid #e8e0d0"}}>
-      <div style={{fontFamily:"'Playfair Display',serif",fontSize:22,color:"#2c2418",marginBottom:10}}>Déconnexion</div>
-      <div style={{fontSize:14,color:"#a89070",marginBottom:20}}>Voulez-vous vraiment vous déconnecter ?</div>
-      <div style={{display:"flex",gap:10}}>
-        <button
-  onClick={handleLogout}style={{padding:"12px 24px",background:"linear-gradient(135deg,#e74c3c,#c0392b)",color:"#fff",border:"none",borderRadius:10,fontSize:14,fontWeight:700,cursor:"pointer"}}>Se déconnecter</button>
-        <button onClick={() => setShowLogoutConfirm(false)} style={{padding:"12px 24px",background:"transparent",color:"#6b5c45",border:"1.5px solid #e0d8cc",borderRadius:10,fontSize:14,cursor:"pointer"}}>Annuler</button>
-      </div>
-    </div>
-    </div>)}
-
+        <div className="overlay">
+          <div className="modal">
+            <div className="modal-title">Déconnexion</div>
+            <div className="modal-desc">Voulez-vous vraiment vous déconnecter ?</div>
+            <div className="modal-btns">
+              <button className="btn-confirm-red" onClick={handleLogout}>Se déconnecter</button>
+              <button className="btn-modal-cancel" onClick={() => setShowLogoutConfirm(false)}>Annuler</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="dash-root">
         <nav className="navbar">
@@ -124,13 +144,15 @@ export default function DashboardEmploye() {
             <span className="nav-name">CongeApp</span>
           </div>
           <div className="nav-links">
-            <button className="nav-link active" onClick={() => navigate("/dashboard")}>Dashboard</button>
+            <button className="nav-link active">Dashboard</button>
             <button className="nav-link" onClick={() => navigate("/demande-conge")}>Demandes</button>
             <button className="nav-link" onClick={() => navigate("/profil")}>Profil</button>
             <button className="nav-link" onClick={() => navigate("/politique")}>Politique</button>
           </div>
           <div className="nav-right">
-            {/* <span className="nav-user">Employé</span> */}
+            <button className="notif-btn">
+              🔔<span className="notif-badge">0</span>
+            </button>
             <button className="btn-logout" onClick={() => setShowLogoutConfirm(true)}>Déconnexion</button>
           </div>
         </nav>
@@ -151,7 +173,7 @@ export default function DashboardEmploye() {
                   <div className="card-value gold">{dashboard?.solde?.soldeRestant ?? 0}</div>
                   <div className="card-desc">jours disponibles</div>
                   <div className="card-bar-track">
-                    <div className="card-bar-fill" style={{width: `${((dashboard?.solde?.soldeRestant ?? 0) / (dashboard?.solde?.joursAnnuels ?? 30)) * 100}%`}}></div>
+                    <div className="card-bar-fill" style={{width:`${((dashboard?.solde?.soldeRestant??0)/(dashboard?.solde?.joursAnnuels??30))*100}%`}}></div>
                   </div>
                 </div>
                 <div className="card">
@@ -160,9 +182,25 @@ export default function DashboardEmploye() {
                   <div className="card-desc">sur {dashboard?.solde?.joursAnnuels ?? 30} jours annuels</div>
                 </div>
                 <div className="card">
-                  <div className="card-label">Demandes</div>
+                  <div className="card-label">Total demandes</div>
                   <div className="card-value">{dashboard?.demandes?.length ?? 0}</div>
                   <div className="card-desc">demandes soumises</div>
+                </div>
+              </div>
+
+              {/* Mini stats statuts */}
+              <div className="mini-stats">
+                <div className="mini-stat green">
+                  <span className="mini-dot" style={{background:"#2e7d32"}}></span>
+                  {nbAcceptees} acceptée{nbAcceptees > 1 ? "s" : ""}
+                </div>
+                <div className="mini-stat red">
+                  <span className="mini-dot" style={{background:"#c0392b"}}></span>
+                  {nbRefusees} refusée{nbRefusees > 1 ? "s" : ""}
+                </div>
+                <div className="mini-stat yellow">
+                  <span className="mini-dot" style={{background:"#b8943c"}}></span>
+                  {nbEnAttente} en attente
                 </div>
               </div>
 
@@ -210,16 +248,16 @@ export default function DashboardEmploye() {
                         const isToday = d === today.getDate();
                         const isAbsent = absenceDates.includes(dateStr);
                         return (
-                          <div key={d} className={`cal-day ${isToday ? "today" : ""} ${isAbsent && !isToday ? "absent" : ""}`}>{d}</div>
+                          <div key={d} className={`cal-day ${isToday?"today":""} ${isAbsent&&!isToday?"absent":""}`}>{d}</div>
                         );
                       })}
                     </div>
-                    <div style={{marginTop: 14, display: "flex", gap: 16}}>
-                      <span style={{fontSize: 12, color: "#a89070", display: "flex", alignItems: "center", gap: 6}}>
-                        <span style={{width: 10, height: 10, borderRadius: 3, background: "linear-gradient(135deg, #d4af64, #b8943c)", display: "inline-block"}}></span> Aujourd'hui
+                    <div style={{marginTop:14,display:"flex",gap:16}}>
+                      <span style={{fontSize:12,color:"#a89070",display:"flex",alignItems:"center",gap:6}}>
+                        <span style={{width:10,height:10,borderRadius:3,background:"linear-gradient(135deg,#d4af64,#b8943c)",display:"inline-block"}}></span> Aujourd'hui
                       </span>
-                      <span style={{fontSize: 12, color: "#a89070", display: "flex", alignItems: "center", gap: 6}}>
-                        <span style={{width: 10, height: 10, borderRadius: 3, background: "#fdecea", display: "inline-block"}}></span> Absence
+                      <span style={{fontSize:12,color:"#a89070",display:"flex",alignItems:"center",gap:6}}>
+                        <span style={{width:10,height:10,borderRadius:3,background:"#fdecea",display:"inline-block"}}></span> Absence
                       </span>
                     </div>
                   </div>

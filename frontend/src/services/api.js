@@ -66,6 +66,12 @@ export const congeApi = {
     return data;
   },
 
+  getJoursFeries: async () => {
+  const res = await fetch(`${BASE_URL}/conges/jours-feries`, { headers: authHeaders() });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+  },
   getMesDemandes: async () => {
     const res = await fetch(`${BASE_URL}/conges/mes-demandes`, { headers: authHeaders() });
     const data = await res.json();
@@ -80,16 +86,47 @@ export const congeApi = {
     return data;
   },
 
-  soumettreDemande: async (demandeData) => {
-    const res = await fetch(`${BASE_URL}/conges`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify(demandeData),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-    return data;
-  },
+soumettreDemande: async (demandeData, fichier) => {
+
+  const formData = new FormData();
+
+  Object.keys(demandeData).forEach(key => {
+    formData.append(key, demandeData[key]);
+  });
+
+  if (fichier) {
+    formData.append("justificatif", fichier);
+  }
+
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}/conges`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    body: formData
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error);
+  }
+
+  return data;
+},
+
+annulerDemande: async (id) => {
+  const res = await fetch(`${BASE_URL}/conges/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+},
+
 };
 
 export const employeApi = {

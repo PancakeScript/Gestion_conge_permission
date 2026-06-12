@@ -1804,6 +1804,7 @@ export namespace Prisma {
     date_debut: Date | null
     date_fin: Date | null
     nombre_jours: number | null
+    justificatif_pdf: string | null
   }
 
   export type Demandes_congeMaxAggregateOutputType = {
@@ -1818,6 +1819,7 @@ export namespace Prisma {
     date_debut: Date | null
     date_fin: Date | null
     nombre_jours: number | null
+    justificatif_pdf: string | null
   }
 
   export type Demandes_congeCountAggregateOutputType = {
@@ -1832,6 +1834,7 @@ export namespace Prisma {
     date_debut: number
     date_fin: number
     nombre_jours: number
+    justificatif_pdf: number
     _all: number
   }
 
@@ -1862,6 +1865,7 @@ export namespace Prisma {
     date_debut?: true
     date_fin?: true
     nombre_jours?: true
+    justificatif_pdf?: true
   }
 
   export type Demandes_congeMaxAggregateInputType = {
@@ -1876,6 +1880,7 @@ export namespace Prisma {
     date_debut?: true
     date_fin?: true
     nombre_jours?: true
+    justificatif_pdf?: true
   }
 
   export type Demandes_congeCountAggregateInputType = {
@@ -1890,6 +1895,7 @@ export namespace Prisma {
     date_debut?: true
     date_fin?: true
     nombre_jours?: true
+    justificatif_pdf?: true
     _all?: true
   }
 
@@ -1991,6 +1997,7 @@ export namespace Prisma {
     date_debut: Date | null
     date_fin: Date | null
     nombre_jours: number | null
+    justificatif_pdf: string | null
     _count: Demandes_congeCountAggregateOutputType | null
     _avg: Demandes_congeAvgAggregateOutputType | null
     _sum: Demandes_congeSumAggregateOutputType | null
@@ -2024,6 +2031,7 @@ export namespace Prisma {
     date_debut?: boolean
     date_fin?: boolean
     nombre_jours?: boolean
+    justificatif_pdf?: boolean
     employe?: boolean | employeDefaultArgs<ExtArgs>
     types_conge?: boolean | types_congeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["demandes_conge"]>
@@ -2040,6 +2048,7 @@ export namespace Prisma {
     date_debut?: boolean
     date_fin?: boolean
     nombre_jours?: boolean
+    justificatif_pdf?: boolean
     employe?: boolean | employeDefaultArgs<ExtArgs>
     types_conge?: boolean | types_congeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["demandes_conge"]>
@@ -2056,6 +2065,7 @@ export namespace Prisma {
     date_debut?: boolean
     date_fin?: boolean
     nombre_jours?: boolean
+    justificatif_pdf?: boolean
     employe?: boolean | employeDefaultArgs<ExtArgs>
     types_conge?: boolean | types_congeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["demandes_conge"]>
@@ -2072,9 +2082,10 @@ export namespace Prisma {
     date_debut?: boolean
     date_fin?: boolean
     nombre_jours?: boolean
+    justificatif_pdf?: boolean
   }
 
-  export type demandes_congeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_demande_conde" | "id_employe" | "id_type_conge" | "motif" | "statut_demandes_conge" | "commentaire_manager" | "commentaire_rh" | "date_demande" | "date_debut" | "date_fin" | "nombre_jours", ExtArgs["result"]["demandes_conge"]>
+  export type demandes_congeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_demande_conde" | "id_employe" | "id_type_conge" | "motif" | "statut_demandes_conge" | "commentaire_manager" | "commentaire_rh" | "date_demande" | "date_debut" | "date_fin" | "nombre_jours" | "justificatif_pdf", ExtArgs["result"]["demandes_conge"]>
   export type demandes_congeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employe?: boolean | employeDefaultArgs<ExtArgs>
     types_conge?: boolean | types_congeDefaultArgs<ExtArgs>
@@ -2106,6 +2117,7 @@ export namespace Prisma {
       date_debut: Date | null
       date_fin: Date | null
       nombre_jours: number | null
+      justificatif_pdf: string | null
     }, ExtArgs["result"]["demandes_conge"]>
     composites: {}
   }
@@ -2542,6 +2554,7 @@ export namespace Prisma {
     readonly date_debut: FieldRef<"demandes_conge", 'DateTime'>
     readonly date_fin: FieldRef<"demandes_conge", 'DateTime'>
     readonly nombre_jours: FieldRef<"demandes_conge", 'Int'>
+    readonly justificatif_pdf: FieldRef<"demandes_conge", 'String'>
   }
     
 
@@ -12193,7 +12206,8 @@ export namespace Prisma {
     date_demande: 'date_demande',
     date_debut: 'date_debut',
     date_fin: 'date_fin',
-    nombre_jours: 'nombre_jours'
+    nombre_jours: 'nombre_jours',
+    justificatif_pdf: 'justificatif_pdf'
   };
 
   export type Demandes_congeScalarFieldEnum = (typeof Demandes_congeScalarFieldEnum)[keyof typeof Demandes_congeScalarFieldEnum]
@@ -12394,6 +12408,7 @@ export namespace Prisma {
     date_debut?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
     date_fin?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
     nombre_jours?: IntNullableFilter<"demandes_conge"> | number | null
+    justificatif_pdf?: StringNullableFilter<"demandes_conge"> | string | null
     employe?: XOR<EmployeScalarRelationFilter, employeWhereInput>
     types_conge?: XOR<Types_congeScalarRelationFilter, types_congeWhereInput>
   }
@@ -12410,6 +12425,7 @@ export namespace Prisma {
     date_debut?: SortOrderInput | SortOrder
     date_fin?: SortOrderInput | SortOrder
     nombre_jours?: SortOrderInput | SortOrder
+    justificatif_pdf?: SortOrderInput | SortOrder
     employe?: employeOrderByWithRelationInput
     types_conge?: types_congeOrderByWithRelationInput
   }
@@ -12429,6 +12445,7 @@ export namespace Prisma {
     date_debut?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
     date_fin?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
     nombre_jours?: IntNullableFilter<"demandes_conge"> | number | null
+    justificatif_pdf?: StringNullableFilter<"demandes_conge"> | string | null
     employe?: XOR<EmployeScalarRelationFilter, employeWhereInput>
     types_conge?: XOR<Types_congeScalarRelationFilter, types_congeWhereInput>
   }, "id_demande_conde">
@@ -12445,6 +12462,7 @@ export namespace Prisma {
     date_debut?: SortOrderInput | SortOrder
     date_fin?: SortOrderInput | SortOrder
     nombre_jours?: SortOrderInput | SortOrder
+    justificatif_pdf?: SortOrderInput | SortOrder
     _count?: demandes_congeCountOrderByAggregateInput
     _avg?: demandes_congeAvgOrderByAggregateInput
     _max?: demandes_congeMaxOrderByAggregateInput
@@ -12467,6 +12485,7 @@ export namespace Prisma {
     date_debut?: DateTimeNullableWithAggregatesFilter<"demandes_conge"> | Date | string | null
     date_fin?: DateTimeNullableWithAggregatesFilter<"demandes_conge"> | Date | string | null
     nombre_jours?: IntNullableWithAggregatesFilter<"demandes_conge"> | number | null
+    justificatif_pdf?: StringNullableWithAggregatesFilter<"demandes_conge"> | string | null
   }
 
   export type departementWhereInput = {
@@ -12984,6 +13003,7 @@ export namespace Prisma {
     date_debut?: Date | string | null
     date_fin?: Date | string | null
     nombre_jours?: number | null
+    justificatif_pdf?: string | null
     employe: employeCreateNestedOneWithoutDemandes_congeInput
     types_conge: types_congeCreateNestedOneWithoutDemandes_congeInput
   }
@@ -13000,6 +13020,7 @@ export namespace Prisma {
     date_debut?: Date | string | null
     date_fin?: Date | string | null
     nombre_jours?: number | null
+    justificatif_pdf?: string | null
   }
 
   export type demandes_congeUpdateInput = {
@@ -13011,6 +13032,7 @@ export namespace Prisma {
     date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
+    justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
     employe?: employeUpdateOneRequiredWithoutDemandes_congeNestedInput
     types_conge?: types_congeUpdateOneRequiredWithoutDemandes_congeNestedInput
   }
@@ -13027,6 +13049,7 @@ export namespace Prisma {
     date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
+    justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type demandes_congeCreateManyInput = {
@@ -13041,6 +13064,7 @@ export namespace Prisma {
     date_debut?: Date | string | null
     date_fin?: Date | string | null
     nombre_jours?: number | null
+    justificatif_pdf?: string | null
   }
 
   export type demandes_congeUpdateManyMutationInput = {
@@ -13052,6 +13076,7 @@ export namespace Prisma {
     date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
+    justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type demandes_congeUncheckedUpdateManyInput = {
@@ -13066,6 +13091,7 @@ export namespace Prisma {
     date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
+    justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type departementCreateInput = {
@@ -13627,6 +13653,7 @@ export namespace Prisma {
     date_debut?: SortOrder
     date_fin?: SortOrder
     nombre_jours?: SortOrder
+    justificatif_pdf?: SortOrder
   }
 
   export type demandes_congeAvgOrderByAggregateInput = {
@@ -13648,6 +13675,7 @@ export namespace Prisma {
     date_debut?: SortOrder
     date_fin?: SortOrder
     nombre_jours?: SortOrder
+    justificatif_pdf?: SortOrder
   }
 
   export type demandes_congeMinOrderByAggregateInput = {
@@ -13662,6 +13690,7 @@ export namespace Prisma {
     date_debut?: SortOrder
     date_fin?: SortOrder
     nombre_jours?: SortOrder
+    justificatif_pdf?: SortOrder
   }
 
   export type demandes_congeSumOrderByAggregateInput = {
@@ -15232,6 +15261,7 @@ export namespace Prisma {
     date_debut?: Date | string | null
     date_fin?: Date | string | null
     nombre_jours?: number | null
+    justificatif_pdf?: string | null
     types_conge: types_congeCreateNestedOneWithoutDemandes_congeInput
   }
 
@@ -15246,6 +15276,7 @@ export namespace Prisma {
     date_debut?: Date | string | null
     date_fin?: Date | string | null
     nombre_jours?: number | null
+    justificatif_pdf?: string | null
   }
 
   export type demandes_congeCreateOrConnectWithoutEmployeInput = {
@@ -15333,6 +15364,7 @@ export namespace Prisma {
     date_debut?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
     date_fin?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
     nombre_jours?: IntNullableFilter<"demandes_conge"> | number | null
+    justificatif_pdf?: StringNullableFilter<"demandes_conge"> | string | null
   }
 
   export type departementUpsertWithoutEmployeInput = {
@@ -15716,6 +15748,7 @@ export namespace Prisma {
     date_debut?: Date | string | null
     date_fin?: Date | string | null
     nombre_jours?: number | null
+    justificatif_pdf?: string | null
     employe: employeCreateNestedOneWithoutDemandes_congeInput
   }
 
@@ -15730,6 +15763,7 @@ export namespace Prisma {
     date_debut?: Date | string | null
     date_fin?: Date | string | null
     nombre_jours?: number | null
+    justificatif_pdf?: string | null
   }
 
   export type demandes_congeCreateOrConnectWithoutTypes_congeInput = {
@@ -16135,6 +16169,7 @@ export namespace Prisma {
     date_debut?: Date | string | null
     date_fin?: Date | string | null
     nombre_jours?: number | null
+    justificatif_pdf?: string | null
   }
 
   export type demandes_congeUpdateWithoutEmployeInput = {
@@ -16146,6 +16181,7 @@ export namespace Prisma {
     date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
+    justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
     types_conge?: types_congeUpdateOneRequiredWithoutDemandes_congeNestedInput
   }
 
@@ -16160,6 +16196,7 @@ export namespace Prisma {
     date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
+    justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type demandes_congeUncheckedUpdateManyWithoutEmployeInput = {
@@ -16173,6 +16210,7 @@ export namespace Prisma {
     date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
+    justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type departementCreateManyManager_departement_id_managerTomanagerInput = {
@@ -16238,6 +16276,7 @@ export namespace Prisma {
     date_debut?: Date | string | null
     date_fin?: Date | string | null
     nombre_jours?: number | null
+    justificatif_pdf?: string | null
   }
 
   export type demandes_congeUpdateWithoutTypes_congeInput = {
@@ -16249,6 +16288,7 @@ export namespace Prisma {
     date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
+    justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
     employe?: employeUpdateOneRequiredWithoutDemandes_congeNestedInput
   }
 
@@ -16263,6 +16303,7 @@ export namespace Prisma {
     date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
+    justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type demandes_congeUncheckedUpdateManyWithoutTypes_congeInput = {
@@ -16276,6 +16317,7 @@ export namespace Prisma {
     date_debut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
+    justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type notificationCreateManyUtilisateurInput = {

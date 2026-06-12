@@ -14,6 +14,7 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.json({ message: "API fonctionnelle" });
 });
+app.use("/uploads",express.static("uploads"));
 
 const authRoutes = require("./routes/auth.routes");
 const employeRoutes = require("./routes/employe.routes");

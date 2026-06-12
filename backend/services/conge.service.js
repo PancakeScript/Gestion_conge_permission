@@ -1,7 +1,7 @@
 const prisma = require("../config/database")
 
 // Soumettre une demande de congé
-const soumettreDemandeConge = async (id_employe, data) => {
+const soumettreDemandeConge = async (id_employe, data, fichier) => {
   const { nom_types_conge, motif, date_debut, date_fin } = data
 
   // Trouver le type par nom
@@ -24,6 +24,12 @@ const soumettreDemandeConge = async (id_employe, data) => {
     }
   }
 
+  let justificatifPdf = null;
+
+if (fichier) {
+  justificatifPdf = fichier.filename;
+}
+
   return prisma.demandes_conge.create({
     data: {
       id_employe,
@@ -32,8 +38,35 @@ const soumettreDemandeConge = async (id_employe, data) => {
       date_debut: new Date(date_debut),
       date_fin: new Date(date_fin),
       nombre_jours,
+      justificatif_pdf: justificatifPdf,
       statut_demandes_conge: "en_attente",
     },
+  })
+}
+
+//annuler une demande de congé
+const annulerDemande = async (id_demande, id_employe) => {
+
+  const demande = await prisma.demandes_conge.findFirst({
+    where: {
+      id_demande_conde: id_demande,
+      id_employe
+    }
+  })
+
+  if (!demande)
+    throw new Error("Demande introuvable")
+
+  if (demande.statut_demandes_conge !== "en_attente")
+    throw new Error("Cette demande ne peut plus être annulée")
+
+  return prisma.demandes_conge.update({
+    where: {
+      id_demande_conde: id_demande
+    },
+    data: {
+      statut_demandes_conge: "annule"
+    }
   })
 }
 
@@ -66,4 +99,4 @@ const getDashboard = async (id_employe) => {
   return { solde, demandes }
 }
 
-module.exports = { soumettreDemandeConge, getSolde, getMesDemandes, getDashboard }
+module.exports = { soumettreDemandeConge, getSolde, getMesDemandes, getDashboard, annulerDemande }

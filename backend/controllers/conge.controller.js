@@ -2,10 +2,24 @@ const congeService = require("../services/conge.service")
 
 const soumettreDemandeConge = async (req, res) => {
   try {
-    const demande = await congeService.soumettreDemandeConge(req.user.id_role, req.body)
+    const demande = await congeService.soumettreDemandeConge(req.user.id_role,req.body,req.file)
     return res.status(201).json({ message: "Demande soumise avec succès", demande })
   } catch (error) {
     return res.status(400).json({ error: error.message })
+  }
+}
+
+//annuler demande de congé
+const annulerDemande = async (req, res) => {
+  try {
+    const demande = await congeService.annulerDemande(
+      parseInt(req.params.id),
+      req.user.id_role
+    )
+
+    res.status(200).json(demande)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
   }
 }
 
@@ -36,4 +50,4 @@ const getDashboard = async (req, res) => {
   }
 }
 
-module.exports = { soumettreDemandeConge, getSolde, getMesDemandes, getDashboard }
+module.exports = { soumettreDemandeConge, getSolde, getMesDemandes, getDashboard, annulerDemande }

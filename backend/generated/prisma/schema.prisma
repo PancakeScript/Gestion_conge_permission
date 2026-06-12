@@ -20,6 +20,7 @@ model demandes_conge {
   date_debut            DateTime?   @db.Date
   date_fin              DateTime?   @db.Date
   nombre_jours          Int?
+  justificatif_pdf      String?     @db.VarChar(255)
   employe               employe     @relation(fields: [id_employe], references: [id_employe], onDelete: NoAction, onUpdate: NoAction)
   types_conge           types_conge @relation(fields: [id_type_conge], references: [id_conge], onDelete: NoAction, onUpdate: NoAction)
 }
