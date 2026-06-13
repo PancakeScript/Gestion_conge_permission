@@ -86,6 +86,32 @@ export const congeApi = {
     return data;
   },
 
+  getNotifications: async () => {
+  const res = await fetch(`${BASE_URL}/conges/notifications`, { headers: authHeaders() });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+},
+
+marquerNotifLue: async (id) => {
+  const res = await fetch(`${BASE_URL}/conges/notifications/${id}/lue`, {
+    method: "PUT",
+    headers: authHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+},
+
+marquerToutesLues: async () => {
+  const res = await fetch(`${BASE_URL}/conges/notifications/toutes-lues`, {
+    method: "PUT",
+    headers: authHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+},
 soumettreDemande: async (demandeData, fichier) => {
 
   const formData = new FormData();

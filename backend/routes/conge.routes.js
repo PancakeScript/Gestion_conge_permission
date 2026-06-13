@@ -41,4 +41,47 @@ router.get("/jours-feries", verifierToken, async (req, res) => {
   }
 })
 
+// Récupérer les notifications de l'employé connecté
+router.get("/notifications", verifierToken, async (req, res) => {
+  try {
+    const prisma = require("../config/database")
+    const notifs = await prisma.notification.findMany({
+      where: { id_utilisateur: req.user.id_utilisateur },
+      orderBy: { date_notification: "desc" },
+      take: 20,
+    })
+    res.json(notifs)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// Marquer une notification comme lue
+router.put("/notifications/:id/lue", verifierToken, async (req, res) => {
+  try {
+    const prisma = require("../config/database")
+    const notif = await prisma.notification.update({
+      where: { id_notification: Number(req.params.id) },
+      data: { statut_notification: "lue" }
+    })
+    res.json(notif)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// Marquer toutes comme lues
+router.put("/notifications/toutes-lues", verifierToken, async (req, res) => {
+  try {
+    const prisma = require("../config/database")
+    await prisma.notification.updateMany({
+      where: { id_utilisateur: req.user.id_utilisateur, statut_notification: "non_lue" },
+      data: { statut_notification: "lue" }
+    })
+    res.json({ message: "ok" })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 module.exports = router

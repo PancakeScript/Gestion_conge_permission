@@ -72,12 +72,15 @@ const annulerDemande = async (id_demande, id_employe) => {
 
 // Consulter le solde
 const getSolde = async (id_employe, joursAnnuels = 30) => {
+  const debutAnnee = new Date(new Date().getFullYear(), 0, 1);
   const demandesApprouvees = await prisma.demandes_conge.findMany({
-    where: { id_employe, statut_demandes_conge: "approuve" },
+    where: {
+      id_employe,
+      statut_demandes_conge: "approuve",
+      date_debut: { gte: debutAnnee }, // ← filtre par année courante
+    },
   })
-  const joursPris = demandesApprouvees.reduce(
-    (acc, d) => acc + (d.nombre_jours || 0), 0
-  )
+  const joursPris = demandesApprouvees.reduce((acc, d) => acc + (d.nombre_jours || 0), 0)
   return { joursAnnuels, joursPris, soldeRestant: joursAnnuels - joursPris }
 }
 

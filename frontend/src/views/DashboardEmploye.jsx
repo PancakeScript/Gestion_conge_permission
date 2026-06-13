@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { congeApi } from "../services/api";
+import NotificationBell from "../components/NotificationBell";
 
 export default function DashboardEmploye() {
   const { logout } = useAuth();
@@ -150,9 +151,9 @@ export default function DashboardEmploye() {
             <button className="nav-link" onClick={() => navigate("/politique")}>Politique</button>
           </div>
           <div className="nav-right">
-            <button className="notif-btn">
+            <NotificationBell className="notif-btn">
               🔔<span className="notif-badge">0</span>
-            </button>
+            </NotificationBell>
             <button className="btn-logout" onClick={() => setShowLogoutConfirm(true)}>Déconnexion</button>
           </div>
         </nav>

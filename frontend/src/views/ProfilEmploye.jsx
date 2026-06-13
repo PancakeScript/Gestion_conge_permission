@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { employeApi } from "../services/api";
+import NotificationBell from "../components/NotificationBell";
 
 export default function ProfilEmploye() {
   const { user, logout } = useAuth();
@@ -79,6 +80,8 @@ export default function ProfilEmploye() {
         .nav-link { padding: 8px 16px; border-radius: 8px; font-size: 14px; color: #a89880; cursor: pointer; border: none; background: none; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
         .nav-link:hover, .nav-link.active { background: rgba(212,175,100,0.15); color: #d4af64; }
         .nav-right { display: flex; align-items: center; gap: 12px; }
+        .notif-btn { background: none; border: none; font-size: 20px; cursor: pointer; position: relative; padding: 4px 6px; }
+        .notif-badge { position: absolute; top: -2px; right: -2px; background: #c0392b; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: 700; }        
         .btn-logout { padding: 8px 16px; background: transparent; border: 1px solid #c0392b; border-radius: 8px; color: #c0392b; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
         .btn-logout:hover { background: #c0392b; color: #fff; }
         .main { padding: 36px 40px; max-width: 860px; margin: 0 auto; }
@@ -174,6 +177,9 @@ export default function ProfilEmploye() {
             <button className="nav-link" onClick={() => navigate("/politique")}>Politique</button>
           </div>
           <div className="nav-right">
+            <NotificationBell className="notif-btn">
+              🔔<span className="notif-badge">0</span>
+            </NotificationBell>
             <button className="btn-logout" onClick={() => setShowLogoutConfirm(true)}>Déconnexion</button>
           </div>
         </nav>
