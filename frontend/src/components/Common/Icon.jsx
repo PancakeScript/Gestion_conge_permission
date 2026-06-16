@@ -1,8 +1,8 @@
 import React from "react";
 
-export const Icon = ({ name, size = 18 }: { name: string; size?: number }) => {
+export const Icon = ({ name, size = 18 }) => {
   const s = { width: size, height: size };
-  const icons: Record<string, React.ReactElement> = {
+  const icons = {
     clock:  <svg {...s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
     check:  <svg {...s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>,
     x:      <svg {...s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,

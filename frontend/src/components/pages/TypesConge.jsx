@@ -3,14 +3,13 @@ import { Icon } from "../Common/Icon";
 import { statutTypeBadge } from "../Common/Badges";
 import { ModalType } from "../Common/Modals";
 import { typesCongeApi } from "../../api/typesConge";
-import type { TypeConge } from "../../api/typesConge";
 
-export const TypesConge: React.FC = () => {
-  const [typesConge, setTypesConge] = useState<TypeConge[]>([]);
+export const TypesConge = () => {
+  const [typesConge, setTypesConge] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showTypeModal, setShowTypeModal] = useState(false);
-  const [editingType, setEditingType] = useState<TypeConge | null>(null);
+  const [editingType, setEditingType] = useState(null);
 
   useEffect(() => {
     fetchTypes();
@@ -22,14 +21,14 @@ export const TypesConge: React.FC = () => {
     try {
       const data = await typesCongeApi.getAll();
       setTypesConge(Array.isArray(data) ? data : []);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Erreur lors du chargement");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSaveType = async (data: any) => {
+  const handleSaveType = async (data) => {
     try {
       if (editingType) {
         const updated = await typesCongeApi.update(editingType.id, data);
@@ -40,27 +39,27 @@ export const TypesConge: React.FC = () => {
       }
       setShowTypeModal(false);
       setEditingType(null);
-    } catch (err: any) {
+    } catch (err) {
       alert(err.message || "Erreur lors de la sauvegarde");
     }
   };
 
-  const handleDeleteType = async (id: number) => {
+  const handleDeleteType = async (id) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer ce type de congé ?")) {
       try {
         await typesCongeApi.delete(id);
         setTypesConge(typesConge.filter(t => t.id !== id));
-      } catch (err: any) {
+      } catch (err) {
         alert(err.message || "Erreur lors de la suppression");
       }
     }
   };
 
-  const handleToggleStatut = async (id: number) => {
+  const handleToggleStatut = async (id) => {
     try {
       const updated = await typesCongeApi.toggleStatut(id);
       setTypesConge(typesConge.map(t => t.id === id ? updated : t));
-    } catch (err: any) {
+    } catch (err) {
       alert(err.message || "Erreur lors du changement de statut");
     }
   };

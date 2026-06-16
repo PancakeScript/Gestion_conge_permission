@@ -3,15 +3,14 @@ import { Icon } from "../Common/Icon";
 import { statutBadge } from "../Common/Badges";
 import { ModalDemande } from "../Common/Modals";
 import { demandesApi } from "../../api/demandes";
-import type { DemandeConge } from "../../api/demandes";
 
-export const Demandes: React.FC = () => {
-  const [demandes, setDemandes] = useState<DemandeConge[]>([]);
+export const Demandes = () => {
+  const [demandes, setDemandes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filterStatut, setFilterStatut] = useState("tous");
   const [search, setSearch] = useState("");
-  const [selectedDemande, setSelectedDemande] = useState<DemandeConge | null>(null);
+  const [selectedDemande, setSelectedDemande] = useState(null);
 
   useEffect(() => {
     fetchDemandes();
@@ -23,14 +22,14 @@ export const Demandes: React.FC = () => {
     try {
       const data = await demandesApi.getAll();
       setDemandes(Array.isArray(data) ? data : []);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Erreur lors du chargement des demandes");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAction = async (id: number, action: "approuve_rh" | "refuse", comment: string) => {
+  const handleAction = async (id, action, comment) => {
     try {
       if (action === "approuve_rh") {
         await demandesApi.approuverRH(id, comment);
@@ -39,7 +38,7 @@ export const Demandes: React.FC = () => {
       }
       setSelectedDemande(null);
       await fetchDemandes(); // ← recharge depuis le serveur
-    } catch (err: any) {
+    } catch (err) {
       alert(err.message || "Erreur lors du traitement");
     }
   };

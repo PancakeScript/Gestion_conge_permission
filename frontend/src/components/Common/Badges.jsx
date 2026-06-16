@@ -1,7 +1,7 @@
 import React from "react";
 
-export function statutBadge(statut: string) {
-  const map: Record<string, { label: string; color: string; bg: string }> = {
+export function statutBadge(statut) {
+  const map = {
     en_attente:        { label: "En attente",   color: "#b8943c", bg: "#fdf6e3" },
     approuve_manager:  { label: "Validé manager",color: "#2563eb", bg: "#eff6ff" },
     approuve_rh:       { label: "Approuvé RH",  color: "#27ae60", bg: "#f0faf4" },
@@ -16,8 +16,8 @@ export function statutBadge(statut: string) {
   );
 }
 
-export function statutEmployeBadge(statut: string) {
-  const map: Record<string, { label: string; color: string; bg: string }> = {
+export function statutEmployeBadge(statut) {
+  const map = {
     actif:  { label: "Actif", color: "#27ae60", bg: "#f0faf4" },
     inactif: { label: "Inactif", color: "#e74c3c", bg: "#fef5f5" },
   };
@@ -29,8 +29,8 @@ export function statutEmployeBadge(statut: string) {
   );
 }
 
-export function statutTypeBadge(statut: string) {
-  const map: Record<string, { label: string; color: string; bg: string }> = {
+export function statutTypeBadge(statut) {
+  const map = {
     actif:  { label: "Actif", color: "#27ae60", bg: "#f0faf4" },
     inactif: { label: "Inactif", color: "#e74c3c", bg: "#fef5f5" },
   };

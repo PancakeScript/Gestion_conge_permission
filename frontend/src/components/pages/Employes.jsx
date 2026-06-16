@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Icon } from "../Common/Icon";
 import { statutEmployeBadge } from "../Common/Badges";
 import { employesApi } from "../../api/employes";
-import type { Employe } from "../../api/employes";
-export const Employes: React.FC = () => {
-  const [employes, setEmployes] = useState<Employe[]>([]);
+
+export const Employes = () => {
+  const [employes, setEmployes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchEmp, setSearchEmp] = useState("");
-  const [viewEmp, setViewEmp] = useState<Employe | null>(null);
+  const [viewEmp, setViewEmp] = useState(null);
 
   // Charger les employés depuis l'API
   useEffect(() => {
@@ -21,20 +21,20 @@ const fetchEmployes = async () => {
   try {
     const data = await employesApi.getAll();
     setEmployes(Array.isArray(data) ? data : []);
-  } catch (err: any) {
+  } catch (err) {
     setError(err.message || "Erreur lors du chargement");
   } finally {
     setLoading(false);
   }
 };
 
-  const handleDeleteEmploye = async (id: number) => {
+  const handleDeleteEmploye = async (id) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer cet employé ?")) {
       try {
         await employesApi.delete(id);
         setEmployes(employes.filter(e => e.id !== id));
         if (viewEmp?.id === id) setViewEmp(null);
-      } catch (err: any) {
+      } catch (err) {
         alert(err.message || "Erreur lors de la suppression");
       }
     }

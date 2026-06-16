@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Icon } from "../Common/Icon";
 import { api } from "../../api/client";
 
-export const Profil: React.FC = () => {
+export const Profil = () => {
   const [isEditing, setIsEditing]   = useState(false);
   const [loading, setLoading]       = useState(true);
   const [saving, setSaving]         = useState(false);
@@ -42,14 +42,14 @@ export const Profil: React.FC = () => {
       setIsEditing(false);
       setSuccess("Profil mis à jour !");
       setTimeout(() => setSuccess(""), 3000);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.response?.data?.error || "Erreur lors de la sauvegarde");
     } finally {
       setSaving(false);
     }
   };
 
-  const handleChangePassword = async (e: React.FormEvent) => {
+  const handleChangePassword = async (e) => {
     e.preventDefault();
     setPwError(""); setPwSuccess("");
     if (pwForm.nouveauMdp !== pwForm.confirmerMdp) {
@@ -63,12 +63,12 @@ export const Profil: React.FC = () => {
       setPwSuccess("Mot de passe changé avec succès !");
       setPwForm({ ancienMdp: "", nouveauMdp: "", confirmerMdp: "" });
       setTimeout(() => setPwSuccess(""), 3000);
-    } catch (err: any) {
+    } catch (err) {
       setPwError(err.response?.data?.error || "Erreur changement mot de passe");
     }
   };
 
-  const getRoleLabel = (role: string) => {
+  const getRoleLabel = (role) => {
     switch (role) {
       case "rh_admin": return "Administrateur RH";
       case "manager":  return "Manager";

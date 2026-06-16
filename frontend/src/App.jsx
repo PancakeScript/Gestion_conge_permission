@@ -9,18 +9,16 @@ import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
 import Profil from "./components/pages/Profil";
 
-type View = "login" | "register";
-
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("token"));
   const [currentUser, setCurrentUser] = useState(() => {
     const u = localStorage.getItem("user");
     return u ? JSON.parse(u) : null;
   });
-  const [authView, setAuthView] = useState<View>("login");
+  const [authView, setAuthView] = useState("login");
   const [activePage, setActivePage] = useState("dashboard");
 
-  const handleLogin = (token: string, user: any) => {
+  const handleLogin = (token, user) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
     setCurrentUser(user);

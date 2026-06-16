@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Icon } from "../Common/Icon";
 import { notificationsApi } from "../../api/notifications";
-import type { Notification } from "../../api/notifications";
 
 const NAV_ITEMS = [
   { key: "dashboard",    label: "Dashboard" },
@@ -12,14 +11,7 @@ const NAV_ITEMS = [
  
 ];
 
-interface HeaderProps {
-  activePage: string;
-  setActivePage: (page: string) => void;
-  onLogout: () => void;
-  user?: any;
-}
-
-const getIconForType = (type: string) => {
+const getIconForType = (type) => {
   switch (type) {
     case "demande_approuvee":  return "✅";
     case "demande_refusee":    return "❌";
@@ -28,11 +20,11 @@ const getIconForType = (type: string) => {
   }
 };
 
-export const Header: React.FC<HeaderProps> = ({ activePage, setActivePage, onLogout, user }) => {
+export const Header = ({ activePage, setActivePage, onLogout, user }) => {
   const [showUserDropdown,  setShowUserDropdown]  = useState(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [notifications,     setNotifications]     = useState<Notification[]>([]);
+  const [notifications,     setNotifications]     = useState([]);
   const [notifLoading,      setNotifLoading]      = useState(false);
   const [notifCount,        setNotifCount]        = useState(0);
 
@@ -72,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({ activePage, setActivePage, onLog
     }
   };
 
-  const handleMarquerLue = async (id: number) => {
+  const handleMarquerLue = async (id) => {
     try {
       await notificationsApi.marquerLue(id);
       setNotifications(prev =>

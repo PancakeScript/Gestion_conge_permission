@@ -1,19 +1,14 @@
 import { useState } from "react";
 import { authApi } from "../../api/auth";
 
-interface LoginProps {
-  onLogin: (token: string, user: any) => void;
-  onRegister: () => void;
-}
-
-export default function Login({ onLogin, onRegister }: LoginProps) {
+export default function Login({ onLogin, onRegister }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     if (!email || !password) { setError("Veuillez remplir tous les champs."); return; }
@@ -21,7 +16,7 @@ export default function Login({ onLogin, onRegister }: LoginProps) {
     try {
       const data = await authApi.login({ mail: email, mdp: password });
       onLogin(data.token, data.user);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Email ou mot de passe incorrect.");
     } finally {
       setLoading(false);

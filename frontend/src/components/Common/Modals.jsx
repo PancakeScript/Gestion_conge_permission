@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { Icon } from "./Icon";
 
-export function ModalDemande({ demande, onClose, onAction }: {
-  demande: any;
-  onClose: () => void;
-  onAction: (id: number, action: "approuve_rh" | "refuse", comment: string) => void;
-}) {
+export function ModalDemande({ demande, onClose, onAction }) {
   const [comment, setComment] = useState("");
   const dejaApprouvee = demande.statut === "approuve_rh";
 
@@ -61,11 +57,7 @@ export function ModalDemande({ demande, onClose, onAction }: {
   );
 }
 
-export function ModalEmploye({ employe, onClose, onSave }: {
-  employe?: any;
-  onClose: () => void;
-  onSave: (data: any) => void;
-}) {
+export function ModalEmploye({ employe, onClose, onSave }) {
   const [form, setForm] = useState(employe || {
     nom: "", prenom: "", dept: "", telephone: "", adresse: "", statut: "actif", email: ""
   });
@@ -109,11 +101,7 @@ export function ModalEmploye({ employe, onClose, onSave }: {
   );
 }
 
-export function ModalType({ type, onClose, onSave }: {
-  type?: any;
-  onClose: () => void;
-  onSave: (data: any) => void;
-}) {
+export function ModalType({ type, onClose, onSave }) {
   const [form, setForm] = useState(type || { nom: "", duree: 0, statut: "actif" });
   return (
     <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -147,11 +135,7 @@ export function ModalType({ type, onClose, onSave }: {
   );
 }
 
-export function ModalFerie({ ferie, onClose, onSave }: {
-  ferie?: any;
-  onClose: () => void;
-  onSave: (data: any) => void;
-}) {
+export function ModalFerie({ ferie, onClose, onSave }) {
   const [form, setForm] = useState(ferie || { nom: "", date: "" });
   return (
     <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -180,10 +164,7 @@ export function ModalFerie({ ferie, onClose, onSave }: {
   );
 }
 
-export function ModalNotif({ onClose, onSend }: {
-  onClose: () => void;
-  onSend: (data: any) => void;
-}) {
+export function ModalNotif({ onClose, onSend }) {
   const [form, setForm] = useState({ destinataire: "", message: "" });
   return (
     <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center" }}>

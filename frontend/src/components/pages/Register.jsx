@@ -2,30 +2,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../api/auth";
 
-interface RegisterProps {
-  onBack?: () => void;
-}
-
-type FormData = {
-  nom: string; 
-  prenom: string; 
-  email: string; 
-  telephone: string;
-  role: string; 
-  password: string; 
-  confirmPassword: string;
-};
-
-function getPasswordStrength(pw: string): { level: number; label: string } {
+function getPasswordStrength(pw) {
   if (!pw) return { level: 0, label: "" };
   if (pw.length < 6) return { level: 1, label: "Faible" };
   if (pw.length < 10 || !/[0-9]/.test(pw)) return { level: 2, label: "Moyen" };
   return { level: 3, label: "Fort" };
 }
 
-export default function Register({ onBack }: RegisterProps) {
+export default function Register({ onBack }) {
   const navigate = useNavigate();
-  const [form, setForm] = useState<FormData>({
+  const [form, setForm] = useState({
     nom: "", prenom: "", email: "", telephone: "",
     role: "", password: "", confirmPassword: ""
   });
@@ -35,8 +21,8 @@ export default function Register({ onBack }: RegisterProps) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const set = (field: keyof FormData) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+  const set = (field) =>
+    (e) =>
       setForm(f => ({ ...f, [field]: e.target.value }));
 
   const pwStrength = getPasswordStrength(form.password);
@@ -49,7 +35,7 @@ export default function Register({ onBack }: RegisterProps) {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); setSuccess("");
 
@@ -84,7 +70,7 @@ export default function Register({ onBack }: RegisterProps) {
           navigate("/login");
         }
       }, 2000);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Erreur lors de la création du compte.");
     } finally {
       setLoading(false);

@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Icon } from "../Common/Icon";
 import { ModalFerie } from "../Common/Modals";
 import { feriesApi } from "../../api/feries";
-import type { JourFerie } from "../../api/feries";
 
-export const Feries: React.FC = () => {
-  const [feries, setFeries] = useState<JourFerie[]>([]);
+export const Feries = () => {
+  const [feries, setFeries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showFerieModal, setShowFerieModal] = useState(false);
-  const [editingFerie, setEditingFerie] = useState<JourFerie | null>(null);
+  const [editingFerie, setEditingFerie] = useState(null);
 
   useEffect(() => {
     fetchFeries();
@@ -21,14 +20,14 @@ export const Feries: React.FC = () => {
     try {
       const data = await feriesApi.getAll();
       setFeries(Array.isArray(data) ? data : []);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Erreur lors du chargement");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSaveFerie = async (data: any) => {
+  const handleSaveFerie = async (data) => {
     try {
       if (editingFerie) {
         const updated = await feriesApi.update(editingFerie.id, data);
@@ -39,17 +38,17 @@ export const Feries: React.FC = () => {
       }
       setShowFerieModal(false);
       setEditingFerie(null);
-    } catch (err: any) {
+    } catch (err) {
       alert(err.message || "Erreur lors de la sauvegarde");
     }
   };
 
-  const handleDeleteFerie = async (id: number) => {
+  const handleDeleteFerie = async (id) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer ce jour férié ?")) {
       try {
         await feriesApi.delete(id);
         setFeries(feries.filter(f => f.id !== id));
-      } catch (err: any) {
+      } catch (err) {
         alert(err.message || "Erreur lors de la suppression");
       }
     }

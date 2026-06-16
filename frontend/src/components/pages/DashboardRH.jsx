@@ -3,17 +3,11 @@ import { Icon } from "../Common/Icon";
 import { statutBadge } from "../Common/Badges";
 import { api } from "../../api/client";
 
-interface DashboardProps {
-  demandes: any[];
-  onTraiterDemande: (demande: any) => void;
-  onVoirTout: () => void;
-}
-
-export const Dashboard: React.FC<DashboardProps> = ({ onTraiterDemande, onVoirTout }) => {
-  const [stats,          setStats]          = useState<any[]>([]);
-  const [absencesDept,   setAbsencesDept]   = useState<any[]>([]);
-  const [topConges,      setTopConges]      = useState<any[]>([]);
-  const [demandes,       setDemandes]       = useState<any[]>([]);
+export const Dashboard = ({ onTraiterDemande, onVoirTout }) => {
+  const [stats,          setStats]          = useState([]);
+  const [absencesDept,   setAbsencesDept]   = useState([]);
+  const [topConges,      setTopConges]      = useState([]);
+  const [demandes,       setDemandes]       = useState([]);
   const [loading,        setLoading]        = useState(true);
 
   useEffect(() => {
