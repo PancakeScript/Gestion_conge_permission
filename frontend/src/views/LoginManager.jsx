@@ -45,7 +45,7 @@ export default function LoginManager() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        .login-root { min-height: 100vh; display: flex; font-family: 'DM Sans', sans-serif; background: #f5f0e8; }
+        .login-root { min-height: 100vh; display: flex; font-family: 'DM Sans', sans-serif; background: #faf7f2; }
         .left-panel { flex: 1; background: linear-gradient(160deg, #2c2418 0%, #3d3020 50%, #2c2418 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 52px; position: relative; overflow: hidden; }
         .left-panel::before { content: ''; position: absolute; top: -100px; left: -100px; width: 480px; height: 480px; background: radial-gradient(circle, rgba(212,175,100,0.15) 0%, transparent 70%); pointer-events: none; }
         .left-panel::after { content: ''; position: absolute; bottom: -80px; right: -80px; width: 380px; height: 380px; background: radial-gradient(circle, rgba(180,140,80,0.1) 0%, transparent 70%); pointer-events: none; }
