@@ -16,11 +16,6 @@ const DashboardManager = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterEmploye, setFilterEmploye] = useState("");
   const [filterType, setFilterType] = useState("");
-  const [filterStatut, setFilterStatut] = useState("en_attente");
-
-  // IDs des demandes traitées localement → toujours affichées même si filtre statut ne correspond pas
-  const [processedCongeIds, setProcessedCongeIds] = useState(new Set());
-  const [processedPermIds, setProcessedPermIds] = useState(new Set());
 
   const fetchDashboard = async () => {
     try {
@@ -43,7 +38,7 @@ const DashboardManager = () => {
   const handleActionConge = async (id, statut) => {
     try {
       await managerApi.updateStatutConge(id, statut, "Traité par le manager");
-      // Mise à jour locale du statut (demande reste visible)
+      // Mise à jour locale du statut
       setDashboardData(prev => ({
         ...prev,
         employes: prev.employes.map(e => ({
@@ -55,8 +50,6 @@ const DashboardManager = () => {
           ),
         })),
       }));
-      // Marquer cet ID comme traité → il restera visible quel que soit le filtre
-      setProcessedCongeIds(prev => new Set([...prev, id]));
     } catch (err) {
       alert("Erreur lors de la mise à jour du congé.");
     }
@@ -65,7 +58,7 @@ const DashboardManager = () => {
   const handleActionPermission = async (id, statut) => {
     try {
       await managerApi.updateStatutPermission(id, statut, "Traité par le manager");
-      // Mise à jour locale du statut (demande reste visible)
+      // Mise à jour locale du statut
       setDashboardData(prev => ({
         ...prev,
         employes: prev.employes.map(e => ({
@@ -77,8 +70,6 @@ const DashboardManager = () => {
           ),
         })),
       }));
-      // Marquer cet ID comme traité → il restera visible quel que soit le filtre
-      setProcessedPermIds(prev => new Set([...prev, id]));
     } catch (err) {
       alert("Erreur lors de la mise à jour de la permission.");
     }
@@ -110,11 +101,8 @@ const DashboardManager = () => {
     ),
   ];
 
-  const filtrerDemandes = (demandes, processedIds, idKey) => {
+  const filtrerDemandes = (demandes) => {
     return demandes.filter(d => {
-      // Les demandes traitées localement sont TOUJOURS affichées, quel que soit le filtre
-      if (processedIds.has(d[idKey])) return true;
-
       const nomComplet = `${d.employe.prenom_employe} ${d.employe.nom_employe}`.toLowerCase();
       const searchMatch =
         searchTerm === "" ||
@@ -123,17 +111,149 @@ const DashboardManager = () => {
         (d.motif || "").toLowerCase().includes(searchTerm.toLowerCase());
       const employeMatch = filterEmploye === "" || d.employe.id_employe === parseInt(filterEmploye);
       const typeMatch = filterType === "" || d.types_conge?.nom_types_conge === filterType;
-      const statutMatch = filterStatut === "" || d.statut_demandes_conge === filterStatut || d.statut === filterStatut;
-      return searchMatch && employeMatch && typeMatch && statutMatch;
+      return searchMatch && employeMatch && typeMatch;
     });
   };
 
   const tousConges = employes.flatMap(e => e.demandes_conge);
   const toutesPermissions = employes.flatMap(e => e.demandes_permission);
 
-  // Les demandes traitées localement passent toujours le filtre
-  const congesAffiches = filtrerDemandes(tousConges, processedCongeIds, "id_demande_conde");
-  const permissionsAffichees = filtrerDemandes(toutesPermissions, processedPermIds, "id_demande_permission");
+  const congesAffiches = filtrerDemandes(tousConges);
+  const permissionsAffichees = filtrerDemandes(toutesPermissions);
+
+  const demandesEnAttente = [
+    ...congesAffiches.filter(c => c.statut_demandes_conge === "en_attente").map(c => ({ ...c, type_demande: "conge" })),
+    ...permissionsAffichees.filter(p => p.statut === "en_attente").map(p => ({ ...p, type_demande: "permission" }))
+  ].sort((a, b) => {
+    const dateA = a.type_demande === "conge" ? new Date(a.date_demande) : new Date(a.date);
+    const dateB = b.type_demande === "conge" ? new Date(b.date_demande) : new Date(b.date);
+    return dateB - dateA;
+  });
+
+  const demandesApprouvees = [
+    ...congesAffiches.filter(c => c.statut_demandes_conge === "approuve_manager" || c.statut_demandes_conge === "approuve_rh" || c.statut_demandes_conge === "approuve").map(c => ({ ...c, type_demande: "conge" })),
+    ...permissionsAffichees.filter(p => p.statut === "approuve_manager" || p.statut === "approuve").map(p => ({ ...p, type_demande: "permission" }))
+  ].sort((a, b) => {
+    const dateA = a.type_demande === "conge" ? new Date(a.date_demande) : new Date(a.date);
+    const dateB = b.type_demande === "conge" ? new Date(b.date_demande) : new Date(b.date);
+    return dateB - dateA;
+  });
+
+  const demandesRefusees = [
+    ...congesAffiches.filter(c => c.statut_demandes_conge === "refuse").map(c => ({ ...c, type_demande: "conge" })),
+    ...permissionsAffichees.filter(p => p.statut === "refuse").map(p => ({ ...p, type_demande: "permission" }))
+  ].sort((a, b) => {
+    const dateA = a.type_demande === "conge" ? new Date(a.date_demande) : new Date(a.date);
+    const dateB = b.type_demande === "conge" ? new Date(b.date_demande) : new Date(b.date);
+    return dateB - dateA;
+  });
+
+  const renderRequestCard = (demande) => {
+    const isConge = demande.type_demande === "conge";
+    const id = isConge ? demande.id_demande_conde : demande.id_demande_permission;
+    const st = isConge ? demande.statut_demandes_conge : demande.statut;
+    const traite = st !== "en_attente";
+    
+    const badgeClass = st === "approuve_manager" || st === "approuve" ? "approuve"
+      : st === "approuve_rh" ? "approuve-rh"
+      : st === "refuse" ? "refuse"
+      : "attente";
+      
+    const badgeLabel = st === "approuve_manager" ? "Validé manager"
+      : st === "approuve_rh" ? "Approuvé RH"
+      : st === "refuse" ? "Refusé"
+      : "En attente";
+
+    return (
+      <div key={`${demande.type_demande}-${id}`} className="mgr-request-card">
+        <div className="mgr-card-header">
+          <span className={`mgr-type-badge ${isConge ? "conge" : "permission"}`}>
+            {isConge ? "Congé" : "Permission"}
+          </span>
+          {traite && <span className={`mgr-statut-badge ${badgeClass}`}>{badgeLabel}</span>}
+        </div>
+        
+        <div>
+          <p className="mgr-card-emp">
+            {demande.employe.prenom_employe} {demande.employe.nom_employe}
+          </p>
+          
+          <div className="mgr-card-details">
+            {isConge ? (
+              <>
+                <div className="mgr-card-detail-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  <span>
+                    Du {new Date(demande.date_debut).toLocaleDateString("fr-FR")} au {new Date(demande.date_fin).toLocaleDateString("fr-FR")}
+                  </span>
+                </div>
+                <div className="mgr-card-detail-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 8v4l3 3" />
+                  </svg>
+                  <span>
+                    Type : {demande.types_conge.nom_types_conge} ({demande.nombre_jours} j)
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="mgr-card-detail-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  <span>
+                    Le {new Date(demande.date).toLocaleDateString("fr-FR")}
+                  </span>
+                </div>
+                <div className="mgr-card-detail-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 8v4l3 3" />
+                  </svg>
+                  <span>
+                    Heure : {demande.heure_debut} → {demande.heure_fin}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+          
+          {demande.motif && (
+            <div className="mgr-card-motif" title="Motif">
+              {demande.motif}
+            </div>
+          )}
+        </div>
+        
+        {!traite && (
+          <div className="mgr-card-actions">
+            <button 
+              className="mgr-card-btn-approve" 
+              onClick={() => isConge ? handleActionConge(id, "approuve_manager") : handleActionPermission(id, "approuve_manager")}
+            >
+              Approuver
+            </button>
+            <button 
+              className="mgr-card-btn-reject" 
+              onClick={() => isConge ? handleActionConge(id, "refuse") : handleActionPermission(id, "refuse")}
+            >
+              Refuser
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   // Compteur basé sur toutes les données (pas seulement l'affichage filtré)
   const totalEnAttente = tousConges.filter(d => d.statut_demandes_conge === "en_attente").length
@@ -191,22 +311,53 @@ const DashboardManager = () => {
         .mgr-alert.danger { background: #fef5f5; border-color: #f5c0c0; border-left-color: #c0392b; }
         .mgr-alert h3 { font-family: 'Playfair Display', serif; font-size: 16px; color: #2c2418; margin-bottom: 8px; font-weight: 600; }
         .mgr-alert-item { font-size: 14px; color: #5e5340; margin-bottom: 4px; }
+        
+        /* ── Kanban Columns ── */
+        .mgr-columns-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 10px; width: 100%; }
+        .mgr-column { background: #faf7f2; border: 1px solid #e8e0d0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; min-height: 500px; }
+        
+        .mgr-column-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid #e0d8cc; }
+        .mgr-column-title { font-family: 'Playfair Display', serif; font-size: 18px; color: #2c2418; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+        .mgr-column-title svg { width: 20px; height: 20px; }
+        .mgr-column-badge { background: #e0d8cc; color: #2c2418; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 12px; }
 
-        /* ── Section Card ── */
-        .mgr-section-card { background: #faf7f2; border: 1px solid #e8e0d0; border-radius: 16px; padding: 24px; margin-bottom: 24px; }
-        .mgr-section-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #2c2418; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        .mgr-section-title svg { width: 22px; height: 22px; color: #b8943c; flex-shrink: 0; }
+        /* Variations par colonne */
+        .mgr-column.attente { border-top: 4px solid #b8943c; }
+        .mgr-column.attente .mgr-column-title svg { color: #b8943c; }
+        .mgr-column.attente .mgr-column-badge { background: #fff8e6; color: #b8943c; }
+        
+        .mgr-column.approuve { border-top: 4px solid #2e7d32; }
+        .mgr-column.approuve .mgr-column-title svg { color: #2e7d32; }
+        .mgr-column.approuve .mgr-column-badge { background: #e8f5e9; color: #2e7d32; }
+        
+        .mgr-column.refuse { border-top: 4px solid #c0392b; }
+        .mgr-column.refuse .mgr-column-title svg { color: #c0392b; }
+        .mgr-column.refuse .mgr-column-badge { background: #fdecea; color: #c0392b; }
 
-        /* ── Request Items ── */
-        .mgr-request-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f0ede5; flex-wrap: wrap; gap: 12px; }
-        .mgr-request-item:last-child { border-bottom: none; }
-        .mgr-employee-name { font-weight: 600; font-size: 15px; color: #2c2418; margin-bottom: 3px; }
-        .mgr-details { color: #6b5c45; font-size: 13px; }
-        .mgr-request-actions { display: flex; gap: 8px; }
-        .mgr-btn-approve { background: linear-gradient(135deg, #d4af64, #b8943c); color: #2c2418; border: none; padding: 8px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 13px; font-family: 'DM Sans', sans-serif; }
-        .mgr-btn-approve:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(180,140,60,0.3); }
-        .mgr-btn-reject { background: #ffffff; border: 1.5px solid #c0392b; color: #c0392b; padding: 8px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 13px; font-family: 'DM Sans', sans-serif; }
-        .mgr-btn-reject:hover { background: #fef5f5; }
+        /* Request Cards inside columns */
+        .mgr-card-list { display: flex; flex-direction: column; gap: 12px; }
+        .mgr-request-card { background: #ffffff; border: 1px solid #e8e0d0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; transition: all 0.2s ease; position: relative; }
+        .mgr-request-card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(44, 36, 24, 0.06); border-color: #d4af64; }
+        
+        .mgr-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+        .mgr-type-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px; }
+        .mgr-type-badge.conge { background: #e3f2fd; color: #1565c0; }
+        .mgr-type-badge.permission { background: #fff3e0; color: #e65100; }
+        
+        .mgr-card-emp { font-weight: 600; font-size: 14px; color: #2c2418; }
+        .mgr-card-details { font-size: 13px; color: #6b5c45; display: flex; flex-direction: column; gap: 4px; }
+        .mgr-card-detail-item { display: flex; align-items: center; gap: 6px; }
+        .mgr-card-detail-item svg { width: 14px; height: 14px; color: #a89070; flex-shrink: 0; }
+        
+        .mgr-card-motif { font-size: 12px; font-style: italic; color: #8c7b65; background: #faf7f2; padding: 6px 10px; border-radius: 6px; border-left: 2.5px solid #d4af64; margin-top: 4px; word-break: break-word; }
+        
+        .mgr-card-actions { display: flex; gap: 8px; margin-top: 4px; }
+        .mgr-card-actions button { flex: 1; padding: 8px; font-size: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .mgr-card-btn-approve { background: linear-gradient(135deg, #d4af64, #b8943c); border: none; color: #2c2418; }
+        .mgr-card-btn-approve:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(180,140,60,0.25); }
+        .mgr-card-btn-reject { background: #ffffff; border: 1px solid #c0392b; color: #c0392b; }
+        .mgr-card-btn-reject:hover { background: #fef5f5; }
+        
         .mgr-empty-state { text-align: center; color: #a89070; font-style: italic; padding: 28px 0; font-size: 14px; }
 
         /* ── Statut Badge ── */
@@ -339,16 +490,8 @@ const DashboardManager = () => {
                   ))}
                 </select>
 
-                <select className="mgr-filter-select" value={filterStatut} onChange={(e) => setFilterStatut(e.target.value)}>
-                  <option value="">Tous les statuts</option>
-                  <option value="en_attente">En attente</option>
-                  <option value="approuve_manager">Approuvé manager</option>
-                  <option value="approuve_rh">Approuvé RH</option>
-                  <option value="refuse">Refusé</option>
-                </select>
-
                 <button className="mgr-reset-btn" onClick={() => {
-                  setSearchInput(""); setSearchTerm(""); setFilterEmploye(""); setFilterType(""); setFilterStatut("en_attente");
+                  setSearchInput(""); setSearchTerm(""); setFilterEmploye(""); setFilterType("");
                 }}>
                   Réinitialiser
                 </button>
@@ -380,116 +523,71 @@ const DashboardManager = () => {
                 </div>
               )}
 
-              {/* Demandes de congé */}
-              <div className="mgr-section-card">
-                <h2 className="mgr-section-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="2" y="7" width="20" height="14" rx="2"/>
-                    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                    <line x1="12" y1="12" x2="12" y2="16"/>
-                    <line x1="10" y1="14" x2="14" y2="14"/>
-                  </svg>
-                  Demandes de congé {filterStatut ? `(${filterStatut.replace(/_/g, " ")})` : ""}
-                </h2>
-                {congesAffiches.length === 0 ? (
-                  <div className="mgr-empty-state">Aucune demande trouvée.</div>
-                ) : (
-                  congesAffiches.map(demande => {
-                    const st = demande.statut_demandes_conge;
-                    const traite = st !== "en_attente";
-                    const badgeClass = st === "approuve_manager" || st === "approuve" ? "approuve"
-                      : st === "approuve_rh" ? "approuve-rh"
-                      : st === "refuse" ? "refuse"
-                      : "attente";
-                    const badgeLabel = st === "approuve_manager" ? "Validé manager"
-                      : st === "approuve_rh" ? "Approuvé RH"
-                      : st === "refuse" ? "Refusé"
-                      : "En attente";
-                    return (
-                      <div key={demande.id_demande_conde} className="mgr-request-item" style={traite ? { opacity: 0.85, background: "#fdfcf8" } : {}}>
-                        <div>
-                          <p className="mgr-employee-name">
-                            {demande.employe.prenom_employe} {demande.employe.nom_employe}
-                          </p>
-                          <p className="mgr-details">
-                            {demande.types_conge.nom_types_conge} — du{" "}
-                            {new Date(demande.date_debut).toLocaleDateString("fr-FR")} au{" "}
-                            {new Date(demande.date_fin).toLocaleDateString("fr-FR")}
-                            {demande.motif && <span> · Motif : {demande.motif}</span>}
-                          </p>
-                        </div>
-                        <div className="mgr-request-actions">
-                          {traite ? (
-                            <span className={`mgr-statut-badge ${badgeClass}`}>{badgeLabel}</span>
-                          ) : (
-                            <>
-                              <button className="mgr-btn-approve" onClick={() => handleActionConge(demande.id_demande_conde, "approuve_manager")}>
-                                Approuver
-                              </button>
-                              <button className="mgr-btn-reject" onClick={() => handleActionConge(demande.id_demande_conde, "refuse")}>
-                                Refuser
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+              {/* Colonnes de Demandes (Kanban) */}
+              <div className="mgr-columns-container">
+                {/* 1. Colonne En Attente */}
+                <div className="mgr-column attente">
+                  <div className="mgr-column-header">
+                    <h2 className="mgr-column-title">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                      </svg>
+                      En attente
+                    </h2>
+                    <span className="mgr-column-badge">{demandesEnAttente.length}</span>
+                  </div>
+                  <div className="mgr-card-list">
+                    {demandesEnAttente.length === 0 ? (
+                      <div className="mgr-empty-state">Aucune demande en attente.</div>
+                    ) : (
+                      demandesEnAttente.map(demande => renderRequestCard(demande))
+                    )}
+                  </div>
+                </div>
 
-              {/* Demandes de permission */}
-              <div className="mgr-section-card">
-                <h2 className="mgr-section-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="12 6 12 12 16 14"/>
-                  </svg>
-                  Demandes de permission {filterStatut ? `(${filterStatut.replace(/_/g, " ")})` : ""}
-                </h2>
-                {permissionsAffichees.length === 0 ? (
-                  <div className="mgr-empty-state">Aucune demande trouvée.</div>
-                ) : (
-                  permissionsAffichees.map(demande => {
-                    const st = demande.statut;
-                    const traite = st !== "en_attente";
-                    const badgeClass = st === "approuve_manager" || st === "approuve" ? "approuve"
-                      : st === "approuve_rh" ? "approuve-rh"
-                      : st === "refuse" ? "refuse"
-                      : "attente";
-                    const badgeLabel = st === "approuve_manager" ? "Validé manager"
-                      : st === "approuve_rh" ? "Approuvé RH"
-                      : st === "refuse" ? "Refusé"
-                      : "En attente";
-                    return (
-                      <div key={demande.id_demande_permission} className="mgr-request-item" style={traite ? { opacity: 0.85, background: "#fdfcf8" } : {}}>
-                        <div>
-                          <p className="mgr-employee-name">
-                            {demande.employe.prenom_employe} {demande.employe.nom_employe}
-                          </p>
-                          <p className="mgr-details">
-                            Le {new Date(demande.date).toLocaleDateString("fr-FR")} · {demande.heure_debut} → {demande.heure_fin}
-                            {demande.motif && <span> · Motif : {demande.motif}</span>}
-                          </p>
-                        </div>
-                        <div className="mgr-request-actions">
-                          {traite ? (
-                            <span className={`mgr-statut-badge ${badgeClass}`}>{badgeLabel}</span>
-                          ) : (
-                            <>
-                              <button className="mgr-btn-approve" onClick={() => handleActionPermission(demande.id_demande_permission, "approuve_manager")}>
-                                Approuver
-                              </button>
-                              <button className="mgr-btn-reject" onClick={() => handleActionPermission(demande.id_demande_permission, "refuse")}>
-                                Refuser
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
+                {/* 2. Colonne Acceptées */}
+                <div className="mgr-column approuve">
+                  <div className="mgr-column-header">
+                    <h2 className="mgr-column-title">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                      </svg>
+                      Acceptées
+                    </h2>
+                    <span className="mgr-column-badge">{demandesApprouvees.length}</span>
+                  </div>
+                  <div className="mgr-card-list">
+                    {demandesApprouvees.length === 0 ? (
+                      <div className="mgr-empty-state">Aucune demande acceptée.</div>
+                    ) : (
+                      demandesApprouvees.map(demande => renderRequestCard(demande))
+                    )}
+                  </div>
+                </div>
+
+                {/* 3. Colonne Refusées */}
+                <div className="mgr-column refuse">
+                  <div className="mgr-column-header">
+                    <h2 className="mgr-column-title">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                      </svg>
+                      Refusées
+                    </h2>
+                    <span className="mgr-column-badge">{demandesRefusees.length}</span>
+                  </div>
+                  <div className="mgr-card-list">
+                    {demandesRefusees.length === 0 ? (
+                      <div className="mgr-empty-state">Aucune demande refusée.</div>
+                    ) : (
+                      demandesRefusees.map(demande => renderRequestCard(demande))
+                    )}
+                  </div>
+                </div>
               </div>
             </>
           )}

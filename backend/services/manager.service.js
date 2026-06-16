@@ -214,11 +214,9 @@ const getDashboardManager = async (id_manager) => {
     where: { id_departement: id_dep },
     include: {
       demandes_conge: {
-        where: { statut_demandes_conge: { in: ["en_attente", "approuve_manager", "approuve_rh"] } },
         include: { employe: true, types_conge: true },
       },
       demandes_permission: {
-        where: { statut: "en_attente" },
         include: { employe: true },
       },
     },
