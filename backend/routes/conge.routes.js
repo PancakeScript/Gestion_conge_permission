@@ -47,7 +47,7 @@ router.get("/notifications", verifierToken, async (req, res) => {
     const prisma = require("../config/database")
     const notifs = await prisma.notification.findMany({
       where: { id_utilisateur: req.user.id_utilisateur },
-      orderBy: { date_notification: "desc" },
+      orderBy: { date_envoie_notification: "desc" },
       take: 20,
     })
     res.json(notifs)

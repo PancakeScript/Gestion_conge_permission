@@ -5,34 +5,6 @@ const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
 });
 
-const refreshTokenIfNeeded = async () => {
-  const token = localStorage.getItem("token");
-  if (!token) return null;
-  
-  // Vérifie si expire dans moins de 2 minutes
-  const payload = JSON.parse(atob(token.split(".")[1]));
-  const expiresIn = payload.exp * 1000 - Date.now();
-  
-  if (expiresIn < 2 * 60 * 1000) {
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (!refreshToken) return token;
-    try {
-      const res = await fetch(`${BASE_URL}/auth/refresh`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        return data.token;
-      }
-    } catch {}
-  }
-  return token;
-};
-
-
 export const authApi = {
   login: async (credentials) => {
     const res = await fetch(`${BASE_URL}/auth/login`, {
@@ -53,7 +25,6 @@ export const authApi = {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Erreur d'inscription");
-    localStorage.setItem("refreshToken", data.refreshToken); 
     return data;
   },
 };
@@ -171,6 +142,73 @@ getProfil: async () => {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  getAbsences: async () => {
+    const res = await fetch(`${BASE_URL}/employes/absences`, { headers: authHeaders() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur");
+    return data;
+  },
+};
+
+export const managerApi = {
+  getDemandesConge: async () => {
+    const res = await fetch(`${BASE_URL}/manager/demandes-conge`, {
+      headers: authHeaders(),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur");
+    return data;
+  },
+
+  updateStatutConge: async (id, statut, commentaire) => {
+    const res = await fetch(`${BASE_URL}/manager/demandes-conge/${id}/statut`, {
+      method: "PATCH",
+      headers: authHeaders(),
+      body: JSON.stringify({ statut, commentaire }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur");
+    return data;
+  },
+
+  getDemandesPermission: async () => {
+    const res = await fetch(`${BASE_URL}/manager/demandes-permission`, {
+      headers: authHeaders(),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur");
+    return data;
+  },
+
+  updateStatutPermission: async (id, statut, commentaire) => {
+    const res = await fetch(`${BASE_URL}/manager/demandes-permission/${id}/statut`, {
+      method: "PATCH",
+      headers: authHeaders(),
+      body: JSON.stringify({ statut, commentaire }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur");
+    return data;
+  },
+
+  getDashboard: async () => {
+    const res = await fetch(`${BASE_URL}/manager/dashboard`, {
+      headers: authHeaders(),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur");
+    return data;
+  },
+
+  getPlanning: async () => {
+    const res = await fetch(`${BASE_URL}/manager/planning`, {
+      headers: authHeaders(),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur");
     return data;
   },
 };

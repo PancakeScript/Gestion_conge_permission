@@ -36,17 +36,18 @@ model departement {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model employe {
-  id_employe        Int              @id @default(autoincrement())
-  nom_employe       String           @db.VarChar(100)
-  prenom_employe    String           @db.VarChar(100)
-  telephone_employe String?          @db.VarChar(20)
-  adresse_employe   String?          @db.VarChar(255)
-  statut_employe    String?          @db.VarChar(20)
-  id_departement    Int?
-  id_utilisateur    Int?             @unique
-  demandes_conge    demandes_conge[]
-  departement       departement?     @relation(fields: [id_departement], references: [id_departement], onDelete: NoAction, onUpdate: NoAction)
-  utilisateur       utilisateur?     @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: NoAction, onUpdate: NoAction)
+  id_employe          Int                   @id @default(autoincrement())
+  nom_employe         String                @db.VarChar(100)
+  prenom_employe      String                @db.VarChar(100)
+  telephone_employe   String?               @db.VarChar(20)
+  adresse_employe     String?               @db.VarChar(255)
+  statut_employe      String?               @db.VarChar(20)
+  id_departement      Int?
+  id_utilisateur      Int?                  @unique
+  demandes_conge      demandes_conge[]
+  demandes_permission demandes_permission[]
+  departement         departement?          @relation(fields: [id_departement], references: [id_departement], onDelete: NoAction, onUpdate: NoAction)
+  utilisateur         utilisateur?          @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model jours_feries {
@@ -114,4 +115,16 @@ model utilisateur {
   manager         manager?
   notification    notification[]
   rh              rh?
+}
+
+model demandes_permission {
+  id_demande_permission Int      @id @default(autoincrement())
+  id_employe            Int
+  date                  DateTime @db.Date
+  heure_debut           DateTime @db.Time
+  heure_fin             DateTime @db.Time
+  motif                 String?
+  statut                String?  @db.VarChar(20) // en_attente, approuve_manager, refuse
+  commentaire_manager   String?
+  employe               employe  @relation(fields: [id_employe], references: [id_employe], onDelete: NoAction, onUpdate: NoAction)
 }

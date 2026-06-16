@@ -203,6 +203,17 @@ exports.Prisma.UtilisateurScalarFieldEnum = {
   mail: 'mail'
 };
 
+exports.Prisma.Demandes_permissionScalarFieldEnum = {
+  id_demande_permission: 'id_demande_permission',
+  id_employe: 'id_employe',
+  date: 'date',
+  heure_debut: 'heure_debut',
+  heure_fin: 'heure_fin',
+  motif: 'motif',
+  statut: 'statut',
+  commentaire_manager: 'commentaire_manager'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -228,7 +239,8 @@ exports.Prisma.ModelName = {
   notification: 'notification',
   rh: 'rh',
   types_conge: 'types_conge',
-  utilisateur: 'utilisateur'
+  utilisateur: 'utilisateur',
+  demandes_permission: 'demandes_permission'
 };
 
 /**

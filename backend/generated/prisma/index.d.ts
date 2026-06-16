@@ -58,6 +58,11 @@ export type types_conge = $Result.DefaultSelection<Prisma.$types_congePayload>
  * 
  */
 export type utilisateur = $Result.DefaultSelection<Prisma.$utilisateurPayload>
+/**
+ * Model demandes_permission
+ * 
+ */
+export type demandes_permission = $Result.DefaultSelection<Prisma.$demandes_permissionPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -269,6 +274,16 @@ export class PrismaClient<
     * ```
     */
   get utilisateur(): Prisma.utilisateurDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.demandes_permission`: Exposes CRUD operations for the **demandes_permission** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Demandes_permissions
+    * const demandes_permissions = await prisma.demandes_permission.findMany()
+    * ```
+    */
+  get demandes_permission(): Prisma.demandes_permissionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -711,7 +726,8 @@ export namespace Prisma {
     notification: 'notification',
     rh: 'rh',
     types_conge: 'types_conge',
-    utilisateur: 'utilisateur'
+    utilisateur: 'utilisateur',
+    demandes_permission: 'demandes_permission'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -727,7 +743,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "demandes_conge" | "departement" | "employe" | "jours_feries" | "manager" | "notification" | "rh" | "types_conge" | "utilisateur"
+      modelProps: "demandes_conge" | "departement" | "employe" | "jours_feries" | "manager" | "notification" | "rh" | "types_conge" | "utilisateur" | "demandes_permission"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1397,6 +1413,80 @@ export namespace Prisma {
           }
         }
       }
+      demandes_permission: {
+        payload: Prisma.$demandes_permissionPayload<ExtArgs>
+        fields: Prisma.demandes_permissionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.demandes_permissionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.demandes_permissionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload>
+          }
+          findFirst: {
+            args: Prisma.demandes_permissionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.demandes_permissionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload>
+          }
+          findMany: {
+            args: Prisma.demandes_permissionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload>[]
+          }
+          create: {
+            args: Prisma.demandes_permissionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload>
+          }
+          createMany: {
+            args: Prisma.demandes_permissionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.demandes_permissionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload>[]
+          }
+          delete: {
+            args: Prisma.demandes_permissionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload>
+          }
+          update: {
+            args: Prisma.demandes_permissionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload>
+          }
+          deleteMany: {
+            args: Prisma.demandes_permissionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.demandes_permissionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.demandes_permissionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload>[]
+          }
+          upsert: {
+            args: Prisma.demandes_permissionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$demandes_permissionPayload>
+          }
+          aggregate: {
+            args: Prisma.Demandes_permissionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDemandes_permission>
+          }
+          groupBy: {
+            args: Prisma.demandes_permissionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Demandes_permissionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.demandes_permissionCountArgs<ExtArgs>
+            result: $Utils.Optional<Demandes_permissionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1514,6 +1604,7 @@ export namespace Prisma {
     rh?: rhOmit
     types_conge?: types_congeOmit
     utilisateur?: utilisateurOmit
+    demandes_permission?: demandes_permissionOmit
   }
 
   /* Types for Logging */
@@ -1635,10 +1726,12 @@ export namespace Prisma {
 
   export type EmployeCountOutputType = {
     demandes_conge: number
+    demandes_permission: number
   }
 
   export type EmployeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     demandes_conge?: boolean | EmployeCountOutputTypeCountDemandes_congeArgs
+    demandes_permission?: boolean | EmployeCountOutputTypeCountDemandes_permissionArgs
   }
 
   // Custom InputTypes
@@ -1657,6 +1750,13 @@ export namespace Prisma {
    */
   export type EmployeCountOutputTypeCountDemandes_congeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: demandes_congeWhereInput
+  }
+
+  /**
+   * EmployeCountOutputType without action
+   */
+  export type EmployeCountOutputTypeCountDemandes_permissionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: demandes_permissionWhereInput
   }
 
 
@@ -4357,6 +4457,7 @@ export namespace Prisma {
     id_departement?: boolean
     id_utilisateur?: boolean
     demandes_conge?: boolean | employe$demandes_congeArgs<ExtArgs>
+    demandes_permission?: boolean | employe$demandes_permissionArgs<ExtArgs>
     departement?: boolean | employe$departementArgs<ExtArgs>
     utilisateur?: boolean | employe$utilisateurArgs<ExtArgs>
     _count?: boolean | EmployeCountOutputTypeDefaultArgs<ExtArgs>
@@ -4402,6 +4503,7 @@ export namespace Prisma {
   export type employeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_employe" | "nom_employe" | "prenom_employe" | "telephone_employe" | "adresse_employe" | "statut_employe" | "id_departement" | "id_utilisateur", ExtArgs["result"]["employe"]>
   export type employeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     demandes_conge?: boolean | employe$demandes_congeArgs<ExtArgs>
+    demandes_permission?: boolean | employe$demandes_permissionArgs<ExtArgs>
     departement?: boolean | employe$departementArgs<ExtArgs>
     utilisateur?: boolean | employe$utilisateurArgs<ExtArgs>
     _count?: boolean | EmployeCountOutputTypeDefaultArgs<ExtArgs>
@@ -4419,6 +4521,7 @@ export namespace Prisma {
     name: "employe"
     objects: {
       demandes_conge: Prisma.$demandes_congePayload<ExtArgs>[]
+      demandes_permission: Prisma.$demandes_permissionPayload<ExtArgs>[]
       departement: Prisma.$departementPayload<ExtArgs> | null
       utilisateur: Prisma.$utilisateurPayload<ExtArgs> | null
     }
@@ -4826,6 +4929,7 @@ export namespace Prisma {
   export interface Prisma__employeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     demandes_conge<T extends employe$demandes_congeArgs<ExtArgs> = {}>(args?: Subset<T, employe$demandes_congeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$demandes_congePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    demandes_permission<T extends employe$demandes_permissionArgs<ExtArgs> = {}>(args?: Subset<T, employe$demandes_permissionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     departement<T extends employe$departementArgs<ExtArgs> = {}>(args?: Subset<T, employe$departementArgs<ExtArgs>>): Prisma__departementClient<$Result.GetResult<Prisma.$departementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     utilisateur<T extends employe$utilisateurArgs<ExtArgs> = {}>(args?: Subset<T, employe$utilisateurArgs<ExtArgs>>): Prisma__utilisateurClient<$Result.GetResult<Prisma.$utilisateurPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
@@ -5287,6 +5391,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Demandes_congeScalarFieldEnum | Demandes_congeScalarFieldEnum[]
+  }
+
+  /**
+   * employe.demandes_permission
+   */
+  export type employe$demandes_permissionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+    where?: demandes_permissionWhereInput
+    orderBy?: demandes_permissionOrderByWithRelationInput | demandes_permissionOrderByWithRelationInput[]
+    cursor?: demandes_permissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Demandes_permissionScalarFieldEnum | Demandes_permissionScalarFieldEnum[]
   }
 
   /**
@@ -12182,6 +12310,1146 @@ export namespace Prisma {
 
 
   /**
+   * Model demandes_permission
+   */
+
+  export type AggregateDemandes_permission = {
+    _count: Demandes_permissionCountAggregateOutputType | null
+    _avg: Demandes_permissionAvgAggregateOutputType | null
+    _sum: Demandes_permissionSumAggregateOutputType | null
+    _min: Demandes_permissionMinAggregateOutputType | null
+    _max: Demandes_permissionMaxAggregateOutputType | null
+  }
+
+  export type Demandes_permissionAvgAggregateOutputType = {
+    id_demande_permission: number | null
+    id_employe: number | null
+  }
+
+  export type Demandes_permissionSumAggregateOutputType = {
+    id_demande_permission: number | null
+    id_employe: number | null
+  }
+
+  export type Demandes_permissionMinAggregateOutputType = {
+    id_demande_permission: number | null
+    id_employe: number | null
+    date: Date | null
+    heure_debut: Date | null
+    heure_fin: Date | null
+    motif: string | null
+    statut: string | null
+    commentaire_manager: string | null
+  }
+
+  export type Demandes_permissionMaxAggregateOutputType = {
+    id_demande_permission: number | null
+    id_employe: number | null
+    date: Date | null
+    heure_debut: Date | null
+    heure_fin: Date | null
+    motif: string | null
+    statut: string | null
+    commentaire_manager: string | null
+  }
+
+  export type Demandes_permissionCountAggregateOutputType = {
+    id_demande_permission: number
+    id_employe: number
+    date: number
+    heure_debut: number
+    heure_fin: number
+    motif: number
+    statut: number
+    commentaire_manager: number
+    _all: number
+  }
+
+
+  export type Demandes_permissionAvgAggregateInputType = {
+    id_demande_permission?: true
+    id_employe?: true
+  }
+
+  export type Demandes_permissionSumAggregateInputType = {
+    id_demande_permission?: true
+    id_employe?: true
+  }
+
+  export type Demandes_permissionMinAggregateInputType = {
+    id_demande_permission?: true
+    id_employe?: true
+    date?: true
+    heure_debut?: true
+    heure_fin?: true
+    motif?: true
+    statut?: true
+    commentaire_manager?: true
+  }
+
+  export type Demandes_permissionMaxAggregateInputType = {
+    id_demande_permission?: true
+    id_employe?: true
+    date?: true
+    heure_debut?: true
+    heure_fin?: true
+    motif?: true
+    statut?: true
+    commentaire_manager?: true
+  }
+
+  export type Demandes_permissionCountAggregateInputType = {
+    id_demande_permission?: true
+    id_employe?: true
+    date?: true
+    heure_debut?: true
+    heure_fin?: true
+    motif?: true
+    statut?: true
+    commentaire_manager?: true
+    _all?: true
+  }
+
+  export type Demandes_permissionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which demandes_permission to aggregate.
+     */
+    where?: demandes_permissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of demandes_permissions to fetch.
+     */
+    orderBy?: demandes_permissionOrderByWithRelationInput | demandes_permissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: demandes_permissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` demandes_permissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` demandes_permissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned demandes_permissions
+    **/
+    _count?: true | Demandes_permissionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Demandes_permissionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Demandes_permissionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Demandes_permissionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Demandes_permissionMaxAggregateInputType
+  }
+
+  export type GetDemandes_permissionAggregateType<T extends Demandes_permissionAggregateArgs> = {
+        [P in keyof T & keyof AggregateDemandes_permission]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDemandes_permission[P]>
+      : GetScalarType<T[P], AggregateDemandes_permission[P]>
+  }
+
+
+
+
+  export type demandes_permissionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: demandes_permissionWhereInput
+    orderBy?: demandes_permissionOrderByWithAggregationInput | demandes_permissionOrderByWithAggregationInput[]
+    by: Demandes_permissionScalarFieldEnum[] | Demandes_permissionScalarFieldEnum
+    having?: demandes_permissionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Demandes_permissionCountAggregateInputType | true
+    _avg?: Demandes_permissionAvgAggregateInputType
+    _sum?: Demandes_permissionSumAggregateInputType
+    _min?: Demandes_permissionMinAggregateInputType
+    _max?: Demandes_permissionMaxAggregateInputType
+  }
+
+  export type Demandes_permissionGroupByOutputType = {
+    id_demande_permission: number
+    id_employe: number
+    date: Date
+    heure_debut: Date
+    heure_fin: Date
+    motif: string | null
+    statut: string | null
+    commentaire_manager: string | null
+    _count: Demandes_permissionCountAggregateOutputType | null
+    _avg: Demandes_permissionAvgAggregateOutputType | null
+    _sum: Demandes_permissionSumAggregateOutputType | null
+    _min: Demandes_permissionMinAggregateOutputType | null
+    _max: Demandes_permissionMaxAggregateOutputType | null
+  }
+
+  type GetDemandes_permissionGroupByPayload<T extends demandes_permissionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Demandes_permissionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Demandes_permissionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Demandes_permissionGroupByOutputType[P]>
+            : GetScalarType<T[P], Demandes_permissionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type demandes_permissionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_demande_permission?: boolean
+    id_employe?: boolean
+    date?: boolean
+    heure_debut?: boolean
+    heure_fin?: boolean
+    motif?: boolean
+    statut?: boolean
+    commentaire_manager?: boolean
+    employe?: boolean | employeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["demandes_permission"]>
+
+  export type demandes_permissionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_demande_permission?: boolean
+    id_employe?: boolean
+    date?: boolean
+    heure_debut?: boolean
+    heure_fin?: boolean
+    motif?: boolean
+    statut?: boolean
+    commentaire_manager?: boolean
+    employe?: boolean | employeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["demandes_permission"]>
+
+  export type demandes_permissionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_demande_permission?: boolean
+    id_employe?: boolean
+    date?: boolean
+    heure_debut?: boolean
+    heure_fin?: boolean
+    motif?: boolean
+    statut?: boolean
+    commentaire_manager?: boolean
+    employe?: boolean | employeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["demandes_permission"]>
+
+  export type demandes_permissionSelectScalar = {
+    id_demande_permission?: boolean
+    id_employe?: boolean
+    date?: boolean
+    heure_debut?: boolean
+    heure_fin?: boolean
+    motif?: boolean
+    statut?: boolean
+    commentaire_manager?: boolean
+  }
+
+  export type demandes_permissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_demande_permission" | "id_employe" | "date" | "heure_debut" | "heure_fin" | "motif" | "statut" | "commentaire_manager", ExtArgs["result"]["demandes_permission"]>
+  export type demandes_permissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    employe?: boolean | employeDefaultArgs<ExtArgs>
+  }
+  export type demandes_permissionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    employe?: boolean | employeDefaultArgs<ExtArgs>
+  }
+  export type demandes_permissionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    employe?: boolean | employeDefaultArgs<ExtArgs>
+  }
+
+  export type $demandes_permissionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "demandes_permission"
+    objects: {
+      employe: Prisma.$employePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_demande_permission: number
+      id_employe: number
+      date: Date
+      heure_debut: Date
+      heure_fin: Date
+      motif: string | null
+      statut: string | null
+      commentaire_manager: string | null
+    }, ExtArgs["result"]["demandes_permission"]>
+    composites: {}
+  }
+
+  type demandes_permissionGetPayload<S extends boolean | null | undefined | demandes_permissionDefaultArgs> = $Result.GetResult<Prisma.$demandes_permissionPayload, S>
+
+  type demandes_permissionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<demandes_permissionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Demandes_permissionCountAggregateInputType | true
+    }
+
+  export interface demandes_permissionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['demandes_permission'], meta: { name: 'demandes_permission' } }
+    /**
+     * Find zero or one Demandes_permission that matches the filter.
+     * @param {demandes_permissionFindUniqueArgs} args - Arguments to find a Demandes_permission
+     * @example
+     * // Get one Demandes_permission
+     * const demandes_permission = await prisma.demandes_permission.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends demandes_permissionFindUniqueArgs>(args: SelectSubset<T, demandes_permissionFindUniqueArgs<ExtArgs>>): Prisma__demandes_permissionClient<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Demandes_permission that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {demandes_permissionFindUniqueOrThrowArgs} args - Arguments to find a Demandes_permission
+     * @example
+     * // Get one Demandes_permission
+     * const demandes_permission = await prisma.demandes_permission.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends demandes_permissionFindUniqueOrThrowArgs>(args: SelectSubset<T, demandes_permissionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__demandes_permissionClient<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Demandes_permission that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demandes_permissionFindFirstArgs} args - Arguments to find a Demandes_permission
+     * @example
+     * // Get one Demandes_permission
+     * const demandes_permission = await prisma.demandes_permission.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends demandes_permissionFindFirstArgs>(args?: SelectSubset<T, demandes_permissionFindFirstArgs<ExtArgs>>): Prisma__demandes_permissionClient<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Demandes_permission that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demandes_permissionFindFirstOrThrowArgs} args - Arguments to find a Demandes_permission
+     * @example
+     * // Get one Demandes_permission
+     * const demandes_permission = await prisma.demandes_permission.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends demandes_permissionFindFirstOrThrowArgs>(args?: SelectSubset<T, demandes_permissionFindFirstOrThrowArgs<ExtArgs>>): Prisma__demandes_permissionClient<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Demandes_permissions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demandes_permissionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Demandes_permissions
+     * const demandes_permissions = await prisma.demandes_permission.findMany()
+     * 
+     * // Get first 10 Demandes_permissions
+     * const demandes_permissions = await prisma.demandes_permission.findMany({ take: 10 })
+     * 
+     * // Only select the `id_demande_permission`
+     * const demandes_permissionWithId_demande_permissionOnly = await prisma.demandes_permission.findMany({ select: { id_demande_permission: true } })
+     * 
+     */
+    findMany<T extends demandes_permissionFindManyArgs>(args?: SelectSubset<T, demandes_permissionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Demandes_permission.
+     * @param {demandes_permissionCreateArgs} args - Arguments to create a Demandes_permission.
+     * @example
+     * // Create one Demandes_permission
+     * const Demandes_permission = await prisma.demandes_permission.create({
+     *   data: {
+     *     // ... data to create a Demandes_permission
+     *   }
+     * })
+     * 
+     */
+    create<T extends demandes_permissionCreateArgs>(args: SelectSubset<T, demandes_permissionCreateArgs<ExtArgs>>): Prisma__demandes_permissionClient<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Demandes_permissions.
+     * @param {demandes_permissionCreateManyArgs} args - Arguments to create many Demandes_permissions.
+     * @example
+     * // Create many Demandes_permissions
+     * const demandes_permission = await prisma.demandes_permission.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends demandes_permissionCreateManyArgs>(args?: SelectSubset<T, demandes_permissionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Demandes_permissions and returns the data saved in the database.
+     * @param {demandes_permissionCreateManyAndReturnArgs} args - Arguments to create many Demandes_permissions.
+     * @example
+     * // Create many Demandes_permissions
+     * const demandes_permission = await prisma.demandes_permission.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Demandes_permissions and only return the `id_demande_permission`
+     * const demandes_permissionWithId_demande_permissionOnly = await prisma.demandes_permission.createManyAndReturn({
+     *   select: { id_demande_permission: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends demandes_permissionCreateManyAndReturnArgs>(args?: SelectSubset<T, demandes_permissionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Demandes_permission.
+     * @param {demandes_permissionDeleteArgs} args - Arguments to delete one Demandes_permission.
+     * @example
+     * // Delete one Demandes_permission
+     * const Demandes_permission = await prisma.demandes_permission.delete({
+     *   where: {
+     *     // ... filter to delete one Demandes_permission
+     *   }
+     * })
+     * 
+     */
+    delete<T extends demandes_permissionDeleteArgs>(args: SelectSubset<T, demandes_permissionDeleteArgs<ExtArgs>>): Prisma__demandes_permissionClient<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Demandes_permission.
+     * @param {demandes_permissionUpdateArgs} args - Arguments to update one Demandes_permission.
+     * @example
+     * // Update one Demandes_permission
+     * const demandes_permission = await prisma.demandes_permission.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends demandes_permissionUpdateArgs>(args: SelectSubset<T, demandes_permissionUpdateArgs<ExtArgs>>): Prisma__demandes_permissionClient<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Demandes_permissions.
+     * @param {demandes_permissionDeleteManyArgs} args - Arguments to filter Demandes_permissions to delete.
+     * @example
+     * // Delete a few Demandes_permissions
+     * const { count } = await prisma.demandes_permission.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends demandes_permissionDeleteManyArgs>(args?: SelectSubset<T, demandes_permissionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Demandes_permissions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demandes_permissionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Demandes_permissions
+     * const demandes_permission = await prisma.demandes_permission.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends demandes_permissionUpdateManyArgs>(args: SelectSubset<T, demandes_permissionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Demandes_permissions and returns the data updated in the database.
+     * @param {demandes_permissionUpdateManyAndReturnArgs} args - Arguments to update many Demandes_permissions.
+     * @example
+     * // Update many Demandes_permissions
+     * const demandes_permission = await prisma.demandes_permission.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Demandes_permissions and only return the `id_demande_permission`
+     * const demandes_permissionWithId_demande_permissionOnly = await prisma.demandes_permission.updateManyAndReturn({
+     *   select: { id_demande_permission: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends demandes_permissionUpdateManyAndReturnArgs>(args: SelectSubset<T, demandes_permissionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Demandes_permission.
+     * @param {demandes_permissionUpsertArgs} args - Arguments to update or create a Demandes_permission.
+     * @example
+     * // Update or create a Demandes_permission
+     * const demandes_permission = await prisma.demandes_permission.upsert({
+     *   create: {
+     *     // ... data to create a Demandes_permission
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Demandes_permission we want to update
+     *   }
+     * })
+     */
+    upsert<T extends demandes_permissionUpsertArgs>(args: SelectSubset<T, demandes_permissionUpsertArgs<ExtArgs>>): Prisma__demandes_permissionClient<$Result.GetResult<Prisma.$demandes_permissionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Demandes_permissions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demandes_permissionCountArgs} args - Arguments to filter Demandes_permissions to count.
+     * @example
+     * // Count the number of Demandes_permissions
+     * const count = await prisma.demandes_permission.count({
+     *   where: {
+     *     // ... the filter for the Demandes_permissions we want to count
+     *   }
+     * })
+    **/
+    count<T extends demandes_permissionCountArgs>(
+      args?: Subset<T, demandes_permissionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Demandes_permissionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Demandes_permission.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Demandes_permissionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Demandes_permissionAggregateArgs>(args: Subset<T, Demandes_permissionAggregateArgs>): Prisma.PrismaPromise<GetDemandes_permissionAggregateType<T>>
+
+    /**
+     * Group by Demandes_permission.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {demandes_permissionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends demandes_permissionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: demandes_permissionGroupByArgs['orderBy'] }
+        : { orderBy?: demandes_permissionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, demandes_permissionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDemandes_permissionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the demandes_permission model
+   */
+  readonly fields: demandes_permissionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for demandes_permission.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__demandes_permissionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    employe<T extends employeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, employeDefaultArgs<ExtArgs>>): Prisma__employeClient<$Result.GetResult<Prisma.$employePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the demandes_permission model
+   */
+  interface demandes_permissionFieldRefs {
+    readonly id_demande_permission: FieldRef<"demandes_permission", 'Int'>
+    readonly id_employe: FieldRef<"demandes_permission", 'Int'>
+    readonly date: FieldRef<"demandes_permission", 'DateTime'>
+    readonly heure_debut: FieldRef<"demandes_permission", 'DateTime'>
+    readonly heure_fin: FieldRef<"demandes_permission", 'DateTime'>
+    readonly motif: FieldRef<"demandes_permission", 'String'>
+    readonly statut: FieldRef<"demandes_permission", 'String'>
+    readonly commentaire_manager: FieldRef<"demandes_permission", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * demandes_permission findUnique
+   */
+  export type demandes_permissionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+    /**
+     * Filter, which demandes_permission to fetch.
+     */
+    where: demandes_permissionWhereUniqueInput
+  }
+
+  /**
+   * demandes_permission findUniqueOrThrow
+   */
+  export type demandes_permissionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+    /**
+     * Filter, which demandes_permission to fetch.
+     */
+    where: demandes_permissionWhereUniqueInput
+  }
+
+  /**
+   * demandes_permission findFirst
+   */
+  export type demandes_permissionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+    /**
+     * Filter, which demandes_permission to fetch.
+     */
+    where?: demandes_permissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of demandes_permissions to fetch.
+     */
+    orderBy?: demandes_permissionOrderByWithRelationInput | demandes_permissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for demandes_permissions.
+     */
+    cursor?: demandes_permissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` demandes_permissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` demandes_permissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of demandes_permissions.
+     */
+    distinct?: Demandes_permissionScalarFieldEnum | Demandes_permissionScalarFieldEnum[]
+  }
+
+  /**
+   * demandes_permission findFirstOrThrow
+   */
+  export type demandes_permissionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+    /**
+     * Filter, which demandes_permission to fetch.
+     */
+    where?: demandes_permissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of demandes_permissions to fetch.
+     */
+    orderBy?: demandes_permissionOrderByWithRelationInput | demandes_permissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for demandes_permissions.
+     */
+    cursor?: demandes_permissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` demandes_permissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` demandes_permissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of demandes_permissions.
+     */
+    distinct?: Demandes_permissionScalarFieldEnum | Demandes_permissionScalarFieldEnum[]
+  }
+
+  /**
+   * demandes_permission findMany
+   */
+  export type demandes_permissionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+    /**
+     * Filter, which demandes_permissions to fetch.
+     */
+    where?: demandes_permissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of demandes_permissions to fetch.
+     */
+    orderBy?: demandes_permissionOrderByWithRelationInput | demandes_permissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing demandes_permissions.
+     */
+    cursor?: demandes_permissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` demandes_permissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` demandes_permissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of demandes_permissions.
+     */
+    distinct?: Demandes_permissionScalarFieldEnum | Demandes_permissionScalarFieldEnum[]
+  }
+
+  /**
+   * demandes_permission create
+   */
+  export type demandes_permissionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a demandes_permission.
+     */
+    data: XOR<demandes_permissionCreateInput, demandes_permissionUncheckedCreateInput>
+  }
+
+  /**
+   * demandes_permission createMany
+   */
+  export type demandes_permissionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many demandes_permissions.
+     */
+    data: demandes_permissionCreateManyInput | demandes_permissionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * demandes_permission createManyAndReturn
+   */
+  export type demandes_permissionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * The data used to create many demandes_permissions.
+     */
+    data: demandes_permissionCreateManyInput | demandes_permissionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * demandes_permission update
+   */
+  export type demandes_permissionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a demandes_permission.
+     */
+    data: XOR<demandes_permissionUpdateInput, demandes_permissionUncheckedUpdateInput>
+    /**
+     * Choose, which demandes_permission to update.
+     */
+    where: demandes_permissionWhereUniqueInput
+  }
+
+  /**
+   * demandes_permission updateMany
+   */
+  export type demandes_permissionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update demandes_permissions.
+     */
+    data: XOR<demandes_permissionUpdateManyMutationInput, demandes_permissionUncheckedUpdateManyInput>
+    /**
+     * Filter which demandes_permissions to update
+     */
+    where?: demandes_permissionWhereInput
+    /**
+     * Limit how many demandes_permissions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * demandes_permission updateManyAndReturn
+   */
+  export type demandes_permissionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * The data used to update demandes_permissions.
+     */
+    data: XOR<demandes_permissionUpdateManyMutationInput, demandes_permissionUncheckedUpdateManyInput>
+    /**
+     * Filter which demandes_permissions to update
+     */
+    where?: demandes_permissionWhereInput
+    /**
+     * Limit how many demandes_permissions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * demandes_permission upsert
+   */
+  export type demandes_permissionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the demandes_permission to update in case it exists.
+     */
+    where: demandes_permissionWhereUniqueInput
+    /**
+     * In case the demandes_permission found by the `where` argument doesn't exist, create a new demandes_permission with this data.
+     */
+    create: XOR<demandes_permissionCreateInput, demandes_permissionUncheckedCreateInput>
+    /**
+     * In case the demandes_permission was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<demandes_permissionUpdateInput, demandes_permissionUncheckedUpdateInput>
+  }
+
+  /**
+   * demandes_permission delete
+   */
+  export type demandes_permissionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+    /**
+     * Filter which demandes_permission to delete.
+     */
+    where: demandes_permissionWhereUniqueInput
+  }
+
+  /**
+   * demandes_permission deleteMany
+   */
+  export type demandes_permissionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which demandes_permissions to delete
+     */
+    where?: demandes_permissionWhereInput
+    /**
+     * Limit how many demandes_permissions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * demandes_permission without action
+   */
+  export type demandes_permissionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the demandes_permission
+     */
+    select?: demandes_permissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the demandes_permission
+     */
+    omit?: demandes_permissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: demandes_permissionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -12303,6 +13571,20 @@ export namespace Prisma {
   };
 
   export type UtilisateurScalarFieldEnum = (typeof UtilisateurScalarFieldEnum)[keyof typeof UtilisateurScalarFieldEnum]
+
+
+  export const Demandes_permissionScalarFieldEnum: {
+    id_demande_permission: 'id_demande_permission',
+    id_employe: 'id_employe',
+    date: 'date',
+    heure_debut: 'heure_debut',
+    heure_fin: 'heure_fin',
+    motif: 'motif',
+    statut: 'statut',
+    commentaire_manager: 'commentaire_manager'
+  };
+
+  export type Demandes_permissionScalarFieldEnum = (typeof Demandes_permissionScalarFieldEnum)[keyof typeof Demandes_permissionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -12554,6 +13836,7 @@ export namespace Prisma {
     id_departement?: IntNullableFilter<"employe"> | number | null
     id_utilisateur?: IntNullableFilter<"employe"> | number | null
     demandes_conge?: Demandes_congeListRelationFilter
+    demandes_permission?: Demandes_permissionListRelationFilter
     departement?: XOR<DepartementNullableScalarRelationFilter, departementWhereInput> | null
     utilisateur?: XOR<UtilisateurNullableScalarRelationFilter, utilisateurWhereInput> | null
   }
@@ -12568,6 +13851,7 @@ export namespace Prisma {
     id_departement?: SortOrderInput | SortOrder
     id_utilisateur?: SortOrderInput | SortOrder
     demandes_conge?: demandes_congeOrderByRelationAggregateInput
+    demandes_permission?: demandes_permissionOrderByRelationAggregateInput
     departement?: departementOrderByWithRelationInput
     utilisateur?: utilisateurOrderByWithRelationInput
   }
@@ -12585,6 +13869,7 @@ export namespace Prisma {
     statut_employe?: StringNullableFilter<"employe"> | string | null
     id_departement?: IntNullableFilter<"employe"> | number | null
     demandes_conge?: Demandes_congeListRelationFilter
+    demandes_permission?: Demandes_permissionListRelationFilter
     departement?: XOR<DepartementNullableScalarRelationFilter, departementWhereInput> | null
     utilisateur?: XOR<UtilisateurNullableScalarRelationFilter, utilisateurWhereInput> | null
   }, "id_employe" | "id_utilisateur">
@@ -12994,6 +14279,78 @@ export namespace Prisma {
     mail?: StringWithAggregatesFilter<"utilisateur"> | string
   }
 
+  export type demandes_permissionWhereInput = {
+    AND?: demandes_permissionWhereInput | demandes_permissionWhereInput[]
+    OR?: demandes_permissionWhereInput[]
+    NOT?: demandes_permissionWhereInput | demandes_permissionWhereInput[]
+    id_demande_permission?: IntFilter<"demandes_permission"> | number
+    id_employe?: IntFilter<"demandes_permission"> | number
+    date?: DateTimeFilter<"demandes_permission"> | Date | string
+    heure_debut?: DateTimeFilter<"demandes_permission"> | Date | string
+    heure_fin?: DateTimeFilter<"demandes_permission"> | Date | string
+    motif?: StringNullableFilter<"demandes_permission"> | string | null
+    statut?: StringNullableFilter<"demandes_permission"> | string | null
+    commentaire_manager?: StringNullableFilter<"demandes_permission"> | string | null
+    employe?: XOR<EmployeScalarRelationFilter, employeWhereInput>
+  }
+
+  export type demandes_permissionOrderByWithRelationInput = {
+    id_demande_permission?: SortOrder
+    id_employe?: SortOrder
+    date?: SortOrder
+    heure_debut?: SortOrder
+    heure_fin?: SortOrder
+    motif?: SortOrderInput | SortOrder
+    statut?: SortOrderInput | SortOrder
+    commentaire_manager?: SortOrderInput | SortOrder
+    employe?: employeOrderByWithRelationInput
+  }
+
+  export type demandes_permissionWhereUniqueInput = Prisma.AtLeast<{
+    id_demande_permission?: number
+    AND?: demandes_permissionWhereInput | demandes_permissionWhereInput[]
+    OR?: demandes_permissionWhereInput[]
+    NOT?: demandes_permissionWhereInput | demandes_permissionWhereInput[]
+    id_employe?: IntFilter<"demandes_permission"> | number
+    date?: DateTimeFilter<"demandes_permission"> | Date | string
+    heure_debut?: DateTimeFilter<"demandes_permission"> | Date | string
+    heure_fin?: DateTimeFilter<"demandes_permission"> | Date | string
+    motif?: StringNullableFilter<"demandes_permission"> | string | null
+    statut?: StringNullableFilter<"demandes_permission"> | string | null
+    commentaire_manager?: StringNullableFilter<"demandes_permission"> | string | null
+    employe?: XOR<EmployeScalarRelationFilter, employeWhereInput>
+  }, "id_demande_permission">
+
+  export type demandes_permissionOrderByWithAggregationInput = {
+    id_demande_permission?: SortOrder
+    id_employe?: SortOrder
+    date?: SortOrder
+    heure_debut?: SortOrder
+    heure_fin?: SortOrder
+    motif?: SortOrderInput | SortOrder
+    statut?: SortOrderInput | SortOrder
+    commentaire_manager?: SortOrderInput | SortOrder
+    _count?: demandes_permissionCountOrderByAggregateInput
+    _avg?: demandes_permissionAvgOrderByAggregateInput
+    _max?: demandes_permissionMaxOrderByAggregateInput
+    _min?: demandes_permissionMinOrderByAggregateInput
+    _sum?: demandes_permissionSumOrderByAggregateInput
+  }
+
+  export type demandes_permissionScalarWhereWithAggregatesInput = {
+    AND?: demandes_permissionScalarWhereWithAggregatesInput | demandes_permissionScalarWhereWithAggregatesInput[]
+    OR?: demandes_permissionScalarWhereWithAggregatesInput[]
+    NOT?: demandes_permissionScalarWhereWithAggregatesInput | demandes_permissionScalarWhereWithAggregatesInput[]
+    id_demande_permission?: IntWithAggregatesFilter<"demandes_permission"> | number
+    id_employe?: IntWithAggregatesFilter<"demandes_permission"> | number
+    date?: DateTimeWithAggregatesFilter<"demandes_permission"> | Date | string
+    heure_debut?: DateTimeWithAggregatesFilter<"demandes_permission"> | Date | string
+    heure_fin?: DateTimeWithAggregatesFilter<"demandes_permission"> | Date | string
+    motif?: StringNullableWithAggregatesFilter<"demandes_permission"> | string | null
+    statut?: StringNullableWithAggregatesFilter<"demandes_permission"> | string | null
+    commentaire_manager?: StringNullableWithAggregatesFilter<"demandes_permission"> | string | null
+  }
+
   export type demandes_congeCreateInput = {
     motif?: string | null
     statut_demandes_conge?: string | null
@@ -13147,6 +14504,7 @@ export namespace Prisma {
     adresse_employe?: string | null
     statut_employe?: string | null
     demandes_conge?: demandes_congeCreateNestedManyWithoutEmployeInput
+    demandes_permission?: demandes_permissionCreateNestedManyWithoutEmployeInput
     departement?: departementCreateNestedOneWithoutEmployeInput
     utilisateur?: utilisateurCreateNestedOneWithoutEmployeInput
   }
@@ -13161,6 +14519,7 @@ export namespace Prisma {
     id_departement?: number | null
     id_utilisateur?: number | null
     demandes_conge?: demandes_congeUncheckedCreateNestedManyWithoutEmployeInput
+    demandes_permission?: demandes_permissionUncheckedCreateNestedManyWithoutEmployeInput
   }
 
   export type employeUpdateInput = {
@@ -13170,6 +14529,7 @@ export namespace Prisma {
     adresse_employe?: NullableStringFieldUpdateOperationsInput | string | null
     statut_employe?: NullableStringFieldUpdateOperationsInput | string | null
     demandes_conge?: demandes_congeUpdateManyWithoutEmployeNestedInput
+    demandes_permission?: demandes_permissionUpdateManyWithoutEmployeNestedInput
     departement?: departementUpdateOneWithoutEmployeNestedInput
     utilisateur?: utilisateurUpdateOneWithoutEmployeNestedInput
   }
@@ -13184,6 +14544,7 @@ export namespace Prisma {
     id_departement?: NullableIntFieldUpdateOperationsInput | number | null
     id_utilisateur?: NullableIntFieldUpdateOperationsInput | number | null
     demandes_conge?: demandes_congeUncheckedUpdateManyWithoutEmployeNestedInput
+    demandes_permission?: demandes_permissionUncheckedUpdateManyWithoutEmployeNestedInput
   }
 
   export type employeCreateManyInput = {
@@ -13578,6 +14939,79 @@ export namespace Prisma {
     mail?: StringFieldUpdateOperationsInput | string
   }
 
+  export type demandes_permissionCreateInput = {
+    date: Date | string
+    heure_debut: Date | string
+    heure_fin: Date | string
+    motif?: string | null
+    statut?: string | null
+    commentaire_manager?: string | null
+    employe: employeCreateNestedOneWithoutDemandes_permissionInput
+  }
+
+  export type demandes_permissionUncheckedCreateInput = {
+    id_demande_permission?: number
+    id_employe: number
+    date: Date | string
+    heure_debut: Date | string
+    heure_fin: Date | string
+    motif?: string | null
+    statut?: string | null
+    commentaire_manager?: string | null
+  }
+
+  export type demandes_permissionUpdateInput = {
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_debut?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_fin?: DateTimeFieldUpdateOperationsInput | Date | string
+    motif?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: NullableStringFieldUpdateOperationsInput | string | null
+    commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
+    employe?: employeUpdateOneRequiredWithoutDemandes_permissionNestedInput
+  }
+
+  export type demandes_permissionUncheckedUpdateInput = {
+    id_demande_permission?: IntFieldUpdateOperationsInput | number
+    id_employe?: IntFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_debut?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_fin?: DateTimeFieldUpdateOperationsInput | Date | string
+    motif?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: NullableStringFieldUpdateOperationsInput | string | null
+    commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type demandes_permissionCreateManyInput = {
+    id_demande_permission?: number
+    id_employe: number
+    date: Date | string
+    heure_debut: Date | string
+    heure_fin: Date | string
+    motif?: string | null
+    statut?: string | null
+    commentaire_manager?: string | null
+  }
+
+  export type demandes_permissionUpdateManyMutationInput = {
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_debut?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_fin?: DateTimeFieldUpdateOperationsInput | Date | string
+    motif?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: NullableStringFieldUpdateOperationsInput | string | null
+    commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type demandes_permissionUncheckedUpdateManyInput = {
+    id_demande_permission?: IntFieldUpdateOperationsInput | number
+    id_employe?: IntFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_debut?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_fin?: DateTimeFieldUpdateOperationsInput | Date | string
+    motif?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: NullableStringFieldUpdateOperationsInput | string | null
+    commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -13856,6 +15290,12 @@ export namespace Prisma {
     none?: demandes_congeWhereInput
   }
 
+  export type Demandes_permissionListRelationFilter = {
+    every?: demandes_permissionWhereInput
+    some?: demandes_permissionWhereInput
+    none?: demandes_permissionWhereInput
+  }
+
   export type DepartementNullableScalarRelationFilter = {
     is?: departementWhereInput | null
     isNot?: departementWhereInput | null
@@ -13867,6 +15307,10 @@ export namespace Prisma {
   }
 
   export type demandes_congeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type demandes_permissionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -14198,6 +15642,49 @@ export namespace Prisma {
     id_utilisateur?: SortOrder
   }
 
+  export type demandes_permissionCountOrderByAggregateInput = {
+    id_demande_permission?: SortOrder
+    id_employe?: SortOrder
+    date?: SortOrder
+    heure_debut?: SortOrder
+    heure_fin?: SortOrder
+    motif?: SortOrder
+    statut?: SortOrder
+    commentaire_manager?: SortOrder
+  }
+
+  export type demandes_permissionAvgOrderByAggregateInput = {
+    id_demande_permission?: SortOrder
+    id_employe?: SortOrder
+  }
+
+  export type demandes_permissionMaxOrderByAggregateInput = {
+    id_demande_permission?: SortOrder
+    id_employe?: SortOrder
+    date?: SortOrder
+    heure_debut?: SortOrder
+    heure_fin?: SortOrder
+    motif?: SortOrder
+    statut?: SortOrder
+    commentaire_manager?: SortOrder
+  }
+
+  export type demandes_permissionMinOrderByAggregateInput = {
+    id_demande_permission?: SortOrder
+    id_employe?: SortOrder
+    date?: SortOrder
+    heure_debut?: SortOrder
+    heure_fin?: SortOrder
+    motif?: SortOrder
+    statut?: SortOrder
+    commentaire_manager?: SortOrder
+  }
+
+  export type demandes_permissionSumOrderByAggregateInput = {
+    id_demande_permission?: SortOrder
+    id_employe?: SortOrder
+  }
+
   export type employeCreateNestedOneWithoutDemandes_congeInput = {
     create?: XOR<employeCreateWithoutDemandes_congeInput, employeUncheckedCreateWithoutDemandes_congeInput>
     connectOrCreate?: employeCreateOrConnectWithoutDemandes_congeInput
@@ -14361,6 +15848,13 @@ export namespace Prisma {
     connect?: demandes_congeWhereUniqueInput | demandes_congeWhereUniqueInput[]
   }
 
+  export type demandes_permissionCreateNestedManyWithoutEmployeInput = {
+    create?: XOR<demandes_permissionCreateWithoutEmployeInput, demandes_permissionUncheckedCreateWithoutEmployeInput> | demandes_permissionCreateWithoutEmployeInput[] | demandes_permissionUncheckedCreateWithoutEmployeInput[]
+    connectOrCreate?: demandes_permissionCreateOrConnectWithoutEmployeInput | demandes_permissionCreateOrConnectWithoutEmployeInput[]
+    createMany?: demandes_permissionCreateManyEmployeInputEnvelope
+    connect?: demandes_permissionWhereUniqueInput | demandes_permissionWhereUniqueInput[]
+  }
+
   export type departementCreateNestedOneWithoutEmployeInput = {
     create?: XOR<departementCreateWithoutEmployeInput, departementUncheckedCreateWithoutEmployeInput>
     connectOrCreate?: departementCreateOrConnectWithoutEmployeInput
@@ -14380,6 +15874,13 @@ export namespace Prisma {
     connect?: demandes_congeWhereUniqueInput | demandes_congeWhereUniqueInput[]
   }
 
+  export type demandes_permissionUncheckedCreateNestedManyWithoutEmployeInput = {
+    create?: XOR<demandes_permissionCreateWithoutEmployeInput, demandes_permissionUncheckedCreateWithoutEmployeInput> | demandes_permissionCreateWithoutEmployeInput[] | demandes_permissionUncheckedCreateWithoutEmployeInput[]
+    connectOrCreate?: demandes_permissionCreateOrConnectWithoutEmployeInput | demandes_permissionCreateOrConnectWithoutEmployeInput[]
+    createMany?: demandes_permissionCreateManyEmployeInputEnvelope
+    connect?: demandes_permissionWhereUniqueInput | demandes_permissionWhereUniqueInput[]
+  }
+
   export type demandes_congeUpdateManyWithoutEmployeNestedInput = {
     create?: XOR<demandes_congeCreateWithoutEmployeInput, demandes_congeUncheckedCreateWithoutEmployeInput> | demandes_congeCreateWithoutEmployeInput[] | demandes_congeUncheckedCreateWithoutEmployeInput[]
     connectOrCreate?: demandes_congeCreateOrConnectWithoutEmployeInput | demandes_congeCreateOrConnectWithoutEmployeInput[]
@@ -14392,6 +15893,20 @@ export namespace Prisma {
     update?: demandes_congeUpdateWithWhereUniqueWithoutEmployeInput | demandes_congeUpdateWithWhereUniqueWithoutEmployeInput[]
     updateMany?: demandes_congeUpdateManyWithWhereWithoutEmployeInput | demandes_congeUpdateManyWithWhereWithoutEmployeInput[]
     deleteMany?: demandes_congeScalarWhereInput | demandes_congeScalarWhereInput[]
+  }
+
+  export type demandes_permissionUpdateManyWithoutEmployeNestedInput = {
+    create?: XOR<demandes_permissionCreateWithoutEmployeInput, demandes_permissionUncheckedCreateWithoutEmployeInput> | demandes_permissionCreateWithoutEmployeInput[] | demandes_permissionUncheckedCreateWithoutEmployeInput[]
+    connectOrCreate?: demandes_permissionCreateOrConnectWithoutEmployeInput | demandes_permissionCreateOrConnectWithoutEmployeInput[]
+    upsert?: demandes_permissionUpsertWithWhereUniqueWithoutEmployeInput | demandes_permissionUpsertWithWhereUniqueWithoutEmployeInput[]
+    createMany?: demandes_permissionCreateManyEmployeInputEnvelope
+    set?: demandes_permissionWhereUniqueInput | demandes_permissionWhereUniqueInput[]
+    disconnect?: demandes_permissionWhereUniqueInput | demandes_permissionWhereUniqueInput[]
+    delete?: demandes_permissionWhereUniqueInput | demandes_permissionWhereUniqueInput[]
+    connect?: demandes_permissionWhereUniqueInput | demandes_permissionWhereUniqueInput[]
+    update?: demandes_permissionUpdateWithWhereUniqueWithoutEmployeInput | demandes_permissionUpdateWithWhereUniqueWithoutEmployeInput[]
+    updateMany?: demandes_permissionUpdateManyWithWhereWithoutEmployeInput | demandes_permissionUpdateManyWithWhereWithoutEmployeInput[]
+    deleteMany?: demandes_permissionScalarWhereInput | demandes_permissionScalarWhereInput[]
   }
 
   export type departementUpdateOneWithoutEmployeNestedInput = {
@@ -14426,6 +15941,20 @@ export namespace Prisma {
     update?: demandes_congeUpdateWithWhereUniqueWithoutEmployeInput | demandes_congeUpdateWithWhereUniqueWithoutEmployeInput[]
     updateMany?: demandes_congeUpdateManyWithWhereWithoutEmployeInput | demandes_congeUpdateManyWithWhereWithoutEmployeInput[]
     deleteMany?: demandes_congeScalarWhereInput | demandes_congeScalarWhereInput[]
+  }
+
+  export type demandes_permissionUncheckedUpdateManyWithoutEmployeNestedInput = {
+    create?: XOR<demandes_permissionCreateWithoutEmployeInput, demandes_permissionUncheckedCreateWithoutEmployeInput> | demandes_permissionCreateWithoutEmployeInput[] | demandes_permissionUncheckedCreateWithoutEmployeInput[]
+    connectOrCreate?: demandes_permissionCreateOrConnectWithoutEmployeInput | demandes_permissionCreateOrConnectWithoutEmployeInput[]
+    upsert?: demandes_permissionUpsertWithWhereUniqueWithoutEmployeInput | demandes_permissionUpsertWithWhereUniqueWithoutEmployeInput[]
+    createMany?: demandes_permissionCreateManyEmployeInputEnvelope
+    set?: demandes_permissionWhereUniqueInput | demandes_permissionWhereUniqueInput[]
+    disconnect?: demandes_permissionWhereUniqueInput | demandes_permissionWhereUniqueInput[]
+    delete?: demandes_permissionWhereUniqueInput | demandes_permissionWhereUniqueInput[]
+    connect?: demandes_permissionWhereUniqueInput | demandes_permissionWhereUniqueInput[]
+    update?: demandes_permissionUpdateWithWhereUniqueWithoutEmployeInput | demandes_permissionUpdateWithWhereUniqueWithoutEmployeInput[]
+    updateMany?: demandes_permissionUpdateManyWithWhereWithoutEmployeInput | demandes_permissionUpdateManyWithWhereWithoutEmployeInput[]
+    deleteMany?: demandes_permissionScalarWhereInput | demandes_permissionScalarWhereInput[]
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -14774,6 +16303,20 @@ export namespace Prisma {
     update?: XOR<XOR<rhUpdateToOneWithWhereWithoutUtilisateurInput, rhUpdateWithoutUtilisateurInput>, rhUncheckedUpdateWithoutUtilisateurInput>
   }
 
+  export type employeCreateNestedOneWithoutDemandes_permissionInput = {
+    create?: XOR<employeCreateWithoutDemandes_permissionInput, employeUncheckedCreateWithoutDemandes_permissionInput>
+    connectOrCreate?: employeCreateOrConnectWithoutDemandes_permissionInput
+    connect?: employeWhereUniqueInput
+  }
+
+  export type employeUpdateOneRequiredWithoutDemandes_permissionNestedInput = {
+    create?: XOR<employeCreateWithoutDemandes_permissionInput, employeUncheckedCreateWithoutDemandes_permissionInput>
+    connectOrCreate?: employeCreateOrConnectWithoutDemandes_permissionInput
+    upsert?: employeUpsertWithoutDemandes_permissionInput
+    connect?: employeWhereUniqueInput
+    update?: XOR<XOR<employeUpdateToOneWithWhereWithoutDemandes_permissionInput, employeUpdateWithoutDemandes_permissionInput>, employeUncheckedUpdateWithoutDemandes_permissionInput>
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -14968,6 +16511,7 @@ export namespace Prisma {
     telephone_employe?: string | null
     adresse_employe?: string | null
     statut_employe?: string | null
+    demandes_permission?: demandes_permissionCreateNestedManyWithoutEmployeInput
     departement?: departementCreateNestedOneWithoutEmployeInput
     utilisateur?: utilisateurCreateNestedOneWithoutEmployeInput
   }
@@ -14981,6 +16525,7 @@ export namespace Prisma {
     statut_employe?: string | null
     id_departement?: number | null
     id_utilisateur?: number | null
+    demandes_permission?: demandes_permissionUncheckedCreateNestedManyWithoutEmployeInput
   }
 
   export type employeCreateOrConnectWithoutDemandes_congeInput = {
@@ -15025,6 +16570,7 @@ export namespace Prisma {
     telephone_employe?: NullableStringFieldUpdateOperationsInput | string | null
     adresse_employe?: NullableStringFieldUpdateOperationsInput | string | null
     statut_employe?: NullableStringFieldUpdateOperationsInput | string | null
+    demandes_permission?: demandes_permissionUpdateManyWithoutEmployeNestedInput
     departement?: departementUpdateOneWithoutEmployeNestedInput
     utilisateur?: utilisateurUpdateOneWithoutEmployeNestedInput
   }
@@ -15038,6 +16584,7 @@ export namespace Prisma {
     statut_employe?: NullableStringFieldUpdateOperationsInput | string | null
     id_departement?: NullableIntFieldUpdateOperationsInput | number | null
     id_utilisateur?: NullableIntFieldUpdateOperationsInput | number | null
+    demandes_permission?: demandes_permissionUncheckedUpdateManyWithoutEmployeNestedInput
   }
 
   export type types_congeUpsertWithoutDemandes_congeInput = {
@@ -15101,6 +16648,7 @@ export namespace Prisma {
     adresse_employe?: string | null
     statut_employe?: string | null
     demandes_conge?: demandes_congeCreateNestedManyWithoutEmployeInput
+    demandes_permission?: demandes_permissionCreateNestedManyWithoutEmployeInput
     utilisateur?: utilisateurCreateNestedOneWithoutEmployeInput
   }
 
@@ -15113,6 +16661,7 @@ export namespace Prisma {
     statut_employe?: string | null
     id_utilisateur?: number | null
     demandes_conge?: demandes_congeUncheckedCreateNestedManyWithoutEmployeInput
+    demandes_permission?: demandes_permissionUncheckedCreateNestedManyWithoutEmployeInput
   }
 
   export type employeCreateOrConnectWithoutDepartementInput = {
@@ -15289,6 +16838,35 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type demandes_permissionCreateWithoutEmployeInput = {
+    date: Date | string
+    heure_debut: Date | string
+    heure_fin: Date | string
+    motif?: string | null
+    statut?: string | null
+    commentaire_manager?: string | null
+  }
+
+  export type demandes_permissionUncheckedCreateWithoutEmployeInput = {
+    id_demande_permission?: number
+    date: Date | string
+    heure_debut: Date | string
+    heure_fin: Date | string
+    motif?: string | null
+    statut?: string | null
+    commentaire_manager?: string | null
+  }
+
+  export type demandes_permissionCreateOrConnectWithoutEmployeInput = {
+    where: demandes_permissionWhereUniqueInput
+    create: XOR<demandes_permissionCreateWithoutEmployeInput, demandes_permissionUncheckedCreateWithoutEmployeInput>
+  }
+
+  export type demandes_permissionCreateManyEmployeInputEnvelope = {
+    data: demandes_permissionCreateManyEmployeInput | demandes_permissionCreateManyEmployeInput[]
+    skipDuplicates?: boolean
+  }
+
   export type departementCreateWithoutEmployeInput = {
     nom_departement: string
     manager_departement_id_managerTomanager?: managerCreateNestedOneWithoutDepartement_departement_id_managerTomanagerInput
@@ -15365,6 +16943,36 @@ export namespace Prisma {
     date_fin?: DateTimeNullableFilter<"demandes_conge"> | Date | string | null
     nombre_jours?: IntNullableFilter<"demandes_conge"> | number | null
     justificatif_pdf?: StringNullableFilter<"demandes_conge"> | string | null
+  }
+
+  export type demandes_permissionUpsertWithWhereUniqueWithoutEmployeInput = {
+    where: demandes_permissionWhereUniqueInput
+    update: XOR<demandes_permissionUpdateWithoutEmployeInput, demandes_permissionUncheckedUpdateWithoutEmployeInput>
+    create: XOR<demandes_permissionCreateWithoutEmployeInput, demandes_permissionUncheckedCreateWithoutEmployeInput>
+  }
+
+  export type demandes_permissionUpdateWithWhereUniqueWithoutEmployeInput = {
+    where: demandes_permissionWhereUniqueInput
+    data: XOR<demandes_permissionUpdateWithoutEmployeInput, demandes_permissionUncheckedUpdateWithoutEmployeInput>
+  }
+
+  export type demandes_permissionUpdateManyWithWhereWithoutEmployeInput = {
+    where: demandes_permissionScalarWhereInput
+    data: XOR<demandes_permissionUpdateManyMutationInput, demandes_permissionUncheckedUpdateManyWithoutEmployeInput>
+  }
+
+  export type demandes_permissionScalarWhereInput = {
+    AND?: demandes_permissionScalarWhereInput | demandes_permissionScalarWhereInput[]
+    OR?: demandes_permissionScalarWhereInput[]
+    NOT?: demandes_permissionScalarWhereInput | demandes_permissionScalarWhereInput[]
+    id_demande_permission?: IntFilter<"demandes_permission"> | number
+    id_employe?: IntFilter<"demandes_permission"> | number
+    date?: DateTimeFilter<"demandes_permission"> | Date | string
+    heure_debut?: DateTimeFilter<"demandes_permission"> | Date | string
+    heure_fin?: DateTimeFilter<"demandes_permission"> | Date | string
+    motif?: StringNullableFilter<"demandes_permission"> | string | null
+    statut?: StringNullableFilter<"demandes_permission"> | string | null
+    commentaire_manager?: StringNullableFilter<"demandes_permission"> | string | null
   }
 
   export type departementUpsertWithoutEmployeInput = {
@@ -15861,6 +17469,7 @@ export namespace Prisma {
     adresse_employe?: string | null
     statut_employe?: string | null
     demandes_conge?: demandes_congeCreateNestedManyWithoutEmployeInput
+    demandes_permission?: demandes_permissionCreateNestedManyWithoutEmployeInput
     departement?: departementCreateNestedOneWithoutEmployeInput
   }
 
@@ -15873,6 +17482,7 @@ export namespace Prisma {
     statut_employe?: string | null
     id_departement?: number | null
     demandes_conge?: demandes_congeUncheckedCreateNestedManyWithoutEmployeInput
+    demandes_permission?: demandes_permissionUncheckedCreateNestedManyWithoutEmployeInput
   }
 
   export type employeCreateOrConnectWithoutUtilisateurInput = {
@@ -15971,6 +17581,7 @@ export namespace Prisma {
     adresse_employe?: NullableStringFieldUpdateOperationsInput | string | null
     statut_employe?: NullableStringFieldUpdateOperationsInput | string | null
     demandes_conge?: demandes_congeUpdateManyWithoutEmployeNestedInput
+    demandes_permission?: demandes_permissionUpdateManyWithoutEmployeNestedInput
     departement?: departementUpdateOneWithoutEmployeNestedInput
   }
 
@@ -15983,6 +17594,7 @@ export namespace Prisma {
     statut_employe?: NullableStringFieldUpdateOperationsInput | string | null
     id_departement?: NullableIntFieldUpdateOperationsInput | number | null
     demandes_conge?: demandes_congeUncheckedUpdateManyWithoutEmployeNestedInput
+    demandes_permission?: demandes_permissionUncheckedUpdateManyWithoutEmployeNestedInput
   }
 
   export type managerUpsertWithoutUtilisateurInput = {
@@ -16074,6 +17686,68 @@ export namespace Prisma {
     statut_rh?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type employeCreateWithoutDemandes_permissionInput = {
+    nom_employe: string
+    prenom_employe: string
+    telephone_employe?: string | null
+    adresse_employe?: string | null
+    statut_employe?: string | null
+    demandes_conge?: demandes_congeCreateNestedManyWithoutEmployeInput
+    departement?: departementCreateNestedOneWithoutEmployeInput
+    utilisateur?: utilisateurCreateNestedOneWithoutEmployeInput
+  }
+
+  export type employeUncheckedCreateWithoutDemandes_permissionInput = {
+    id_employe?: number
+    nom_employe: string
+    prenom_employe: string
+    telephone_employe?: string | null
+    adresse_employe?: string | null
+    statut_employe?: string | null
+    id_departement?: number | null
+    id_utilisateur?: number | null
+    demandes_conge?: demandes_congeUncheckedCreateNestedManyWithoutEmployeInput
+  }
+
+  export type employeCreateOrConnectWithoutDemandes_permissionInput = {
+    where: employeWhereUniqueInput
+    create: XOR<employeCreateWithoutDemandes_permissionInput, employeUncheckedCreateWithoutDemandes_permissionInput>
+  }
+
+  export type employeUpsertWithoutDemandes_permissionInput = {
+    update: XOR<employeUpdateWithoutDemandes_permissionInput, employeUncheckedUpdateWithoutDemandes_permissionInput>
+    create: XOR<employeCreateWithoutDemandes_permissionInput, employeUncheckedCreateWithoutDemandes_permissionInput>
+    where?: employeWhereInput
+  }
+
+  export type employeUpdateToOneWithWhereWithoutDemandes_permissionInput = {
+    where?: employeWhereInput
+    data: XOR<employeUpdateWithoutDemandes_permissionInput, employeUncheckedUpdateWithoutDemandes_permissionInput>
+  }
+
+  export type employeUpdateWithoutDemandes_permissionInput = {
+    nom_employe?: StringFieldUpdateOperationsInput | string
+    prenom_employe?: StringFieldUpdateOperationsInput | string
+    telephone_employe?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse_employe?: NullableStringFieldUpdateOperationsInput | string | null
+    statut_employe?: NullableStringFieldUpdateOperationsInput | string | null
+    demandes_conge?: demandes_congeUpdateManyWithoutEmployeNestedInput
+    departement?: departementUpdateOneWithoutEmployeNestedInput
+    utilisateur?: utilisateurUpdateOneWithoutEmployeNestedInput
+  }
+
+  export type employeUncheckedUpdateWithoutDemandes_permissionInput = {
+    id_employe?: IntFieldUpdateOperationsInput | number
+    nom_employe?: StringFieldUpdateOperationsInput | string
+    prenom_employe?: StringFieldUpdateOperationsInput | string
+    telephone_employe?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse_employe?: NullableStringFieldUpdateOperationsInput | string | null
+    statut_employe?: NullableStringFieldUpdateOperationsInput | string | null
+    id_departement?: NullableIntFieldUpdateOperationsInput | number | null
+    id_utilisateur?: NullableIntFieldUpdateOperationsInput | number | null
+    demandes_conge?: demandes_congeUncheckedUpdateManyWithoutEmployeNestedInput
+  }
+
   export type employeCreateManyDepartementInput = {
     id_employe?: number
     nom_employe: string
@@ -16101,6 +17775,7 @@ export namespace Prisma {
     adresse_employe?: NullableStringFieldUpdateOperationsInput | string | null
     statut_employe?: NullableStringFieldUpdateOperationsInput | string | null
     demandes_conge?: demandes_congeUpdateManyWithoutEmployeNestedInput
+    demandes_permission?: demandes_permissionUpdateManyWithoutEmployeNestedInput
     utilisateur?: utilisateurUpdateOneWithoutEmployeNestedInput
   }
 
@@ -16113,6 +17788,7 @@ export namespace Prisma {
     statut_employe?: NullableStringFieldUpdateOperationsInput | string | null
     id_utilisateur?: NullableIntFieldUpdateOperationsInput | number | null
     demandes_conge?: demandes_congeUncheckedUpdateManyWithoutEmployeNestedInput
+    demandes_permission?: demandes_permissionUncheckedUpdateManyWithoutEmployeNestedInput
   }
 
   export type employeUncheckedUpdateManyWithoutDepartementInput = {
@@ -16172,6 +17848,16 @@ export namespace Prisma {
     justificatif_pdf?: string | null
   }
 
+  export type demandes_permissionCreateManyEmployeInput = {
+    id_demande_permission?: number
+    date: Date | string
+    heure_debut: Date | string
+    heure_fin: Date | string
+    motif?: string | null
+    statut?: string | null
+    commentaire_manager?: string | null
+  }
+
   export type demandes_congeUpdateWithoutEmployeInput = {
     motif?: NullableStringFieldUpdateOperationsInput | string | null
     statut_demandes_conge?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16211,6 +17897,35 @@ export namespace Prisma {
     date_fin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     nombre_jours?: NullableIntFieldUpdateOperationsInput | number | null
     justificatif_pdf?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type demandes_permissionUpdateWithoutEmployeInput = {
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_debut?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_fin?: DateTimeFieldUpdateOperationsInput | Date | string
+    motif?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: NullableStringFieldUpdateOperationsInput | string | null
+    commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type demandes_permissionUncheckedUpdateWithoutEmployeInput = {
+    id_demande_permission?: IntFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_debut?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_fin?: DateTimeFieldUpdateOperationsInput | Date | string
+    motif?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: NullableStringFieldUpdateOperationsInput | string | null
+    commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type demandes_permissionUncheckedUpdateManyWithoutEmployeInput = {
+    id_demande_permission?: IntFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_debut?: DateTimeFieldUpdateOperationsInput | Date | string
+    heure_fin?: DateTimeFieldUpdateOperationsInput | Date | string
+    motif?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: NullableStringFieldUpdateOperationsInput | string | null
+    commentaire_manager?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type departementCreateManyManager_departement_id_managerTomanagerInput = {

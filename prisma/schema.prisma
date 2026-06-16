@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -13,7 +14,7 @@ model demandes_conge {
   id_employe            Int
   id_type_conge         Int
   motif                 String?
-  justificatif_pdf      String?   @db.VarChar(255)
+  justificatif_pdf      String?     @db.VarChar(255)  
   statut_demandes_conge String?     @db.VarChar(30)
   commentaire_manager   String?
   commentaire_rh        String?
@@ -45,6 +46,7 @@ model employe {
   id_departement    Int?
   id_utilisateur    Int?             @unique
   demandes_conge    demandes_conge[]
+  demandes_permission demandes_permission[]
   departement       departement?     @relation(fields: [id_departement], references: [id_departement], onDelete: NoAction, onUpdate: NoAction)
   utilisateur       utilisateur?     @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -114,4 +116,16 @@ model utilisateur {
   manager         manager?
   notification    notification[]
   rh              rh?
+}
+
+model demandes_permission {
+  id_demande_permission Int      @id @default(autoincrement())
+  id_employe            Int
+  date                  DateTime @db.Date
+  heure_debut           DateTime @db.Time
+  heure_fin             DateTime @db.Time
+  motif                 String?
+  statut                String?  @db.VarChar(20) // en_attente, approuve_manager, refuse
+  commentaire_manager   String?
+  employe               employe  @relation(fields: [id_employe], references: [id_employe], onDelete: NoAction, onUpdate: NoAction)
 }

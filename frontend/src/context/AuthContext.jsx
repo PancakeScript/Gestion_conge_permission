@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext(null);   // ✅ Ajout de `export`
 
 // Vérifie si le token JWT est expiré
 const isTokenExpired = (token) => {
