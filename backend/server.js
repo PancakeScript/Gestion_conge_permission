@@ -1,10 +1,8 @@
-require("dotenv").config();
+require('dotenv').config();
+const app = require('./app');
 
-const app = require("./app");
-require("./config/database");
-
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log("Serveur démarré sur le port", PORT);
+  console.log(`Serveur démarré sur http://localhost:${PORT}`);
 });

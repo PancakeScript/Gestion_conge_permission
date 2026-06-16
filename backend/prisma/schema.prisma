@@ -1,18 +1,126 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
+  engineType = "library"
 }
+
 datasource db {
   provider = "postgresql"
+  
 }
 
+model utilisateur {
+  id_utilisateur  Int    @id @default(autoincrement())
+  nom_utilisateur String
+  prenom          String
+  mdp             String
+  mail            String @unique
 
-model Test {
-  id        Int      @id @default(autoincrement())
-  nom       String
-  createdAt DateTime @default(now())
+  rh           rh?
+  manager      manager?
+  employe      employe?
+  notification notification[]
+}
+
+model rh {
+  id_rh          Int     @id @default(autoincrement())
+  nom_rh         String
+  prenom_rh      String
+  telephone_rh   String?
+  adresse_rh     String?
+  statut_rh      String  @default("actif")
+  id_utilisateur Int     @unique
+  utilisateur    utilisateur @relation(fields: [id_utilisateur], references: [id_utilisateur])
+}
+
+model departement {
+  id_departement  Int     @id @default(autoincrement())
+  nom_departement String
+  id_manager      Int?
+  employes        employe[]
+  managers        manager[]
+}
+
+model manager {
+  id_manager        Int     @id @default(autoincrement())
+  nom_manager       String
+  prenom_manager    String
+  telephone_manager String?
+  adresse_manager   String?
+  statut_manager    String  @default("actif")
+  id_departement    Int?
+  id_utilisateur    Int     @unique
+  utilisateur       utilisateur  @relation(fields: [id_utilisateur], references: [id_utilisateur])
+  departement       departement? @relation(fields: [id_departement], references: [id_departement])
+  types_conge       types_conge[]
+}
+
+model employe {
+  id_employe          Int     @id @default(autoincrement())
+  nom_employe         String
+  prenom_employe      String
+  telephone_employe   String?
+  adresse_employe     String?
+  statut_employe      String  @default("actif")
+  jours_acquis_annuel Int     @default(30)
+  id_departement      Int?
+  id_utilisateur      Int     @unique
+  utilisateur         utilisateur  @relation(fields: [id_utilisateur], references: [id_utilisateur])
+  departement         departement? @relation(fields: [id_departement], references: [id_departement])
+  demandes_conge      demandes_conge[]
+  demandes_permission demandes_permission[]
+}
+
+model types_conge {
+  id_conge           Int     @id @default(autoincrement())
+  nom_types_conge    String
+  statut_types_conge String  @default("actif")
+  duree              Int?
+  id_manager         Int?
+  manager            manager?         @relation(fields: [id_manager], references: [id_manager])
+  demandes_conge     demandes_conge[]
+}
+
+model demandes_conge {
+  id_demande_conde      Int         @id @default(autoincrement())
+  id_employe            Int
+  id_type_conge         Int
+  motif                 String?
+  statut_demandes_conge String?     @db.VarChar(30)
+  commentaire_manager   String?
+  commentaire_rh        String?
+  date_demande          DateTime?   @default(now()) @db.Timestamp(6)
+  date_debut            DateTime?   @db.Date
+  date_fin              DateTime?   @db.Date
+  nombre_jours          Int?
+  employe               employe     @relation(fields: [id_employe], references: [id_employe], onDelete: NoAction, onUpdate: NoAction)
+  types_conge           types_conge @relation(fields: [id_type_conge], references: [id_conge], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model demandes_permission {
+  id_demande_permission Int      @id @default(autoincrement())
+  id_employe            Int
+  date                  DateTime
+  heure_debut           String
+  heure_fin             String
+  duree_minutes         Int?
+  motif                 String?
+  statut                String   @default("en_attente")
+  commentaire_manager   String?
+  date_demande          DateTime @default(now())
+  employe               employe @relation(fields: [id_employe], references: [id_employe])
+}
+
+model notification {
+  id_notification          Int      @id @default(autoincrement())
+  id_utilisateur           Int
+  message                  String
+  statut_notification      String   @default("non_lu")
+  date_envoie_notification DateTime @default(now())
+  utilisateur              utilisateur @relation(fields: [id_utilisateur], references: [id_utilisateur])
+}
+
+model jours_feries {
+  id_jours_feries   Int      @id @default(autoincrement())
+  nom_jours_feries  String
+  date_jours_feries DateTime @unique
 }
