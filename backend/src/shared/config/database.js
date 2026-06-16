@@ -1,0 +1,17 @@
+const path = require("path");
+const { PrismaClient } = require(path.join(__dirname, "../../../generated/prisma"));
+const { Pool } = require("pg");
+const { PrismaPg } = require("@prisma/adapter-pg");
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const adapter = new PrismaPg(pool);
+
+const prisma = new PrismaClient({
+  adapter,
+  log: ["warn", "error"],
+});
+
+module.exports = prisma;
