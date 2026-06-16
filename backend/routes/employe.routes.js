@@ -3,6 +3,8 @@ const router = express.Router()
 const ctrl = require("../controllers/employe.controller")
 const { verifierToken } = require("../middleware/auth.middleware");
 
+// Inscription d'un nouvel employé (sans authentification)
+router.post("/", ctrl.createEmploye);
 
 router.get("/moi", verifierToken, async (req, res) => {
   try {

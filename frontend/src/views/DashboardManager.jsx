@@ -18,6 +18,10 @@ const DashboardManager = () => {
   const [filterType, setFilterType] = useState("");
   const [filterStatut, setFilterStatut] = useState("en_attente");
 
+  // IDs des demandes traitées localement → toujours affichées même si filtre statut ne correspond pas
+  const [processedCongeIds, setProcessedCongeIds] = useState(new Set());
+  const [processedPermIds, setProcessedPermIds] = useState(new Set());
+
   const fetchDashboard = async () => {
     try {
       setLoading(true);
@@ -39,7 +43,20 @@ const DashboardManager = () => {
   const handleActionConge = async (id, statut) => {
     try {
       await managerApi.updateStatutConge(id, statut, "Traité par le manager");
-      fetchDashboard();
+      // Mise à jour locale du statut (demande reste visible)
+      setDashboardData(prev => ({
+        ...prev,
+        employes: prev.employes.map(e => ({
+          ...e,
+          demandes_conge: e.demandes_conge.map(d =>
+            d.id_demande_conde === id
+              ? { ...d, statut_demandes_conge: statut }
+              : d
+          ),
+        })),
+      }));
+      // Marquer cet ID comme traité → il restera visible quel que soit le filtre
+      setProcessedCongeIds(prev => new Set([...prev, id]));
     } catch (err) {
       alert("Erreur lors de la mise à jour du congé.");
     }
@@ -48,7 +65,20 @@ const DashboardManager = () => {
   const handleActionPermission = async (id, statut) => {
     try {
       await managerApi.updateStatutPermission(id, statut, "Traité par le manager");
-      fetchDashboard();
+      // Mise à jour locale du statut (demande reste visible)
+      setDashboardData(prev => ({
+        ...prev,
+        employes: prev.employes.map(e => ({
+          ...e,
+          demandes_permission: e.demandes_permission.map(d =>
+            d.id_demande_permission === id
+              ? { ...d, statut: statut }
+              : d
+          ),
+        })),
+      }));
+      // Marquer cet ID comme traité → il restera visible quel que soit le filtre
+      setProcessedPermIds(prev => new Set([...prev, id]));
     } catch (err) {
       alert("Erreur lors de la mise à jour de la permission.");
     }
@@ -80,8 +110,11 @@ const DashboardManager = () => {
     ),
   ];
 
-  const filtrerDemandes = (demandes) => {
+  const filtrerDemandes = (demandes, processedIds, idKey) => {
     return demandes.filter(d => {
+      // Les demandes traitées localement sont TOUJOURS affichées, quel que soit le filtre
+      if (processedIds.has(d[idKey])) return true;
+
       const nomComplet = `${d.employe.prenom_employe} ${d.employe.nom_employe}`.toLowerCase();
       const searchMatch =
         searchTerm === "" ||
@@ -95,15 +128,16 @@ const DashboardManager = () => {
     });
   };
 
-  const congesFiltres = filtrerDemandes(employes.flatMap(e => e.demandes_conge));
-  const permissionsFiltrees = filtrerDemandes(employes.flatMap(e => e.demandes_permission));
+  const tousConges = employes.flatMap(e => e.demandes_conge);
+  const toutesPermissions = employes.flatMap(e => e.demandes_permission);
 
-  const afficherTout = filterStatut === "" && searchTerm === "" && filterEmploye === "" && filterType === "";
-  const congesEnAttente = afficherTout ? congesFiltres.filter(d => d.statut_demandes_conge === "en_attente") : congesFiltres;
-  const permissionsEnAttente = afficherTout ? permissionsFiltrees.filter(d => d.statut === "en_attente") : permissionsFiltrees;
+  // Les demandes traitées localement passent toujours le filtre
+  const congesAffiches = filtrerDemandes(tousConges, processedCongeIds, "id_demande_conde");
+  const permissionsAffichees = filtrerDemandes(toutesPermissions, processedPermIds, "id_demande_permission");
 
-  const totalEnAttente = congesEnAttente.filter(d => d.statut_demandes_conge === "en_attente").length
-    + permissionsEnAttente.filter(d => d.statut === "en_attente").length;
+  // Compteur basé sur toutes les données (pas seulement l'affichage filtré)
+  const totalEnAttente = tousConges.filter(d => d.statut_demandes_conge === "en_attente").length
+    + toutesPermissions.filter(d => d.statut === "en_attente").length;
 
   return (
     <>
@@ -177,6 +211,10 @@ const DashboardManager = () => {
 
         /* ── Statut Badge ── */
         .mgr-statut-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+        .mgr-statut-badge.attente { background: #fff8e6; color: #b8943c; }
+        .mgr-statut-badge.approuve { background: #e3f2fd; color: #1565c0; }
+        .mgr-statut-badge.refuse { background: #fdecea; color: #c0392b; }
+        .mgr-statut-badge.approuve-rh { background: #e8f5e9; color: #2e7d32; }
 
         /* ── Loading ── */
         .mgr-loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; font-size: 15px; color: #a89070; }
@@ -351,34 +389,52 @@ const DashboardManager = () => {
                     <line x1="12" y1="12" x2="12" y2="16"/>
                     <line x1="10" y1="14" x2="14" y2="14"/>
                   </svg>
-                  Demandes de congé {filterStatut ? `(${filterStatut.replace("_", " ")})` : ""}
+                  Demandes de congé {filterStatut ? `(${filterStatut.replace(/_/g, " ")})` : ""}
                 </h2>
-                {congesEnAttente.length === 0 ? (
+                {congesAffiches.length === 0 ? (
                   <div className="mgr-empty-state">Aucune demande trouvée.</div>
                 ) : (
-                  congesEnAttente.map(demande => (
-                    <div key={demande.id_demande_conde} className="mgr-request-item">
-                      <div>
-                        <p className="mgr-employee-name">
-                          {demande.employe.prenom_employe} {demande.employe.nom_employe}
-                        </p>
-                        <p className="mgr-details">
-                          {demande.types_conge.nom_types_conge} — du{" "}
-                          {new Date(demande.date_debut).toLocaleDateString("fr-FR")} au{" "}
-                          {new Date(demande.date_fin).toLocaleDateString("fr-FR")}
-                          {demande.motif && <span> · Motif : {demande.motif}</span>}
-                        </p>
+                  congesAffiches.map(demande => {
+                    const st = demande.statut_demandes_conge;
+                    const traite = st !== "en_attente";
+                    const badgeClass = st === "approuve_manager" || st === "approuve" ? "approuve"
+                      : st === "approuve_rh" ? "approuve-rh"
+                      : st === "refuse" ? "refuse"
+                      : "attente";
+                    const badgeLabel = st === "approuve_manager" ? "Validé manager"
+                      : st === "approuve_rh" ? "Approuvé RH"
+                      : st === "refuse" ? "Refusé"
+                      : "En attente";
+                    return (
+                      <div key={demande.id_demande_conde} className="mgr-request-item" style={traite ? { opacity: 0.85, background: "#fdfcf8" } : {}}>
+                        <div>
+                          <p className="mgr-employee-name">
+                            {demande.employe.prenom_employe} {demande.employe.nom_employe}
+                          </p>
+                          <p className="mgr-details">
+                            {demande.types_conge.nom_types_conge} — du{" "}
+                            {new Date(demande.date_debut).toLocaleDateString("fr-FR")} au{" "}
+                            {new Date(demande.date_fin).toLocaleDateString("fr-FR")}
+                            {demande.motif && <span> · Motif : {demande.motif}</span>}
+                          </p>
+                        </div>
+                        <div className="mgr-request-actions">
+                          {traite ? (
+                            <span className={`mgr-statut-badge ${badgeClass}`}>{badgeLabel}</span>
+                          ) : (
+                            <>
+                              <button className="mgr-btn-approve" onClick={() => handleActionConge(demande.id_demande_conde, "approuve_manager")}>
+                                Approuver
+                              </button>
+                              <button className="mgr-btn-reject" onClick={() => handleActionConge(demande.id_demande_conde, "refuse")}>
+                                Refuser
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </div>
-                      <div className="mgr-request-actions">
-                        <button className="mgr-btn-approve" onClick={() => handleActionConge(demande.id_demande_conde, "approuve_manager")}>
-                          Approuver
-                        </button>
-                        <button className="mgr-btn-reject" onClick={() => handleActionConge(demande.id_demande_conde, "refuse")}>
-                          Refuser
-                        </button>
-                      </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
 
@@ -389,32 +445,50 @@ const DashboardManager = () => {
                     <circle cx="12" cy="12" r="10"/>
                     <polyline points="12 6 12 12 16 14"/>
                   </svg>
-                  Demandes de permission {filterStatut ? `(${filterStatut.replace("_", " ")})` : ""}
+                  Demandes de permission {filterStatut ? `(${filterStatut.replace(/_/g, " ")})` : ""}
                 </h2>
-                {permissionsEnAttente.length === 0 ? (
+                {permissionsAffichees.length === 0 ? (
                   <div className="mgr-empty-state">Aucune demande trouvée.</div>
                 ) : (
-                  permissionsEnAttente.map(demande => (
-                    <div key={demande.id_demande_permission} className="mgr-request-item">
-                      <div>
-                        <p className="mgr-employee-name">
-                          {demande.employe.prenom_employe} {demande.employe.nom_employe}
-                        </p>
-                        <p className="mgr-details">
-                          Le {new Date(demande.date).toLocaleDateString("fr-FR")} · {demande.heure_debut} → {demande.heure_fin}
-                          {demande.motif && <span> · Motif : {demande.motif}</span>}
-                        </p>
+                  permissionsAffichees.map(demande => {
+                    const st = demande.statut;
+                    const traite = st !== "en_attente";
+                    const badgeClass = st === "approuve_manager" || st === "approuve" ? "approuve"
+                      : st === "approuve_rh" ? "approuve-rh"
+                      : st === "refuse" ? "refuse"
+                      : "attente";
+                    const badgeLabel = st === "approuve_manager" ? "Validé manager"
+                      : st === "approuve_rh" ? "Approuvé RH"
+                      : st === "refuse" ? "Refusé"
+                      : "En attente";
+                    return (
+                      <div key={demande.id_demande_permission} className="mgr-request-item" style={traite ? { opacity: 0.85, background: "#fdfcf8" } : {}}>
+                        <div>
+                          <p className="mgr-employee-name">
+                            {demande.employe.prenom_employe} {demande.employe.nom_employe}
+                          </p>
+                          <p className="mgr-details">
+                            Le {new Date(demande.date).toLocaleDateString("fr-FR")} · {demande.heure_debut} → {demande.heure_fin}
+                            {demande.motif && <span> · Motif : {demande.motif}</span>}
+                          </p>
+                        </div>
+                        <div className="mgr-request-actions">
+                          {traite ? (
+                            <span className={`mgr-statut-badge ${badgeClass}`}>{badgeLabel}</span>
+                          ) : (
+                            <>
+                              <button className="mgr-btn-approve" onClick={() => handleActionPermission(demande.id_demande_permission, "approuve_manager")}>
+                                Approuver
+                              </button>
+                              <button className="mgr-btn-reject" onClick={() => handleActionPermission(demande.id_demande_permission, "refuse")}>
+                                Refuser
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </div>
-                      <div className="mgr-request-actions">
-                        <button className="mgr-btn-approve" onClick={() => handleActionPermission(demande.id_demande_permission, "approuve_manager")}>
-                          Approuver
-                        </button>
-                        <button className="mgr-btn-reject" onClick={() => handleActionPermission(demande.id_demande_permission, "refuse")}>
-                          Refuser
-                        </button>
-                      </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </>

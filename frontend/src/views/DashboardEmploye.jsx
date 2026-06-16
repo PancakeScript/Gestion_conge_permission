@@ -12,11 +12,18 @@ export default function DashboardEmploye() {
   const [error, setError] = useState("");
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  useEffect(() => {
+  const fetchDashboard = () => {
     congeApi.getDashboard()
       .then(setDashboard)
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchDashboard();
+    // Rafraîchissement automatique toutes les 30 secondes
+    const interval = setInterval(fetchDashboard, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = () => { logout(); navigate("/login"); };
