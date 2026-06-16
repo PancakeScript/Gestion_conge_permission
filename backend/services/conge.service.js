@@ -30,7 +30,13 @@ if (fichier) {
   justificatifPdf = fichier.filename;
 }
 
-  return prisma.demandes_conge.create({
+  // Récupérer l'employé pour connaître son département
+  const employe = await prisma.employe.findUnique({
+    where: { id_employe },
+    include: { departement: true },
+  });
+
+  const demande = await prisma.demandes_conge.create({
     data: {
       id_employe,
       id_type_conge: typeConge.id_conge,
@@ -41,7 +47,30 @@ if (fichier) {
       justificatif_pdf: justificatifPdf,
       statut_demandes_conge: "en_attente",
     },
-  })
+    include: { types_conge: true },
+  });
+
+  // Notifier le manager du département
+  if (employe?.id_departement) {
+    const dept = await prisma.departement.findUnique({
+      where: { id_departement: employe.id_departement },
+      include: { manager_departement_id_managerTomanager: true },
+    });
+    const manager = dept?.manager_departement_id_managerTomanager;
+    if (manager?.id_utilisateur) {
+      const dateDebut = new Date(date_debut).toLocaleDateString('fr-FR');
+      const dateFin   = new Date(date_fin).toLocaleDateString('fr-FR');
+      await prisma.notification.create({
+        data: {
+          id_utilisateur: manager.id_utilisateur,
+          message: `Nouvelle demande de congé de ${employe.prenom_employe} ${employe.nom_employe} — ${typeConge.nom_types_conge} du ${dateDebut} au ${dateFin}`,
+          statut_notification: "non_lu",
+        },
+      });
+    }
+  }
+
+  return demande;
 }
 
 //annuler une demande de congé
