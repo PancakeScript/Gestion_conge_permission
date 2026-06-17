@@ -1,4 +1,4 @@
-const prisma = require('../config/prisma');
+const prisma = require('../../shared/config/database');
 
 // ─── GET ALL ──────────────────────────────────────────────────────────
 const getAll = async (req, res) => {
@@ -96,6 +96,17 @@ const deleteType = async (req, res) => {
 
     if (!existing) {
       return res.status(404).json({ error: 'Type de congé non trouvé' });
+    }
+
+    // Vérifier si le type est utilisé dans des demandes
+    const demandesLiees = await prisma.demandes_conge.count({
+      where: { id_type_conge: id }
+    });
+
+    if (demandesLiees > 0) {
+      return res.status(400).json({
+        error: 'Ce type de congé est utilisé dans des demandes existantes. Impossible de le supprimer.'
+      });
     }
 
     await prisma.types_conge.delete({

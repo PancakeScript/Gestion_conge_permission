@@ -1,10 +1,10 @@
-const prisma = require('../config/prisma');
+const prisma = require('../../shared/config/database');
 
 const getDashboardStats = async (req, res) => {
   try {
     const now = new Date();
     const debutMois = new Date(now.getFullYear(), now.getMonth(), 1);
-    const finMois   = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const finMois = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
     // ── STATS ──
     const [enAttente, approuveesMois, refuseesMois, employesActifs] = await Promise.all([
@@ -63,7 +63,7 @@ const getDashboardStats = async (req, res) => {
 
     const colors = ["#d4af64", "#3b82f6", "#a78bfa", "#f472b6", "#94a3b8"];
     const topCongesData = topConges.map((t, i) => ({
-      type:  typesConge.find(tc => tc.id_conge === t.id_type_conge)?.nom_types_conge || "Inconnu",
+      type: typesConge.find(tc => tc.id_conge === t.id_type_conge)?.nom_types_conge || "Inconnu",
       count: t._count.id_type_conge,
       color: colors[i] || "#ccc",
     }));
@@ -80,22 +80,22 @@ const getDashboardStats = async (req, res) => {
     });
 
     const demandes = demandesATraiter.map(d => ({
-      id:     d.id_demande_conde,
-      nom:    `${d.employe.prenom_employe} ${d.employe.nom_employe}`,
-      dept:   d.employe.departement?.nom_departement || "—",
-      type:   d.types_conge.nom_types_conge,
-      debut:  d.date_debut ? new Date(d.date_debut).toLocaleDateString('fr-FR') : "—",
-      fin:    d.date_fin   ? new Date(d.date_fin).toLocaleDateString('fr-FR')   : "—",
-      jours:  d.nombre_jours || 0,
+      id: d.id_demande_conde,
+      nom: `${d.employe.prenom_employe} ${d.employe.nom_employe}`,
+      dept: d.employe.departement?.nom_departement || "—",
+      type: d.types_conge.nom_types_conge,
+      debut: d.date_debut ? new Date(d.date_debut).toLocaleDateString('fr-FR') : "—",
+      fin: d.date_fin ? new Date(d.date_fin).toLocaleDateString('fr-FR') : "—",
+      jours: d.nombre_jours || 0,
       statut: d.statut_demandes_conge,
     }));
 
     res.json({
       stats: [
-        { label: "Demandes en attente", value: enAttente,     icon: "clock",  color: "#d4af64", bg: "#fdf6e3" },
-        { label: "Approuvées ce mois",  value: approuveesMois, icon: "check",  color: "#27ae60", bg: "#f0faf4" },
-        { label: "Refusées ce mois",    value: refuseesMois,   icon: "x",      color: "#e74c3c", bg: "#fef5f5" },
-        { label: "Employés actifs",     value: employesActifs, icon: "users",  color: "#3b82f6", bg: "#eff6ff" },
+        { label: "Demandes en attente", value: enAttente, icon: "clock", color: "#d4af64", bg: "#fdf6e3" },
+        { label: "Approuvées ce mois", value: approuveesMois, icon: "check", color: "#27ae60", bg: "#f0faf4" },
+        { label: "Refusées ce mois", value: refuseesMois, icon: "x", color: "#e74c3c", bg: "#fef5f5" },
+        { label: "Employés actifs", value: employesActifs, icon: "users", color: "#3b82f6", bg: "#eff6ff" },
       ],
       absencesParDept,
       topConges: topCongesData,
