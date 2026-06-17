@@ -12,20 +12,20 @@ const managerApi = {
   },
   updateStatutConge: async (id, statut, commentaire) => {
     const token = localStorage.getItem("token");
-    const res = await fetch(`${API_BASE}/manager/conges/${id}`, {
+    const res = await fetch(`${API_BASE}/manager/demandes-conge/${id}/statut`, {
       method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ statut_demandes_conge: statut, commentaire_manager: commentaire })
+      body: JSON.stringify({ statut, commentaire })
     });
-    if (!res.ok) throw new Error("Erreur mise a jour conge");
+    if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.error || "Erreur mise a jour conge"); }
     return res.json();
   },
   updateStatutPermission: async (id, statut, commentaire) => {
     const token = localStorage.getItem("token");
-    const res = await fetch(`${API_BASE}/manager/permissions/${id}`, {
+    const res = await fetch(`${API_BASE}/manager/demandes-permission/${id}/statut`, {
       method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ statut, commentaire_manager: commentaire })
+      body: JSON.stringify({ statut, commentaire })
     });
-    if (!res.ok) throw new Error("Erreur mise a jour permission");
+    if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.error || "Erreur mise a jour permission"); }
     return res.json();
   }
 };
@@ -114,46 +114,34 @@ const DashboardManager = () => {
     const st = isConge ? demande.statut_demandes_conge : demande.statut;
     const traite = st !== "en_attente";
     const badge = getBadge(st);
-
     return (
       <div key={`${demande.type_demande}-${id}`} className="request-card">
         <div className="request-card-header">
-          <span className={`type-badge ${isConge ? "conge" : "permission"}`}>
-            {isConge ? "Conge" : "Permission"}
-          </span>
+          <span className={`type-badge ${isConge ? "conge" : "permission"}`}>{isConge ? "Conge" : "Permission"}</span>
           {traite && <span className={`statut-badge ${badge.cls}`}>{badge.label}</span>}
         </div>
         <p className="request-emp">{demande.employe?.prenom_employe} {demande.employe?.nom_employe}</p>
         <div className="request-details">
-          {isConge ? (
-            <>
-              <div className="request-detail"><Icon name="calendar" size={13} color="#a89070" /><span>Du {new Date(demande.date_debut).toLocaleDateString("fr-FR")} au {new Date(demande.date_fin).toLocaleDateString("fr-FR")}</span></div>
-              <div className="request-detail"><Icon name="clock" size={13} color="#a89070" /><span>{demande.types_conge?.nom_types_conge} ({demande.nombre_jours} j)</span></div>
-            </>
-          ) : (
-            <>
-              <div className="request-detail"><Icon name="calendar" size={13} color="#a89070" /><span>{new Date(demande.date).toLocaleDateString("fr-FR")}</span></div>
-              <div className="request-detail"><Icon name="clock" size={13} color="#a89070" /><span>{demande.heure_debut} - {demande.heure_fin}</span></div>
-            </>
-          )}
+          {isConge ? (<>
+            <div className="request-detail"><Icon name="calendar" size={13} color="#a89070" /><span>Du {new Date(demande.date_debut).toLocaleDateString("fr-FR")} au {new Date(demande.date_fin).toLocaleDateString("fr-FR")}</span></div>
+            <div className="request-detail"><Icon name="clock" size={13} color="#a89070" /><span>{demande.types_conge?.nom_types_conge} ({demande.nombre_jours} j)</span></div>
+          </>) : (<>
+            <div className="request-detail"><Icon name="calendar" size={13} color="#a89070" /><span>{new Date(demande.date).toLocaleDateString("fr-FR")}</span></div>
+            <div className="request-detail"><Icon name="clock" size={13} color="#a89070" /><span>{demande.heure_debut} - {demande.heure_fin}</span></div>
+          </>)}
         </div>
         {demande.motif && <div className="request-motif">{demande.motif}</div>}
-        {!traite && (
-          <div className="request-actions">
-            <button className="btn-approve" onClick={() => handleDecisionClick(demande, "approuve_manager")}><Icon name="check" size={13} /> Approuver</button>
-            <button className="btn-reject" onClick={() => handleDecisionClick(demande, "refuse")}><Icon name="x" size={13} /> Refuser</button>
-          </div>
-        )}
+        {!traite && (<div className="request-actions">
+          <button className="btn-approve" onClick={() => handleDecisionClick(demande, "approuve_manager")}><Icon name="check" size={13} /> Approuver</button>
+          <button className="btn-reject" onClick={() => handleDecisionClick(demande, "refuse")}><Icon name="x" size={13} /> Refuser</button>
+        </div>)}
       </div>
     );
   };
 
   if (loading) return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 300, background: "#f5f0e8" }}>
-      <div style={{ textAlign: "center" }}>
-        <div style={{ width: 36, height: 36, border: "3px solid #e0d8cc", borderTopColor: "#d4af64", borderRadius: "50%", animation: "spin 0.7s linear infinite", margin: "0 auto 12px" }} />
-        <p style={{ color: "#a89070" }}>Chargement...</p>
-      </div>
+      <div style={{ textAlign: "center" }}><div style={{ width: 36, height: 36, border: "3px solid #e0d8cc", borderTopColor: "#d4af64", borderRadius: "50%", animation: "spin 0.7s linear infinite", margin: "0 auto 12px" }} /><p style={{ color: "#a89070" }}>Chargement...</p></div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
@@ -168,14 +156,12 @@ const DashboardManager = () => {
         .page-sub{color:#a89070;font-size:14px}
         .alert-success{background:#f0faf4;border:1px solid #a7d5b0;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:14px;display:flex;align-items:center;gap:8px}
         .alert-error{background:#fef5f5;border:1px solid #f5c0c0;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:14px;display:flex;align-items:center;gap:8px;color:#c0392b}
-        
         .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:24px}
         .stat-card{background:#fff;border:1px solid #e8e0d0;border-radius:16px;padding:24px}
         .stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#a89070;margin-bottom:10px}
         .stat-value{font-family:'Playfair Display',serif;font-size:42px;color:#2c2418;line-height:1;margin-bottom:6px}
         .stat-value.gold{color:#b8943c}
         .stat-desc{font-size:13px;color:#a89070}
-        
         .filter-bar{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;background:#fff;border:1px solid #e8e0d0;border-radius:16px;padding:16px 20px;align-items:center}
         .search-wrap{position:relative;flex:2;min-width:200px}
         .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#a89070}
@@ -185,12 +171,8 @@ const DashboardManager = () => {
         .filter-select:focus{border-color:#d4af64}
         .btn-reset{background:none;border:1.5px solid #d4af64;color:#d4af64;padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer;white-space:nowrap;font-size:13px}
         .btn-reset:hover{background:#d4af64;color:#2c2418}
-        
         .alert-warning{background:#fffbf0;border:1px solid #f0d68a;border-left:4px solid #d4af64;border-radius:12px;padding:16px 20px;margin-bottom:20px}
         .alert-danger{background:#fef5f5;border:1px solid #f5c0c0;border-left:4px solid #c0392b;border-radius:12px;padding:16px 20px;margin-bottom:20px}
-        .alert-warning h3,.alert-danger h3{font-family:'Playfair Display',serif;font-size:16px;color:#2c2418;margin-bottom:8px;font-weight:600}
-        .alert-item{font-size:14px;color:#5e5340;margin-bottom:4px}
-        
         .columns-container{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:10px;width:100%}
         .column{background:#fff;border:1px solid #e8e0d0;border-radius:16px;padding:20px;display:flex;flex-direction:column;min-height:500px}
         .column.attente{border-top:4px solid #b8943c}
@@ -202,7 +184,6 @@ const DashboardManager = () => {
         .column.attente .column-badge{background:#fdf6e3;color:#b8943c}
         .column.approuve .column-badge{background:#f0faf4;color:#27ae60}
         .column.refuse .column-badge{background:#fef5f5;color:#c0392b}
-        
         .card-list{display:flex;flex-direction:column;gap:12px}
         .request-card{background:#fdfcf8;border:1px solid #e8e0d0;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:all 0.2s}
         .request-card:hover{transform:translateY(-2px);box-shadow:0 6px 12px rgba(44,36,24,0.06);border-color:#d4af64}
@@ -220,15 +201,12 @@ const DashboardManager = () => {
         .btn-approve:hover{box-shadow:0 4px 12px rgba(180,140,60,0.3)}
         .btn-reject{background:#fff;border:1px solid #c0392b;color:#c0392b}
         .btn-reject:hover{background:#fef5f5}
-        
         .statut-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
         .badge-dore{background:#fdf6e3;color:#b8943c}
         .badge-bleu{background:#eff6ff;color:#1e40af}
         .badge-vert{background:#f0faf4;color:#27ae60}
         .badge-rouge{background:#fef5f5;color:#c0392b}
-        
         .empty-state{text-align:center;color:#a89070;font-style:italic;padding:28px 0;font-size:14px}
-        
         .modal-overlay{position:fixed;inset:0;background:rgba(44,36,24,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;animation:fadeIn 0.2s}
         .modal-card{background:#fff;border-radius:20px;padding:28px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(44,36,24,0.25);border:1px solid #e8e0d0;animation:slideUp 0.3s}
         .modal-title{font-family:'Playfair Display',serif;font-size:22px;color:#2c2418;margin-bottom:10px}
@@ -237,110 +215,45 @@ const DashboardManager = () => {
         .btn-modal-cancel{flex:1;padding:12px;background:#f0ede5;color:#6b5c45;border:none;border-radius:12px;font-weight:600;cursor:pointer}
         .btn-modal-green{flex:1;padding:12px;background:#27ae60;color:#fff;border:none;border-radius:12px;font-weight:600;cursor:pointer}
         .btn-modal-red{flex:1;padding:12px;background:#c0392b;color:#fff;border:none;border-radius:12px;font-weight:600;cursor:pointer}
-        
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
         @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         @media(max-width:768px){.stats-grid{grid-template-columns:1fr}.columns-container{grid-template-columns:1fr}.filter-bar{flex-direction:column}}
       `}</style>
 
-      {/* Modal decision */}
       {decisionDialog.isOpen && (
         <div className="modal-overlay" onClick={() => setDecisionDialog(prev => ({ ...prev, isOpen: false }))}>
           <div className="modal-card" onClick={e => e.stopPropagation()}>
-            <div className="modal-title">
-              <Icon name={decisionDialog.action === "approuve_manager" ? "check-circle" : "x-circle"} size={20} color={decisionDialog.action === "approuve_manager" ? "#27ae60" : "#c0392b"} />
-              {decisionDialog.action === "approuve_manager" ? " Approuver la demande" : " Refuser la demande"}
-            </div>
-            <div className="modal-desc">
-              {decisionDialog.action === "approuve_manager"
-                ? `Vous allez approuver la demande de ${decisionDialog.demande.employe?.prenom_employe} ${decisionDialog.demande.employe?.nom_employe}.`
-                : `Vous allez refuser la demande de ${decisionDialog.demande.employe?.prenom_employe} ${decisionDialog.demande.employe?.nom_employe}.`}
-            </div>
-            <div className="modal-btns">
-              <button className="btn-modal-cancel" onClick={() => setDecisionDialog({ isOpen: false, demande: null, action: "", loading: false })} disabled={decisionDialog.loading}>Annuler</button>
-              <button className={decisionDialog.action === "approuve_manager" ? "btn-modal-green" : "btn-modal-red"} onClick={handleDecisionConfirm} disabled={decisionDialog.loading}>
-                {decisionDialog.loading ? "..." : (decisionDialog.action === "approuve_manager" ? "Approuver" : "Refuser")}
-              </button>
-            </div>
+            <div className="modal-title"><Icon name={decisionDialog.action === "approuve_manager" ? "check-circle" : "x-circle"} size={20} color={decisionDialog.action === "approuve_manager" ? "#27ae60" : "#c0392b"} />{decisionDialog.action === "approuve_manager" ? " Approuver la demande" : " Refuser la demande"}</div>
+            <div className="modal-desc">{decisionDialog.action === "approuve_manager" ? `Vous allez approuver la demande de ${decisionDialog.demande.employe?.prenom_employe} ${decisionDialog.demande.employe?.nom_employe}.` : `Vous allez refuser la demande de ${decisionDialog.demande.employe?.prenom_employe} ${decisionDialog.demande.employe?.nom_employe}.`}</div>
+            <div className="modal-btns"><button className="btn-modal-cancel" onClick={() => setDecisionDialog({ isOpen: false, demande: null, action: "", loading: false })} disabled={decisionDialog.loading}>Annuler</button><button className={decisionDialog.action === "approuve_manager" ? "btn-modal-green" : "btn-modal-red"} onClick={handleDecisionConfirm} disabled={decisionDialog.loading}>{decisionDialog.loading ? "..." : (decisionDialog.action === "approuve_manager" ? "Approuver" : "Refuser")}</button></div>
           </div>
         </div>
       )}
 
-      {/* Contenu principal */}
-      <div className="page-header">
-        <h1 className="page-title">Tableau de bord Manager</h1>
-        <p className="page-sub">Gerez les absences et permissions de votre equipe</p>
-      </div>
-
+      <div className="page-header"><h1 className="page-title">Tableau de bord Manager</h1><p className="page-sub">Gerez les absences et permissions de votre equipe</p></div>
       {success && <div className="alert-success"><Icon name="check-circle" size={18} color="#27ae60" /><span>{success}</span></div>}
       {error && <div className="alert-error"><Icon name="alert-circle" size={18} color="#c0392b" /><span>{error}</span><button onClick={fetchDashboard} style={{background:"none",border:"none",color:"#b8943c",cursor:"pointer",fontWeight:600,marginLeft:"auto"}}>Reessayer</button></div>}
 
-      {!loading && dashboardData && (
-        <>
-          <div className="stats-grid">
-            <div className="stat-card"><div className="stat-label">Employes suivis</div><div className="stat-value gold">{employes.length}</div><div className="stat-desc">dans votre departement</div></div>
-            <div className="stat-card"><div className="stat-label">Demandes en attente</div><div className="stat-value">{totalEnAttente}</div><div className="stat-desc">a traiter</div></div>
-            <div className="stat-card"><div className="stat-label">Chevauchements</div><div className="stat-value" style={{color:chevauchements.length>0?"#c0392b":"#2c2418"}}>{chevauchements.length}</div><div className="stat-desc">conflits detectes</div></div>
-          </div>
-
-          <div className="filter-bar">
-            <div className="search-wrap">
-              <span className="search-icon"><Icon name="search" size={14} /></span>
-              <input className="search-input" placeholder="Rechercher..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} onKeyDown={handleSearchKeyDown}/>
-            </div>
-            <select className="filter-select" value={filterEmploye} onChange={(e) => setFilterEmploye(e.target.value)}>
-              <option value="">Tous les employes</option>
-              {listeEmployes.map((emp) => (<option key={emp.id} value={emp.id}>{emp.nom}</option>))}
-            </select>
-            <select className="filter-select" value={filterType} onChange={(e) => setFilterType(e.target.value)}>
-              <option value="">Tous les types</option>
-              {typesConges.map((type) => (<option key={type} value={type}>{type}</option>))}
-            </select>
-            <button className="btn-reset" onClick={() => { setSearchInput(""); setSearchTerm(""); setFilterEmploye(""); setFilterType(""); }}>Reinitialiser</button>
-          </div>
-
-          {chevauchements.length > 0 && (
-            <div className="alert-warning"><h3><Icon name="alert-triangle" size={16} color="#d4af64" /> Chevauchements detectes</h3>
-              {chevauchements.map((chev, idx) => (<div key={idx} className="alert-item">{chev.employeA} et {chev.employeB}</div>))}
-            </div>
-          )}
-          {demandesRetard.length > 0 && (
-            <div className="alert-danger"><h3><Icon name="clock" size={16} color="#c0392b" /> Demandes en retard</h3>
-              {demandesRetard.map(d => (<div key={d.id_demande_conde} className="alert-item">{d.employe.prenom_employe} {d.employe.nom_employe} - {d.types_conge.nom_types_conge}</div>))}
-            </div>
-          )}
-
-          <div className="columns-container">
-            <div className="column attente">
-              <div className="column-header">
-                <h2 className="column-title"><Icon name="clock" size={18} color="#b8943c" /> En attente</h2>
-                <span className="column-badge">{demandesEnAttente.length}</span>
-              </div>
-              <div className="card-list">
-                {demandesEnAttente.length === 0 ? <div className="empty-state">Aucune demande</div> : demandesEnAttente.map(d => renderRequestCard(d))}
-              </div>
-            </div>
-            <div className="column approuve">
-              <div className="column-header">
-                <h2 className="column-title"><Icon name="check-circle" size={18} color="#27ae60" /> Acceptees</h2>
-                <span className="column-badge">{demandesApprouvees.length}</span>
-              </div>
-              <div className="card-list">
-                {demandesApprouvees.length === 0 ? <div className="empty-state">Aucune demande</div> : demandesApprouvees.map(d => renderRequestCard(d))}
-              </div>
-            </div>
-            <div className="column refuse">
-              <div className="column-header">
-                <h2 className="column-title"><Icon name="x-circle" size={18} color="#c0392b" /> Refusees</h2>
-                <span className="column-badge">{demandesRefusees.length}</span>
-              </div>
-              <div className="card-list">
-                {demandesRefusees.length === 0 ? <div className="empty-state">Aucune demande</div> : demandesRefusees.map(d => renderRequestCard(d))}
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      {!loading && dashboardData && (<>
+        <div className="stats-grid">
+          <div className="stat-card"><div className="stat-label">Employes suivis</div><div className="stat-value gold">{employes.length}</div><div className="stat-desc">dans votre departement</div></div>
+          <div className="stat-card"><div className="stat-label">Demandes en attente</div><div className="stat-value">{totalEnAttente}</div><div className="stat-desc">a traiter</div></div>
+          <div className="stat-card"><div className="stat-label">Chevauchements</div><div className="stat-value" style={{color:chevauchements.length>0?"#c0392b":"#2c2418"}}>{chevauchements.length}</div><div className="stat-desc">conflits detectes</div></div>
+        </div>
+        <div className="filter-bar">
+          <div className="search-wrap"><span className="search-icon"><Icon name="search" size={14} /></span><input className="search-input" placeholder="Rechercher..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} onKeyDown={handleSearchKeyDown}/></div>
+          <select className="filter-select" value={filterEmploye} onChange={(e) => setFilterEmploye(e.target.value)}><option value="">Tous les employes</option>{listeEmployes.map((emp) => (<option key={emp.id} value={emp.id}>{emp.nom}</option>))}</select>
+          <select className="filter-select" value={filterType} onChange={(e) => setFilterType(e.target.value)}><option value="">Tous les types</option>{typesConges.map((type) => (<option key={type} value={type}>{type}</option>))}</select>
+          <button className="btn-reset" onClick={() => { setSearchInput(""); setSearchTerm(""); setFilterEmploye(""); setFilterType(""); }}>Reinitialiser</button>
+        </div>
+        {chevauchements.length > 0 && (<div className="alert-warning"><h3><Icon name="alert-triangle" size={16} color="#d4af64" /> Chevauchements detectes</h3>{chevauchements.map((chev, idx) => (<div key={idx} className="alert-item">{chev.employeA} et {chev.employeB}</div>))}</div>)}
+        {demandesRetard.length > 0 && (<div className="alert-danger"><h3><Icon name="clock" size={16} color="#c0392b" /> Demandes en retard</h3>{demandesRetard.map(d => (<div key={d.id_demande_conde} className="alert-item">{d.employe.prenom_employe} {d.employe.nom_employe} - {d.types_conge.nom_types_conge}</div>))}</div>)}
+        <div className="columns-container">
+          <div className="column attente"><div className="column-header"><h2 className="column-title"><Icon name="clock" size={18} color="#b8943c" /> En attente</h2><span className="column-badge">{demandesEnAttente.length}</span></div><div className="card-list">{demandesEnAttente.length === 0 ? <div className="empty-state">Aucune demande</div> : demandesEnAttente.map(d => renderRequestCard(d))}</div></div>
+          <div className="column approuve"><div className="column-header"><h2 className="column-title"><Icon name="check-circle" size={18} color="#27ae60" /> Acceptees</h2><span className="column-badge">{demandesApprouvees.length}</span></div><div className="card-list">{demandesApprouvees.length === 0 ? <div className="empty-state">Aucune demande</div> : demandesApprouvees.map(d => renderRequestCard(d))}</div></div>
+          <div className="column refuse"><div className="column-header"><h2 className="column-title"><Icon name="x-circle" size={18} color="#c0392b" /> Refusees</h2><span className="column-badge">{demandesRefusees.length}</span></div><div className="card-list">{demandesRefusees.length === 0 ? <div className="empty-state">Aucune demande</div> : demandesRefusees.map(d => renderRequestCard(d))}</div></div>
+        </div>
+      </>)}
     </div>
   );
 };

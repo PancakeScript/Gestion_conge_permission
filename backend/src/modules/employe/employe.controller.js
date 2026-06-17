@@ -1,40 +1,30 @@
 const employeService = require('./employe.service');
 
 class EmployeController {
-  // GET /api/employe/profil
+  // GET /api/employes/:id
   async getProfil(req, res) {
     try {
-      console.log("PARAMS =", req.params);
-      console.log("USER =", req.user);
-      console.log("REQ.USER =", req.user);
       const profil = await employeService.obtenirProfil(req.params.id);
+      if (!profil) return res.status(404).json({ error: "Employé introuvable" });
       return res.status(200).json(profil);
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
   }
 
-  // POST /api/employe
-async createEmploye(req, res) {
-    console.log("Body reçu:", req.body)
-  try {
-    const nouvelEmploye = await employeService.creerEmploye(req.body);
-    return res.status(201).json({ 
-      message: "Employé créé avec succès", 
-      employe: nouvelEmploye 
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
+  // POST /api/employes
+  async createEmploye(req, res) {
+    try {
+      const nouvelEmploye = await employeService.creerEmploye(req.body);
+      return res.status(201).json({ message: "Employé créé avec succès", employe: nouvelEmploye });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
   }
-}
 
-  // PUT /api/employe/profil
+  // PUT /api/employes/:id
   async updateProfil(req, res) {
     try {
-      //params ovaina params.id
-      console.log("PARAMS =", req.params.id);
-      console.log("USER =", req.user);
-      //modifierProfil par modifierEmploye 
       const profilMisAJour = await employeService.modifierEmploye(req.params.id, req.body);
       return res.status(200).json({ message: "Profil mis à jour", donnees: profilMisAJour });
     } catch (error) {
@@ -42,20 +32,20 @@ async createEmploye(req, res) {
     }
   }
 
-  // POST /api/employe/demande
+  // POST /api/employes/:id/demande
   async postDemande(req, res) {
     try {
-      const nouvelleDemande = await employeService.creerDemande(req.user.id_employe, req.body);
+      const nouvelleDemande = await employeService.creerDemande(req.params.id, req.body);
       return res.status(201).json({ message: "Demande soumise avec succès", donnees: nouvelleDemande });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
   }
 
-  // GET /api/employe/dashboard
+  // GET /api/employes/:id/dashboard
   async getDashboard(req, res) {
     try {
-      const donneesDashboard = await employeService.obtenirTableauDeBord(req.user.id_employe);
+      const donneesDashboard = await employeService.obtenirTableauDeBord(req.params.id);
       return res.status(200).json(donneesDashboard);
     } catch (error) {
       return res.status(500).json({ error: error.message });

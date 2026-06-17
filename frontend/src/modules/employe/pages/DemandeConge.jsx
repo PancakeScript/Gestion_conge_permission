@@ -1,449 +1,296 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../shared/context/AuthContext";
-import { congeApi } from "../../../shared/services/api";
+import { Icon } from "../../../shared/components/Common/Icon";
+import { getTypeCongeIcon } from "../../../shared/utils/typeCongeIcons";
 
-const TYPES_CONGE = [
-  { nom: "Congé Annuel", justificatif: null, pdf: false },
-  { nom: "Congé Maladie", justificatif: "Certificat médical requis", pdf: true },
-  { nom: "Congé Maternité/Paternité", justificatif: "Acte de naissance requis", pdf: true },
-  { nom: "Congé Sans Solde", justificatif: null, pdf: false },
-  { nom: "Congé Exceptionnel", justificatif: "Justificatif selon le cas", pdf: true },
-];
+const API_BASE = "http://localhost:3000/api";
 
-const FORM_INITIAL = { nom_types_conge: "", date_debut: "", date_fin: "", motif: "" };
+const api = {
+  getSolde: async () => {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_BASE}/conges/solde`, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) throw new Error("Erreur chargement solde");
+    return res.json();
+  },
+  getTypesConge: async () => {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_BASE}/types-conge`, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) return [];
+    return res.json();
+  },
+  getMesDemandes: async () => {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_BASE}/conges/mes-demandes`, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) return [];
+    return res.json();
+  },
+  getJoursFeries: async () => {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_BASE}/conges/jours-feries`, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) return [];
+    return res.json();
+  },
+  soumettreDemande: async (form, fichier) => {
+    const token = localStorage.getItem("token");
+    const fd = new FormData();
+    fd.append("id_type_conge", form.id_type_conge);
+    fd.append("date_debut", form.date_debut);
+    fd.append("date_fin", form.date_fin);
+    fd.append("motif", form.motif || "");
+    if (fichier) fd.append("justificatif", fichier);
+    const res = await fetch(`${API_BASE}/conges`, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd });
+    if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.error || "Erreur"); }
+    return res.json();
+  },
+  annulerDemande: async (id) => {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_BASE}/conges/${id}/annuler`, { method: "PUT", headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) throw new Error("Erreur annulation");
+    return res.json();
+  }
+};
+
+const FORM_INITIAL = { id_type_conge: "", date_debut: "", date_fin: "", motif: "" };
 
 export default function DemandeConge() {
-  const { logout } = useAuth();
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
-
-  const [form, setForm] = useState(() => {
-    const saved = sessionStorage.getItem("demande_form");
-    return saved ? JSON.parse(saved) : FORM_INITIAL;
-  });
+  const [form, setForm] = useState(() => { const saved = sessionStorage.getItem("demande_form"); return saved ? JSON.parse(saved) : FORM_INITIAL; });
   const [fichier, setFichier] = useState(null);
   const [solde, setSolde] = useState(null);
+  const [typesConge, setTypesConge] = useState([]);
+  const [historique, setHistorique] = useState([]);
+  const [joursFeries, setJoursFeries] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loadingSolde, setLoadingSolde] = useState(true);
+  const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showAnnulerConfirm, setShowAnnulerConfirm] = useState(false);
   const [showAnnulerHistConfirm, setShowAnnulerHistConfirm] = useState(false);
   const [selectedDemande, setSelectedDemande] = useState(null);
-  const [success, setSuccess] = useState(false);
-  const [historique, setHistorique] = useState([]);
-  const [joursFeries, setJoursFeries] = useState([]);
 
   useEffect(() => {
-    congeApi.getSolde().then(setSolde).catch(e => setError(e.message)).finally(() => setLoadingSolde(false));
-    congeApi.getMesDemandes().then(setHistorique).catch(() => {});
-    congeApi.getJoursFeries().then(jours => {
-      setJoursFeries(jours.map(j => new Date(j.date_jours_feries).toDateString()));
-    }).catch(() => {});
+    Promise.all([api.getSolde(), api.getTypesConge(), api.getMesDemandes(), api.getJoursFeries()])
+      .then(([s, t, h, j]) => {
+        setSolde(s); setTypesConge(Array.isArray(t) ? t.filter(tp => (tp.statut_types_conge || tp.statut) === "actif") : []);
+        setHistorique(Array.isArray(h) ? h : []); setJoursFeries(Array.isArray(j) ? j.map(jf => new Date(jf.date_jours_feries).toDateString()) : []);
+      }).catch(e => setError(e.message)).finally(() => setLoadingData(false));
   }, []);
 
-  useEffect(() => {
-    sessionStorage.setItem("demande_form", JSON.stringify(form));
-  }, [form]);
-
-  const typeSelectionne = TYPES_CONGE.find(t => t.nom === form.nom_types_conge);
+  useEffect(() => { sessionStorage.setItem("demande_form", JSON.stringify(form)); }, [form]);
 
   const nombreJours = () => {
     if (!form.date_debut || !form.date_fin) return 0;
-    let count = 0;
-    const cur = new Date(form.date_debut);
-    const end = new Date(form.date_fin);
-    while (cur <= end) {
-      const jour = cur.getDay();
-      const estWeekend = jour === 0 || jour === 6;
-      const estFerie = joursFeries.includes(cur.toDateString());
-      if (!estWeekend && !estFerie) count++;
-      cur.setDate(cur.getDate() + 1);
-    }
+    let count = 0; const cur = new Date(form.date_debut); const end = new Date(form.date_fin);
+    while (cur <= end) { const jour = cur.getDay(); if (jour !== 0 && jour !== 6 && !joursFeries.includes(cur.toDateString())) count++; cur.setDate(cur.getDate() + 1); }
     return count;
   };
 
-  const handleSubmitConfirm = (e) => {
-    e.preventDefault();
-    setError("");
-    if (!form.nom_types_conge || !form.date_debut || !form.date_fin || !form.motif) {
-      setError("Veuillez remplir tous les champs obligatoires."); return;
-    }
-    if (new Date(form.date_fin) < new Date(form.date_debut)) {
-      setError("La date de fin doit être après la date de début."); return;
-    }
-    if (typeSelectionne?.pdf && !fichier) {
-      setError("Veuillez joindre le justificatif requis (PDF)."); return;
-    }
-    setShowConfirm(true);
+  const handleSubmitConfirm = (e) => { e.preventDefault(); setError(""); if (!form.id_type_conge || !form.date_debut || !form.date_fin) { setError("Veuillez remplir tous les champs obligatoires."); return; } if (new Date(form.date_fin) < new Date(form.date_debut)) { setError("La date de fin doit etre apres la date de debut."); return; } setShowConfirm(true); };
+  const handleSubmit = async () => { setShowConfirm(false); setLoading(true); try { await api.soumettreDemande(form, fichier); sessionStorage.removeItem("demande_form"); setSuccess(true); setForm(FORM_INITIAL); setFichier(null); const [s, h] = await Promise.all([api.getSolde(), api.getMesDemandes()]); setSolde(s); setHistorique(h); } catch (err) { setError(err.message); } finally { setLoading(false); } };
+  const handleAnnuler = () => { setShowAnnulerConfirm(false); sessionStorage.removeItem("demande_form"); setForm(FORM_INITIAL); setFichier(null); setError(""); const input = document.getElementById('justificatif-file-input'); if (input) input.value = ""; };
+  const handleAnnulerHist = async () => { if (!selectedDemande) return; setShowAnnulerHistConfirm(false); try { await api.annulerDemande(selectedDemande.id_demande_conde); const [s, h] = await Promise.all([api.getSolde(), api.getMesDemandes()]); setSolde(s); setHistorique(h); } catch (err) { setError(err.message); } };
+
+  const getStatutStyle = (statut) => {
+    const s = { en_attente: { bg: "#fdf6e3", color: "#b8943c", label: "En attente", icon: "clock" }, approuve_manager: { bg: "#eff6ff", color: "#1e40af", label: "Valide manager", icon: "user-check" }, approuve_rh: { bg: "#f0faf4", color: "#27ae60", label: "Approuve RH", icon: "check-circle" }, approuve: { bg: "#f0faf4", color: "#27ae60", label: "Approuve", icon: "check-circle" }, refuse: { bg: "#fef5f5", color: "#c0392b", label: "Refuse", icon: "x-circle" }, annule: { bg: "#f0ede5", color: "#6b5c45", label: "Annule", icon: "x" } };
+    return s[statut] || { bg: "#f0ede5", color: "#6b5c45", label: statut, icon: "info" };
   };
 
-  const handleSubmit = async () => {
-    setShowConfirm(false);
-    setLoading(true);
-    try {
-      await congeApi.soumettreDemande(form);
-      sessionStorage.removeItem("demande_form");
-      setSuccess(true);
-      setForm(FORM_INITIAL);
-      setFichier(null);
-      congeApi.getMesDemandes().then(setHistorique).catch(() => {});
-      congeApi.getSolde().then(setSolde).catch(() => {});
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAnnuler = () => {
-    setShowAnnulerConfirm(false);
-    sessionStorage.removeItem("demande_form");
-    setForm(FORM_INITIAL);
-    setFichier(null);
-    setError("");
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
-  const handleAnnulerHist = async () => {
-    if (!selectedDemande) return;
-    setShowAnnulerHistConfirm(false);
-    try {
-      await congeApi.annulerDemande(selectedDemande.id_demande_conde);
-      congeApi.getMesDemandes().then(setHistorique).catch(() => {});
-      congeApi.getSolde().then(setSolde).catch(() => {});
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const handleLogout = () => { logout(); navigate("/login"); };
   const jours = nombreJours();
+  const typeSelectionne = typesConge.find(t => (t.id_conge || t.id) === parseInt(form.id_type_conge));
 
-  const statutStyle = (statut) => {
-    const s = {
-      en_attente: { bg: "#fff8e6", color: "#b8943c", label: "En attente" },
-      approuve: { bg: "#e8f5e9", color: "#2e7d32", label: "Approuvé" },
-      approuve_manager: { bg: "#e3f2fd", color: "#1565c0", label: "Validé manager" },
-      refuse: { bg: "#fdecea", color: "#c0392b", label: "Refusé" },
-      annule: { bg: "#f5f5f5", color: "#757575", label: "Annulé" },
-    };
-    return s[statut] || { bg: "#f5f5f5", color: "#757575", label: statut };
-  };
+  if (loadingData) return (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 300, background: "#f5f0e8" }}>
+      <div style={{ textAlign: "center" }}><div style={{ width: 36, height: 36, border: "3px solid #e0d8cc", borderTopColor: "#d4af64", borderRadius: "50%", animation: "spin 0.7s linear infinite", margin: "0 auto 12px" }} /><p style={{ color: "#a89070" }}>Chargement...</p></div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
 
   return (
-    <>
+    <div style={{ padding: "40px 32px", width: "100%", minHeight: "100vh", background: "#f5f0e8" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body, #root { width: 100%; min-height: 100vh; }
-        .page-root { min-height: 100vh; background: #f5f0e8; font-family: 'DM Sans', sans-serif; width: 100%; }
-        .navbar { background: #2c2418; padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #3d3020; position: sticky; top: 0; z-index: 100; width: 100%; }
-        .nav-brand { display: flex; align-items: center; gap: 10px; }
-        .nav-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #d4af64, #b8943c); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-        .nav-icon svg { width: 18px; height: 18px; color: #2c2418; }
-        .nav-name { font-family: 'Playfair Display', serif; font-size: 18px; color: #f5f0e8; }
-        .nav-links { display: flex; align-items: center; gap: 4px; }
-        .nav-link { padding: 8px 16px; border-radius: 8px; font-size: 14px; color: #a89880; cursor: pointer; border: none; background: none; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-        .nav-link:hover, .nav-link.active { background: rgba(212,175,100,0.15); color: #d4af64; }
-        .nav-right { display: flex; align-items: center; gap: 12px; }
-        .notif-btn { background: none; border: none; font-size: 20px; cursor: pointer; position: relative; padding: 4px 6px; }
-        .notif-badge { position: absolute; top: -2px; right: -2px; background: #c0392b; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
-        .btn-logout { padding: 8px 16px; background: transparent; border: 1px solid #c0392b; border-radius: 8px; color: #c0392b; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
-        .btn-logout:hover { background: #c0392b; color: #fff; }
-        .main { padding: 36px 40px; max-width: 1100px; margin: 0 auto; }
-        .page-title { font-family: 'Playfair Display', serif; font-size: 30px; color: #2c2418; margin-bottom: 6px; }
-        .page-subtitle { font-size: 14px; color: #a89070; margin-bottom: 28px; }
-        .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
-        .solde-banner { background: linear-gradient(135deg, #2c2418, #3d3020); border-radius: 14px; padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .solde-info { display: flex; flex-direction: column; gap: 2px; }
-        .solde-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #a89880; }
-        .solde-value { font-family: 'Playfair Display', serif; font-size: 36px; color: #d4af64; }
-        .solde-desc { font-size: 13px; color: #7a6a55; }
-        .solde-bar-wrap { flex: 1; max-width: 160px; }
-        .solde-bar-track { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 8px; }
-        .solde-bar-fill { height: 6px; background: linear-gradient(90deg, #d4af64, #b8943c); border-radius: 3px; }
-        .card { background: #faf7f2; border-radius: 14px; padding: 28px; border: 1px solid #e8e0d0; }
-        .card-title { font-family: 'Playfair Display', serif; font-size: 18px; color: #2c2418; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #e8e0d0; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-        .form-label { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #6b5c45; }
-        .required { color: #c0392b; margin-left: 2px; }
-        .form-select, .form-input, .form-textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #e0d8cc; border-radius: 10px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: #2c2418; background: #fff; outline: none; transition: all 0.2s; }
-        .form-select:focus, .form-input:focus, .form-textarea:focus { border-color: #d4af64; box-shadow: 0 0 0 3px rgba(212,175,100,0.15); }
-        .form-textarea { resize: vertical; min-height: 90px; }
-        .justificatif-box { background: #fff8e6; border: 1px solid #f0d080; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #b8943c; display: flex; align-items: center; gap: 8px; }
-        .pdf-upload-btn { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #f0f7ff; border: 1.5px dashed #90c4f5; border-radius: 10px; color: #1565c0; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; width: 100%; justify-content: center; }
-        .pdf-upload-btn:hover { background: #e3f2fd; border-color: #1565c0; }
-        .pdf-selected { background: #e8f5e9; border: 1.5px solid #a5d6a7; border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #2e7d32; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-        .pdf-remove { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 16px; padding: 0 4px; }
-        .jours-preview { background: #f0f7ff; border: 1px solid #b3d4f5; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #1565c0; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-        .jours-warning { background: #fdecea; border: 1px solid #f5c0c0; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #c0392b; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-        .error-box { background: #fdecea; border: 1px solid #f5c0c0; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #c0392b; display: flex; align-items: center; gap: 8px; margin-top: 12px; }
-        .btn-row { display: flex; gap: 12px; margin-top: 16px; }
-        .btn-primary { padding: 13px 24px; background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
-        .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(39,174,96,0.3); }
-        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
-        .btn-danger { padding: 13px 24px; background: transparent; color: #c0392b; border: 1.5px solid #c0392b; border-radius: 10px; font-size: 14px; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
-        .btn-danger:hover { background: #c0392b; color: #fff; }
-        .success-card { text-align: center; padding: 48px 28px; }
-        .success-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #27ae60, #1e8449); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
-        .success-title { font-family: 'Playfair Display', serif; font-size: 24px; color: #2c2418; margin-bottom: 8px; }
-        .success-desc { font-size: 14px; color: #a89070; margin-bottom: 24px; }
-        .btn-gold { padding: 12px 24px; background: linear-gradient(135deg, #d4af64, #b8943c); color: #2c2418; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-        .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(180,140,60,0.3); }
-        .btn-secondary { padding: 12px 24px; background: transparent; color: #6b5c45; border: 1.5px solid #e0d8cc; border-radius: 10px; font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
-        .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .historique-section { margin-top: 0; }
-        .historique-scroll { max-height: 560px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
-        .historique-scroll::-webkit-scrollbar { width: 6px; }
-        .historique-scroll::-webkit-scrollbar-track { background: #f0ece4; border-radius: 3px; }
-        .historique-scroll::-webkit-scrollbar-thumb { background: #d4af64; border-radius: 3px; }
-        .historique-item { background: #fff; border: 1px solid #e8e0d0; border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .historique-info { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
-        .historique-type { font-size: 13px; font-weight: 600; color: #2c2418; }
-        .historique-date { font-size: 11px; color: #a89070; }
-        .historique-motif { font-size: 11px; color: #6b5c45; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .statut-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
-        .btn-annuler-hist { background: transparent; border: 1px solid #c0392b; color: #c0392b; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 11px; font-family: 'DM Sans', sans-serif; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
-        .btn-annuler-hist:hover { background: #c0392b; color: white; }
-        .empty { text-align: center; padding: 32px; color: #a89070; font-size: 14px; }
-        .overlay { position: fixed; inset: 0; background: rgba(44,36,24,0.55); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(2px); }
-        .modal { background: #faf7f2; border-radius: 16px; padding: 32px; max-width: 440px; width: 90%; border: 1px solid #e8e0d0; }
-        .modal-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #2c2418; margin-bottom: 10px; }
-        .modal-desc { font-size: 14px; color: #a89070; margin-bottom: 8px; line-height: 1.6; }
-        .modal-detail { background: #f5f0e8; border-radius: 8px; padding: 12px 14px; margin: 14px 0; font-size: 13px; color: #6b5c45; line-height: 2; }
-        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-confirm-green { padding: 12px 22px; background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
-        .btn-confirm-red { padding: 12px 22px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
-        .btn-modal-cancel { padding: 12px 22px; background: transparent; color: #6b5c45; border: 1.5px solid #e0d8cc; border-radius: 10px; font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
-        @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .navbar { padding: 0 16px; } .main { padding: 24px 16px; } }
+        *{box-sizing:border-box;margin:0;padding:0}
+        .page-header{text-align:center;margin-bottom:32px}
+        .page-title{font-family:'Playfair Display',serif;font-size:36px;color:#2c2418}
+        .page-sub{color:#a89070;font-size:14px}
+        .alert-error{background:#fef5f5;border:1px solid #f5c0c0;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:14px;display:flex;align-items:center;gap:8px;color:#c0392b}
+        .alert-warning{background:#fdf6e3;border:1px solid #f0d080;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:14px;display:flex;align-items:center;gap:8px;color:#b8943c}
+        .alert-info{background:#eff6ff;border:1px solid #b3d4f5;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:14px;display:flex;align-items:center;gap:8px;color:#1e40af}
+        
+        .solde-banner{background:#fff;border:1px solid #e8e0d0;border-radius:16px;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+        .solde-info{display:flex;flex-direction:column;gap:2px}
+        .solde-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#a89070}
+        .solde-value{font-family:'Playfair Display',serif;font-size:36px;color:#b8943c}
+        .solde-desc{font-size:13px;color:#a89070}
+        .solde-bar-wrap{flex:1;max-width:160px}
+        .solde-bar-track{height:6px;background:#e8e0d0;border-radius:3px;margin-top:8px}
+        .solde-bar-fill{height:6px;background:linear-gradient(90deg,#d4af64,#b8943c);border-radius:3px}
+        
+        .layout{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+        .card{background:#fff;border:1px solid #e8e0d0;border-radius:16px;padding:28px}
+        .card-title{font-family:'Playfair Display',serif;font-size:20px;color:#2c2418;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #e8e0d0;display:flex;align-items:center;gap:8px}
+        
+        .form-group{margin-bottom:18px}
+        .form-label{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;text-transform:uppercase;color:#6b5c45;margin-bottom:8px}
+        .required{color:#c0392b;margin-left:2px}
+        .form-select,.form-input,.form-textarea{width:100%;padding:12px 14px;border:1.5px solid #e0d8cc;border-radius:12px;font-size:14px;font-family:'DM Sans',sans-serif;color:#2c2418;background:#fdfcf8;outline:none;transition:all 0.2s}
+        .form-select:focus,.form-input:focus,.form-textarea:focus{border-color:#d4af64;box-shadow:0 0 0 3px rgba(212,175,100,0.1)}
+        .form-textarea{resize:vertical;min-height:90px}
+        
+        .upload-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;background:#fdfcf8;border:1.5px dashed #d4af64;border-radius:12px;color:#b8943c;font-size:13px;cursor:pointer;width:100%;justify-content:center;transition:all 0.2s}
+        .upload-btn:hover{background:#fdf6e3;border-color:#b8943c}
+        .file-selected{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;background:#f0faf4;border:1.5px solid #a7d5b0;border-radius:12px;font-size:13px;color:#27ae60}
+        .file-remove{background:none;border:none;color:#c0392b;cursor:pointer;font-size:16px;padding:0 4px}
+        
+        .btn-row{display:flex;gap:12px;margin-top:20px}
+        .btn-primary{padding:13px 24px;background:linear-gradient(135deg,#27ae60,#1e8449);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.2s}
+        .btn-primary:hover:not(:disabled){box-shadow:0 6px 20px rgba(39,174,96,0.3)}
+        .btn-primary:disabled{opacity:0.7;cursor:not-allowed}
+        .btn-danger{padding:13px 24px;background:transparent;color:#c0392b;border:1.5px solid #c0392b;border-radius:12px;font-size:14px;cursor:pointer;transition:all 0.2s}
+        .btn-danger:hover{background:#c0392b;color:#fff}
+        .btn-gold{padding:12px 24px;background:linear-gradient(135deg,#d4af64,#b8943c);color:#2c2418;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
+        .btn-secondary{padding:12px 24px;background:transparent;color:#6b5c45;border:1.5px solid #e0d8cc;border-radius:12px;font-size:14px;cursor:pointer}
+        
+        .historique-scroll{max-height:560px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-right:4px}
+        .historique-item{background:#fdfcf8;border:1px solid #e8e0d0;border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+        .historique-left{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0}
+        .historique-icon-wrap{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+        .historique-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+        .historique-type{font-size:13px;font-weight:600;color:#2c2418}
+        .historique-date{font-size:11px;color:#a89070}
+        .historique-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+        .statut-badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:4px}
+        .btn-annuler-hist{background:transparent;border:1px solid #c0392b;color:#c0392b;padding:5px 10px;border-radius:8px;cursor:pointer;font-size:11px;transition:all 0.2s;white-space:nowrap;flex-shrink:0}
+        .btn-annuler-hist:hover{background:#c0392b;color:#fff}
+        
+        .pdf-link{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#b8943c;text-decoration:none;font-weight:500;padding:4px 10px;border-radius:6px;background:#fdf6e3;border:1px solid #f0d080;transition:all 0.2s;white-space:nowrap;margin-top:2px;width:fit-content}
+        .pdf-link:hover{background:#d4af64;color:#2c2418;border-color:#d4af64}
+        
+        .success-card{text-align:center;padding:40px 20px}
+        .success-icon{width:64px;height:64px;background:linear-gradient(135deg,#27ae60,#1e8449);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+        .success-title{font-family:'Playfair Display',serif;font-size:22px;color:#2c2418;margin-bottom:8px}
+        .success-desc{font-size:14px;color:#a89070;margin-bottom:24px}
+        
+        .empty-state{text-align:center;padding:32px;color:#a89070}
+        .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        
+        .modal-overlay{position:fixed;inset:0;background:rgba(44,36,24,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;animation:fadeIn 0.2s}
+        .modal-card{background:#fff;border-radius:20px;padding:28px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(44,36,24,0.25);border:1px solid #e8e0d0;animation:slideUp 0.3s}
+        .modal-title{font-family:'Playfair Display',serif;font-size:22px;color:#2c2418;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+        .modal-desc{font-size:14px;color:#a89070;margin-bottom:8px;line-height:1.6}
+        .modal-detail{background:#fdfcf8;border-radius:10px;padding:12px 14px;margin:14px 0;font-size:13px;color:#6b5c45;line-height:2}
+        .modal-btns{display:flex;gap:10px;margin-top:20px}
+        .btn-modal-green{flex:1;padding:12px;background:#27ae60;color:#fff;border:none;border-radius:12px;font-weight:600;cursor:pointer}
+        .btn-modal-red{flex:1;padding:12px;background:#c0392b;color:#fff;border:none;border-radius:12px;font-weight:600;cursor:pointer}
+        .btn-modal-cancel{flex:1;padding:12px;background:#f0ede5;color:#6b5c45;border:none;border-radius:12px;font-weight:600;cursor:pointer}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        @media(max-width:768px){.layout{grid-template-columns:1fr}.page-title{font-size:28px}.historique-item{flex-direction:column}.historique-right{width:100%;justify-content:flex-end}}
       `}</style>
 
-      {/* Modal confirmation soumission */}
       {showConfirm && (
-        <div className="overlay">
-          <div className="modal">
-            <div className="modal-title">Confirmer la demande</div>
+        <div className="modal-overlay" onClick={() => setShowConfirm(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-title"><Icon name="check-circle" size={20} color="#27ae60" /> Confirmer la demande</div>
             <div className="modal-desc">Voulez-vous vraiment soumettre cette demande ?</div>
-            <div className="modal-detail">
-              <strong>Type :</strong> {form.nom_types_conge}<br/>
-              <strong>Du :</strong> {form.date_debut ? new Date(form.date_debut).toLocaleDateString("fr-FR") : "—"}<br/>
-              <strong>Au :</strong> {form.date_fin ? new Date(form.date_fin).toLocaleDateString("fr-FR") : "—"}<br/>
-              <strong>Durée :</strong> {jours} jour{jours > 1 ? "s" : ""} ouvrable{jours > 1 ? "s" : ""}<br/>
-              <strong>Motif :</strong> {form.motif}
-              {fichier && <><br/><strong>Justificatif :</strong> {fichier.name}</>}
-            </div>
-            <div className="modal-btns">
-              <button className="btn-confirm-green" onClick={handleSubmit}>Confirmer</button>
-              <button className="btn-modal-cancel" onClick={() => setShowConfirm(false)}>Annuler</button>
-            </div>
+            <div className="modal-detail"><strong>Type :</strong> {typeSelectionne?.nom_types_conge || typeSelectionne?.nom || "—"}<br/><strong>Du :</strong> {form.date_debut ? new Date(form.date_debut).toLocaleDateString("fr-FR") : "—"}<br/><strong>Au :</strong> {form.date_fin ? new Date(form.date_fin).toLocaleDateString("fr-FR") : "—"}<br/><strong>Duree :</strong> {jours} jour{jours>1?"s":""}{fichier && <><br/><strong>Justificatif :</strong> {fichier.name}</>}</div>
+            <div className="modal-btns"><button className="btn-modal-green" onClick={handleSubmit} disabled={loading}>{loading?"Envoi...":"Confirmer"}</button><button className="btn-modal-cancel" onClick={()=>setShowConfirm(false)}>Annuler</button></div>
           </div>
         </div>
       )}
-
-      {/* Modal annulation saisie */}
       {showAnnulerConfirm && (
-        <div className="overlay">
-          <div className="modal">
-            <div className="modal-title">Annuler la saisie ?</div>
-            <div className="modal-desc">Les champs seront vidés. Cette action est irréversible.</div>
-            <div className="modal-btns">
-              <button className="btn-confirm-red" onClick={handleAnnuler}>Oui, vider les champs</button>
-              <button className="btn-modal-cancel" onClick={() => setShowAnnulerConfirm(false)}>Continuer la saisie</button>
-            </div>
+        <div className="modal-overlay" onClick={() => setShowAnnulerConfirm(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-title"><Icon name="alert-triangle" size={20} color="#c0392b" /> Annuler la saisie ?</div>
+            <div className="modal-desc">Les champs seront vides.</div>
+            <div className="modal-btns"><button className="btn-modal-red" onClick={handleAnnuler}>Vider</button><button className="btn-modal-cancel" onClick={()=>setShowAnnulerConfirm(false)}>Continuer</button></div>
           </div>
         </div>
       )}
-
-      {/* Modal annulation demande historique */}
       {showAnnulerHistConfirm && (
-        <div className="overlay">
-          <div className="modal">
-            <div className="modal-title">Annuler et supprimer ?</div>
-            <div className="modal-desc">Cette action est irréversible. La demande sera définitivement supprimée.</div>
-            {selectedDemande && (
-              <div className="modal-detail">
-                <strong>Type :</strong> {selectedDemande.types_conge?.nom_types_conge || "Congé"}<br/>
-                <strong>Du :</strong> {selectedDemande.date_debut ? new Date(selectedDemande.date_debut).toLocaleDateString("fr-FR") : "—"}<br/>
-                <strong>Au :</strong> {selectedDemande.date_fin ? new Date(selectedDemande.date_fin).toLocaleDateString("fr-FR") : "—"}
-              </div>
-            )}
-            <div className="modal-btns">
-              <button className="btn-confirm-red" onClick={handleAnnulerHist}>Annuler et supprimer</button>
-              <button className="btn-modal-cancel" onClick={() => setShowAnnulerHistConfirm(false)}>Retour</button>
-            </div>
+        <div className="modal-overlay" onClick={() => setShowAnnulerHistConfirm(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-title"><Icon name="alert-triangle" size={20} color="#c0392b" /> Annuler cette demande ?</div>
+            <div className="modal-desc">Cette action est irreversible.</div>
+            <div className="modal-btns"><button className="btn-modal-red" onClick={handleAnnulerHist}>Supprimer</button><button className="btn-modal-cancel" onClick={()=>setShowAnnulerHistConfirm(false)}>Retour</button></div>
           </div>
         </div>
       )}
 
-      {/* Modal déconnexion */}
-      {showLogoutConfirm && (
-        <div className="overlay">
-          <div className="modal">
-            <div className="modal-title">Déconnexion</div>
-            <div className="modal-desc">Voulez-vous vraiment vous déconnecter ?</div>
-            <div className="modal-btns">
-              <button className="btn-confirm-red" onClick={handleLogout}>Se déconnecter</button>
-              <button className="btn-modal-cancel" onClick={() => setShowLogoutConfirm(false)}>Annuler</button>
-            </div>
-          </div>
+      <div className="page-header"><h1 className="page-title">Demande de conge</h1><p className="page-sub">Soumettez une nouvelle demande et consultez votre historique</p></div>
+      {error && <div className="alert-error"><Icon name="alert-circle" size={18} color="#c0392b" /><span>{error}</span></div>}
+
+      {solde && (
+        <div className="solde-banner">
+          <div className="solde-info"><span className="solde-label">Solde disponible</span><span className="solde-value">{solde.soldeRestant}</span><span className="solde-desc">jours sur {solde.joursAnnuels} annuels</span></div>
+          <div className="solde-bar-wrap"><div className="solde-bar-track"><div className="solde-bar-fill" style={{width:`${(solde.soldeRestant/solde.joursAnnuels)*100}%`}}></div></div></div>
         </div>
       )}
 
-      <div className="page-root">
-
-        <main className="main">
-          <h1 className="page-title">Demandes de congé</h1>
-          <p className="page-subtitle">Soumettez une nouvelle demande et consultez votre historique</p>
-
-          {!loadingSolde && solde && (
-            <div className="solde-banner">
-              <div className="solde-info">
-                <span className="solde-label">Solde disponible</span>
-                <span className="solde-value">{solde.soldeRestant}</span>
-                <span className="solde-desc">jours sur {solde.joursAnnuels} annuels</span>
-              </div>
-              <div className="solde-bar-wrap">
-                <div className="solde-bar-track">
-                  <div className="solde-bar-fill" style={{width:`${(solde.soldeRestant/solde.joursAnnuels)*100}%`}}></div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="layout">
-            <div>
-              <div className="card">
-                <h3 className="card-title">Nouvelle demande</h3>
-                {success ? (
-                  <div className="success-card">
-                    <div className="success-icon">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                    <div className="success-title">Demande soumise !</div>
-                    <div className="success-desc">Votre demande a été transmise à votre manager.</div>
-                    <div style={{display:"flex",gap:12,justifyContent:"center"}}>
-                      <button className="btn-gold" onClick={() => setSuccess(false)}>Nouvelle demande</button>
-                      <button className="btn-secondary" onClick={() => navigate("/dashboard")}>Dashboard</button>
-                    </div>
-                  </div>
+      <div className="layout">
+        <div className="card">
+          <h3 className="card-title"><Icon name="plus-circle" size={18} color="#d4af64" /> Nouvelle demande</h3>
+          {success ? (
+            <div className="success-card"><div className="success-icon"><Icon name="check" size={28} color="#fff" /></div><div className="success-title">Demande soumise !</div><div className="success-desc">Votre demande a ete transmise a votre manager.</div>
+              <div style={{display:"flex",gap:12,justifyContent:"center"}}><button className="btn-gold" onClick={()=>setSuccess(false)}>Nouvelle demande</button><button className="btn-secondary" onClick={()=>navigate("/dashboard")}>Dashboard</button></div></div>
+          ) : (
+            <form onSubmit={handleSubmitConfirm}>
+              <div className="form-group"><label className="form-label"><Icon name="tag" size={12} />Type de conge <span className="required">*</span></label>
+                <select className="form-select" value={form.id_type_conge} onChange={e => setForm({...form, id_type_conge: e.target.value})}><option value="">Selectionner un type</option>{typesConge.map(t => <option key={t.id_conge||t.id} value={t.id_conge||t.id}>{t.nom_types_conge||t.nom}</option>)}</select></div>
+              <div className="form-group"><label className="form-label"><Icon name="calendar" size={12} />Date de debut <span className="required">*</span></label><input type="date" className="form-input" value={form.date_debut} min={new Date().toISOString().split("T")[0]} onChange={e=>setForm({...form,date_debut:e.target.value})}/></div>
+              <div className="form-group"><label className="form-label"><Icon name="calendar" size={12} />Date de fin <span className="required">*</span></label><input type="date" className="form-input" value={form.date_fin} min={form.date_debut||new Date().toISOString().split("T")[0]} onChange={e=>setForm({...form,date_fin:e.target.value})}/></div>
+              {jours>0&&(solde&&jours>solde.soldeRestant?<div className="alert-warning"><Icon name="alert-triangle" size={16} color="#b8943c"/> Solde insuffisant — {jours}j demandes, {solde.soldeRestant}j disponibles</div>:<div className="alert-info"><Icon name="calendar" size={16} color="#1e40af"/> Duree : <strong>{jours} jour{jours>1?"s":""} ouvrable{jours>1?"s":""}</strong></div>)}
+              <div className="form-group"><label className="form-label"><Icon name="message-square" size={12} />Motif</label><textarea className="form-textarea" placeholder="Decrivez le motif..." value={form.motif} onChange={e=>setForm({...form,motif:e.target.value})}/></div>
+              
+              {/* ===== JUSTIFICATIF CORRIGE ===== */}
+              <div className="form-group">
+                <label className="form-label"><Icon name="file" size={12} />Justificatif (optionnel)</label>
+                <input type="file" id="justificatif-file-input" accept=".pdf,.jpg,.jpeg,.png" style={{position:"absolute",opacity:0,width:0,height:0,overflow:"hidden"}} onChange={(e) => { const file = e.target.files[0]; if (file) setFichier(file); }} />
+                {!fichier ? (
+                  <label htmlFor="justificatif-file-input" className="upload-btn" style={{cursor:"pointer"}}><Icon name="upload" size={14}/> Joindre un justificatif</label>
                 ) : (
-                  <form onSubmit={handleSubmitConfirm}>
-                    <div className="form-group">
-                      <label className="form-label">Type de congé <span className="required">*</span></label>
-                      <select className="form-select" value={form.nom_types_conge}
-                        onChange={e => setForm({...form, nom_types_conge: e.target.value})}>
-                        <option value="">Sélectionner un type</option>
-                        {TYPES_CONGE.map(t => <option key={t.nom} value={t.nom}>{t.nom}</option>)}
-                      </select>
-                      {typeSelectionne?.justificatif && (
-                        <div className="justificatif-box">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                          {typeSelectionne.justificatif}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Date de début <span className="required">*</span></label>
-                      <input type="date" className="form-input" value={form.date_debut}
-                        min={new Date().toISOString().split("T")[0]}
-                        onChange={e => setForm({...form, date_debut: e.target.value})} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Date de fin <span className="required">*</span></label>
-                      <input type="date" className="form-input" value={form.date_fin}
-                        min={form.date_debut || new Date().toISOString().split("T")[0]}
-                        onChange={e => setForm({...form, date_fin: e.target.value})} />
-                    </div>
-
-                    {jours > 0 && (
-                      solde && form.nom_types_conge !== "Congé Sans Solde" && jours > solde.soldeRestant
-                        ? <div className="jours-warning">⚠ Solde insuffisant — {jours}j ouvrables demandés, {solde.soldeRestant}j disponibles</div>
-                        : <div className="jours-preview">📅 Durée : <strong>{jours} jour{jours > 1 ? "s" : ""} ouvrable{jours > 1 ? "s" : ""}</strong> (week-ends et fériés exclus)</div>
-                    )}
-
-                    <div className="form-group" style={{marginTop:12}}>
-                      <label className="form-label">Motif <span className="required">*</span></label>
-                      <textarea className="form-textarea" placeholder="Décrivez le motif de votre demande..."
-                        value={form.motif} onChange={e => setForm({...form, motif: e.target.value})} />
-                    </div>
-
-                    {typeSelectionne?.pdf && (
-                      <div className="form-group">
-                        <label className="form-label">Justificatif PDF <span className="required">*</span></label>
-                        <input type="file" accept=".pdf" ref={fileInputRef} style={{display:"none"}}
-                          onChange={e => setFichier(e.target.files[0] || null)} />
-                        {!fichier ? (
-                          <button type="button" className="pdf-upload-btn" onClick={() => fileInputRef.current.click()}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                            Télécharger le justificatif (PDF)
-                          </button>
-                        ) : (
-                          <div className="pdf-selected">
-                            <span> {fichier.name}</span>
-                            <button type="button" className="pdf-remove" onClick={() => { setFichier(null); fileInputRef.current.value = ""; }}>✕</button>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {error && <div className="error-box">⚠ {error}</div>}
-
-                    <div className="btn-row">
-                      <button type="submit" className="btn-primary" disabled={loading}>
-                        {loading ? <><div className="spinner"/> Envoi...</> : " Soumettre"}
-                      </button>
-                      <button type="button" className="btn-danger" onClick={() => setShowAnnulerConfirm(true)}>
-                        Annuler
-                      </button>
-                    </div>
-                  </form>
+                  <div className="file-selected">
+                    <Icon name="file" size={14} color="#27ae60"/> {fichier.name}
+                    <button type="button" className="file-remove" onClick={(e) => { e.preventDefault(); setFichier(null); const input = document.getElementById('justificatif-file-input'); if (input) input.value = ""; }}><Icon name="x" size={14} /></button>
+                  </div>
                 )}
+                <p style={{fontSize:11,color:"#a89070",marginTop:4}}>Formats acceptes : PDF, JPG, PNG (max 10 Mo)</p>
               </div>
-            </div>
+              
+              <div className="btn-row"><button type="submit" className="btn-primary" disabled={loading}>{loading?<><div className="spinner"/>Envoi...</>:<><Icon name="send" size={16}/>Soumettre</>}</button><button type="button" className="btn-danger" onClick={()=>setShowAnnulerConfirm(true)}>Annuler</button></div>
+            </form>
+          )}
+        </div>
 
-            <div className="historique-section">
-              <div className="card">
-                <h3 className="card-title">Historique des demandes</h3>
-                <div className="historique-scroll">
-                  {historique.length === 0 ? (
-                    <div className="empty">Aucune demande pour le moment</div>
-                  ) : (
-                    historique.map((d, i) => {
-                      const s = statutStyle(d.statut_demandes_conge);
-                      return (
-                        <div key={i} className="historique-item">
-                          <div className="historique-info">
-                            <span className="historique-type">{d.types_conge?.nom_types_conge || "Congé"}</span>
-                            <span className="historique-date">
-                              {d.date_debut ? new Date(d.date_debut).toLocaleDateString("fr-FR") : "—"}
-                              {d.date_fin ? ` → ${new Date(d.date_fin).toLocaleDateString("fr-FR")}` : ""}
-                              {d.nombre_jours ? ` · ${d.nombre_jours}j` : ""}
-                            </span>
-                            {d.motif && <span className="historique-motif">{d.motif}</span>}
-                          </div>
-                          <span className="statut-badge" style={{background: s.bg, color: s.color}}>{s.label}</span>
-                          {d.statut_demandes_conge === "en_attente" && (
-                            <button className="btn-annuler-hist" onClick={() => {
-                              setSelectedDemande(d);
-                              setShowAnnulerHistConfirm(true);
-                            }}>Annuler</button>
-                          )}
-                        </div>
-                      );
-                    })
-                  )}
+        <div className="card">
+          <h3 className="card-title"><Icon name="list" size={18} color="#d4af64" /> Historique</h3>
+          <div className="historique-scroll">
+            {historique.length===0?<div className="empty-state"><Icon name="inbox" size={40} color="#d4af64"/><div style={{marginTop:8}}>Aucune demande</div></div>:historique.map((d,i)=>{
+              const s=getStatutStyle(d.statut_demandes_conge);const icon=getTypeCongeIcon(d.types_conge?.nom_types_conge||"");
+              return (<div key={i} className="historique-item">
+                <div className="historique-left">
+                  <div className="historique-icon-wrap" style={{background:icon.color+"18"}}><Icon name={icon.icon} size={14} color={icon.color}/></div>
+                  <div className="historique-info">
+                    <span className="historique-type">{d.types_conge?.nom_types_conge||"Conge"}</span>
+                    <span className="historique-date">{d.date_debut?new Date(d.date_debut).toLocaleDateString("fr-FR"):"—"} → {d.date_fin?new Date(d.date_fin).toLocaleDateString("fr-FR"):"—"}{d.nombre_jours?` · ${d.nombre_jours}j`:""}</span>
+                    {d.justificatif_pdf && (
+                      <a href={`http://localhost:3000/uploads/${d.justificatif_pdf}`} target="_blank" rel="noopener noreferrer" className="pdf-link">
+                        <Icon name="file" size={11} /> Voir le justificatif
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
+                <div className="historique-right">
+                  <span className="statut-badge" style={{background:s.bg,color:s.color}}><Icon name={s.icon} size={10}/> {s.label}</span>
+                  {d.statut_demandes_conge==="en_attente"&&<button className="btn-annuler-hist" onClick={()=>{setSelectedDemande(d);setShowAnnulerHistConfirm(true);}}>Annuler</button>}
+                </div>
+              </div>);
+            })}
           </div>
-        </main>
+        </div>
       </div>
-    </>
+    </div>
   );
 }

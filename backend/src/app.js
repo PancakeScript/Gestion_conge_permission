@@ -10,7 +10,10 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Dossier uploads accessible publiquement
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 // Route de test
@@ -29,7 +32,7 @@ app.use("/api/feries", require("./modules/ferie/ferie.routes"));
 app.use("/api/types-conge", require("./modules/type-conge/typeConge.routes"));
 app.use("/api/notifications", require("./modules/notification/notification.routes"));
 
-// Route spéciale pour /api/demandes (redirection vers /api/conges)
+// Route pour /api/demandes (redirection)
 app.use("/api/demandes", require("./modules/conge/conge.routes"));
 
 // ============ EXPORT ============
